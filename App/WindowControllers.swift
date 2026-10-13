@@ -41,7 +41,7 @@ final class MarliaWindowController: NSWindowController, NSWindowDelegate, NSTool
         // Window title = name of the active directory; the "second pane" icon reflects the
         // state.
         appState.$activeDirectoryURL.receive(on: RunLoop.main).sink { [weak window] url in
-            window?.title = FileManager.default.displayName(atPath: url.path)
+            window?.title = ICloudDrive.isRoot(url) ? ICloudDrive.name : FileManager.default.displayName(atPath: url.path)
             // representedURL gives the title a folder proxy icon and ⌘-click on the
             // title to reveal the path — what a user expects from a file manager
             // (Finder does exactly this).

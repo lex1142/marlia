@@ -117,6 +117,16 @@ struct SidebarView: View {
                 }
             }
 
+            // Like Finder's iCloud section. Shown only while iCloud Drive is turned on —
+            // otherwise its folder doesn't exist and the row would lead nowhere.
+            if ICloudDrive.isAvailable {
+                Section("iCloud") {
+                    Label(ICloudDrive.name, systemImage: "icloud")
+                        .lineLimit(1)
+                        .tag(ICloudDrive.url)
+                }
+            }
+
             Section("Drives") {
                 ForEach(volumes.items, id: \.self) { url in
                     driveRow(url: url)
@@ -243,6 +253,7 @@ struct SidebarView: View {
         if url.standardizedFileURL == FileManager.default.homeDirectoryForCurrentUser.standardizedFileURL {
             return "house"
         }
+        if url.standardizedFileURL.path == ICloudDrive.url.path { return "icloud" }
         switch url.lastPathComponent {
         case "Desktop": return "desktopcomputer"
         case "Documents": return "doc"
@@ -357,6 +368,25 @@ struct SidebarView: View {
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         process.waitUntilExit()
         return process.terminationStatus == 0 ? nil : (output.isEmpty ? "diskutil eject failed" : output)
+    }
+}
+
+/// iCloud Drive as Finder shows it. Its real location is an internal folder whose raw name
+/// (`com~apple~CloudDocs`, under `~/Library/Mobile Documents`) should never reach the UI,
+/// so the sidebar, the breadcrumbs and the window title all present it under this name.
+enum ICloudDrive {
+    static let url = FileManager.default.homeDirectoryForCurrentUser
+        .appendingPathComponent("Library/Mobile Documents/com~apple~CloudDocs", isDirectory: true)
+    static let name = "iCloud Drive"
+
+    /// The folder exists only while iCloud Drive is turned on for this Mac.
+    static var isAvailable: Bool {
+        var isDirectory: ObjCBool = false
+        return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) && isDirectory.boolValue
+    }
+
+    static func isRoot(_ candidate: URL) -> Bool {
+        candidate.standardizedFileURL.path == url.standardizedFileURL.path
     }
 }
 

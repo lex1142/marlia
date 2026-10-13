@@ -389,6 +389,12 @@ struct PaneView: View {
         var result: [(name: String, url: URL)] = []
         var url = model.currentURL
         while url.pathComponents.count > 1 {
+            // Inside iCloud Drive the crumbs start at "iCloud Drive", as in Finder, rather
+            // than at /Users/…/Library/Mobile Documents/com~apple~CloudDocs.
+            if ICloudDrive.isRoot(url) {
+                result.append((name: ICloudDrive.name, url: url))
+                return result.reversed()
+            }
             result.append((name: url.lastPathComponent, url: url))
             // Inside the managed Workspaces folder, the long internal path leading to
             // it (~/Library/Application Support/...) isn't shown — the breadcrumbs
@@ -407,8 +413,11 @@ struct PaneView: View {
     /// manual path editing (see .onTapGesture below and isEditingPath).
     private var breadcrumbPath: some View {
         HStack(spacing: 2) {
-            ForEach(Array(pathSegments.enumerated()), id: \.element.url) { index, segment in
-                if index > 1 {
+            let segments = pathSegments
+            ForEach(Array(segments.enumerated()), id: \.element.url) { index, segment in
+                // No separator right after the root "/" (it is one itself), but one after a
+                // trimmed first crumb — a workspace or iCloud Drive.
+                if index > 0 && segments[index - 1].name != "/" {
                     Text("/").foregroundStyle(.secondary)
                 }
                 Button {
