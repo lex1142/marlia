@@ -352,6 +352,46 @@ final class FileOperationService {
     }
 
     /// "file.txt" -> "file 2.txt" if the name is taken.
+    /// Whether an error means "no permission to write here" (a root-owned folder like
+    /// /Users), as opposed to anything else (disk full, name taken…). Only these are worth
+    /// offering to retry as an administrator.
+    static func isPermissionError(_ error: Error) -> Bool {
+        let ns = error as NSError
+        if ns.domain == NSCocoaErrorDomain, ns.code == CocoaError.fileWriteNoPermission.rawValue { return true }
+        let posix = (ns.userInfo[NSUnderlyingErrorKey] as? NSError) ?? ns
+        return posix.domain == NSPOSIXErrorDomain && (posix.code == Int(EACCES) || posix.code == Int(EPERM))
+    }
+
+    enum PrivilegedResult { case success, cancelled, failed(String) }
+
+    /// Runs a command as root behind the system administrator password prompt. Goes through
+    /// `do shell script … with administrator privileges`, so every argument is single-quoted
+    /// for the shell and the whole command escaped as an AppleScript string literal (verified
+    /// against names with quotes, backslashes, `$(…)`, backticks and semicolons). Must run on
+    /// the main thread: it shows UI and blocks until it's answered.
+    ///
+    /// The prompt is password-only. Authorization Services (`AuthorizationCopyRights` +
+    /// `AuthorizationExecuteWithPrivileges`) was tried for Touch ID and gives the same
+    /// password-only dialog on macOS 27: for an ad-hoc signed, non-notarized app the system
+    /// shows its "Apple could not verify this app" variant without Touch ID. Revisit once the
+    /// app has a Developer ID.
+    @MainActor
+    static func runWithAdministratorPrivileges(_ arguments: [String]) -> PrivilegedResult {
+        let shellQuoted = arguments
+            .map { "'" + $0.replacingOccurrences(of: "'", with: "'\\''") + "'" }
+            .joined(separator: " ")
+        let literal = "\"" + shellQuoted
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"") + "\""
+        var errorInfo: NSDictionary?
+        NSAppleScript(source: "do shell script \(literal) with administrator privileges")?
+            .executeAndReturnError(&errorInfo)
+        guard let errorInfo else { return .success }
+        // -128 is "User canceled." — dismissing the password prompt isn't an error.
+        if (errorInfo[NSAppleScript.errorNumber] as? Int) == -128 { return .cancelled }
+        return .failed(errorInfo[NSAppleScript.errorMessage] as? String ?? "The command failed.")
+    }
+
     static func uniqueURL(for url: URL) -> URL {
         guard FileManager.default.fileExists(atPath: url.path) else { return url }
         let ext = url.pathExtension

@@ -703,10 +703,7 @@ final class AppState: ObservableObject {
             return
         }
         let url = FileOperationService.uniqueURL(for: pane.currentURL.appendingPathComponent(trimmed))
-        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
-        record(.createItem(url: url, isDirectory: true))
-        revealIfHidden(url.lastPathComponent, in: pane)
-        pane.reload()
+        createItem(at: url, isDirectory: true, in: pane)
     }
 
     func createFile() {
@@ -721,10 +718,56 @@ final class AppState: ObservableObject {
             return
         }
         let url = FileOperationService.uniqueURL(for: pane.currentURL.appendingPathComponent(trimmed))
-        FileManager.default.createFile(atPath: url.path, contents: nil)
-        record(.createItem(url: url, isDirectory: false))
+        createItem(at: url, isDirectory: false, in: pane)
+    }
+
+    /// Creates the folder/file and reports failure instead of swallowing it. This used to be
+    /// `try?` (and an unchecked `createFile`), so in a folder the user can't write to, such
+    /// as /Users, nothing happened at all — and an undo entry was still recorded for an item
+    /// that didn't exist. A permission error gets Finder's answer: offer to do it as an
+    /// administrator.
+    private func createItem(at url: URL, isDirectory: Bool, in pane: PaneViewModel) {
+        let kind = isDirectory ? "folder" : "file"
+        do {
+            if isDirectory {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
+            } else {
+                try Data().write(to: url, options: .withoutOverwriting)
+            }
+            record(.createItem(url: url, isDirectory: isDirectory))
+        } catch where FileOperationService.isPermissionError(error) {
+            let folder = FileManager.default.displayName(atPath: pane.currentURL.path)
+            let alert = NSAlert()
+            alert.messageText = "You don't have permission to create a \(kind) in “\(folder)”."
+            alert.informativeText = "Authenticate with an administrator password to create “\(url.lastPathComponent)” anyway. It will be owned by the system (root)."
+            alert.addButton(withTitle: "Authenticate…")
+            alert.addButton(withTitle: "Cancel")
+            guard alert.runModal() == .alertFirstButtonReturn else { return }
+            let command = isDirectory ? ["/bin/mkdir", url.path] : ["/usr/bin/touch", url.path]
+            switch FileOperationService.runWithAdministratorPrivileges(command) {
+            case .success where !FileManager.default.fileExists(atPath: url.path):
+                // Success is confirmed by the result itself, not only by the exit status.
+                showCreateError("Couldn't create the \(kind) “\(url.lastPathComponent)”.", "The command finished, but the \(kind) wasn't created.")
+            case .success, .cancelled:
+                // No undo entry: undo works with FileManager as the current user and couldn't
+                // remove a root-owned item anyway.
+                break
+            case .failed(let message):
+                showCreateError("Couldn't create the \(kind) “\(url.lastPathComponent)”.", message)
+            }
+        } catch {
+            showCreateError("Couldn't create the \(kind) “\(url.lastPathComponent)”.", error.localizedDescription)
+        }
         revealIfHidden(url.lastPathComponent, in: pane)
         pane.reload()
+    }
+
+    private func showCreateError(_ title: String, _ details: String) {
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = title
+        alert.informativeText = details
+        alert.runModal()
     }
 
     func refreshActive() { activePane.reload() }

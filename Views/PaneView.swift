@@ -211,16 +211,20 @@ struct PaneView: View {
         // with the default name.
         .sheet(isPresented: $model.isCreatingFolder) {
             NewItemSheet(title: "New Folder", prompt: "Folder Name", defaultName: "New Folder") { name in
-                appState.createFolder(named: name, in: model)
+                // Close the sheet first: creating can raise an alert (no permission, error),
+                // which shouldn't pop up on top of a sheet that is still open.
                 model.isCreatingFolder = false
+                DispatchQueue.main.async { appState.createFolder(named: name, in: model) }
             } onCancel: {
                 model.isCreatingFolder = false
             }
         }
         .sheet(isPresented: $model.isCreatingFile) {
             NewItemSheet(title: "New File", prompt: "File Name", defaultName: "New File") { name in
-                appState.createFile(named: name, in: model)
+                // Close the sheet first: creating can raise an alert (no permission, error),
+                // which shouldn't pop up on top of a sheet that is still open.
                 model.isCreatingFile = false
+                DispatchQueue.main.async { appState.createFile(named: name, in: model) }
             } onCancel: {
                 model.isCreatingFile = false
             }
