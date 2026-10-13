@@ -1,0 +1,26 @@
+Marlia — installation
+=====================
+
+1. Drag "Marlia.app" onto the "Applications" shortcut in this window.
+
+2. The app is only ad-hoc signed (no Developer ID, not notarized), so macOS
+   blocks it on first launch. Open it one of these ways:
+
+   • Right-click Marlia.app → "Open" → "Open" again in the dialog.
+     (Only once; after that a normal double-click works.)
+     On macOS 15 Sequoia and later this no longer works: try to open the
+     app once, then go to System Settings → Privacy & Security and click
+     "Open Anyway" next to the message about Marlia.
+
+   • If macOS says the app "is damaged and can't be opened" (common after
+     downloading it, AirDrop or cloud sync), run this in Terminal:
+
+         xattr -cr /Applications/Marlia.app
+
+     then open it normally.
+
+3. On first launch you may want to grant Full Disk Access:
+   System Settings → Privacy & Security → Full Disk Access → add Marlia
+   (so Desktop/Documents/Downloads are visible without extra prompts).
+
+4. Requires macOS 13.5 (Ventura) or later on Apple Silicon.

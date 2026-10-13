@@ -1,0 +1,28 @@
+name: Build
+
+# Compile-only CI: the project has no automated test suite (UI behavior is verified
+# manually — see CONTRIBUTING.md). This workflow catches build breaks, not functional
+# regressions. It runs the same ./build.sh as a local build, so the source list lives
+# in one place.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Swift version
+        run: swift --version
+
+      - name: Build Marlia.app
+        run: ./build.sh
+
+      - name: Verify the binary still targets macOS 13.5
+        run: |
+          otool -l build/Marlia.app/Contents/MacOS/Marlia | grep -A3 LC_BUILD_VERSION | tee /dev/stderr | grep -q "minos 13.5"

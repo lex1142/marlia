@@ -1,0 +1,8 @@
+# Build artifacts — produced by ./build.sh, not versioned
+build/
+
+# macOS Finder metadata
+.DS_Store
+
+# Local Claude Code settings (per-machine permissions)
+.claude/settings.local.json

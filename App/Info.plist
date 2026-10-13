@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>Marlia</string>
+	<key>CFBundleIconFile</key>
+	<string>Marlia</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.local.marlia</string>
+	<key>CFBundleName</key>
+	<string>Marlia</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.2</string>
+	<key>CFBundleVersion</key>
+	<string>1.2</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.5</string>
+	<!-- Shown in the standard About panel (without this key it has no copyright
+	     line at all). -->
+	<key>NSHumanReadableCopyright</key>
+	<string>Marlia — a two-pane file manager for macOS.</string>
+	<!-- TCC purpose strings. The app is unsandboxed and, by its very purpose, walks
+	     into Desktop/Documents/Downloads and onto removable and network volumes, so
+	     macOS shows its access prompt. Without these keys the prompt appears with no
+	     reason at all, which Apple's guidelines for access prompts don't allow. -->
+	<key>NSDesktopFolderUsageDescription</key>
+	<string>Marlia needs access to your Desktop to list and manage the files stored there.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Marlia needs access to your Documents folder to list and manage the files stored there.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>Marlia needs access to your Downloads folder to list and manage the files stored there.</string>
+	<key>NSRemovableVolumesUsageDescription</key>
+	<string>Marlia needs access to removable volumes to list and manage the files on connected drives and memory cards.</string>
+	<key>NSNetworkVolumesUsageDescription</key>
+	<string>Marlia needs access to network volumes to connect to SMB shares and manage the files on them.</string>
+</dict>
+</plist>
