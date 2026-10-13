@@ -148,6 +148,11 @@ struct FileTableView: NSViewRepresentable {
         tableView.target = context.coordinator
         tableView.focusRingType = .none
         tableView.style = .inset
+        // Width changes go to Name, as in Finder. The default (last column only) grew the
+        // last visible column to fill a wide single pane, and when the second pane halved
+        // the width it never shrank the others back — the table stayed far wider than the
+        // pane, with a long horizontal scroll. See also FileNSTableView.resize.
+        tableView.columnAutoresizingStyle = .firstColumnOnlyAutoresizingStyle
 
         // The header is drawn by us (see Theme.swift): the system NSTableHeaderCell
         // doesn't obey the palette and stays noticeably lighter than the pane in the dark
@@ -566,6 +571,20 @@ final class FileNSTableView: NSTableView {
     override func cancelOperation(_ sender: Any?) {
         if coordinator?.parent.onEscape() == true { return }
         super.cancelOperation(sender)
+    }
+
+    /// AppKit's autoresizing only distributes a width *change*: when the pane grows from
+    /// zero (the hidden second pane being shown) the table is still wider than the pane
+    /// afterwards, because columns never shrank while it was collapsed. So whenever the
+    /// columns overflow the visible width, take the excess from Name, down to its minimum.
+    /// Columns the user widened beyond that keep their width and scroll, as in Finder.
+    override func resize(withOldSuperviewSize oldSize: NSSize) {
+        super.resize(withOldSuperviewSize: oldSize)
+        guard let clip = superview, let name = tableColumns.first(where: { !$0.isHidden }) else { return }
+        let overflow = frame.width - clip.bounds.width
+        guard overflow > 0.5 else { return }
+        let shrink = min(overflow, name.width - name.minWidth)
+        if shrink > 0 { name.width -= shrink }
     }
 
 
