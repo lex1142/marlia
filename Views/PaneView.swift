@@ -779,20 +779,32 @@ struct PaneView: View {
             menu.addItem(menuItem("Open", "arrow.up.forward.app") { model.open(first) })
             menu.addItem(menuItem("Quick Look", "eye") { QuickLookCoordinator.shared.toggle(urls: items.map(\.url)) })
             if items.count == 1, !first.isNavigableFolder {
-                let apps = NSWorkspace.shared.urlsForApplications(toOpen: first.url)
-                if !apps.isEmpty {
-                    let openWith = newMenu()
-                    for appURL in apps {
-                        let item = ClosureMenuItem(title: FileManager.default.displayName(atPath: appURL.path)) {
-                            NSWorkspace.shared.open([first.url], withApplicationAt: appURL, configuration: NSWorkspace.OpenConfiguration())
-                        }
-                        let icon = NSWorkspace.shared.icon(forFile: appURL.path)
-                        icon.size = NSSize(width: 16, height: 16)
-                        item.image = icon
-                        openWith.addItem(item)
-                    }
-                    addSubmenu(menu, "Open With", "square.grid.2x2", openWith)
+                // Resolved: like the other Launch Services calls, these don't follow a
+                // symlink, and a link's own type isn't the type of the file it points at.
+                let target = first.url.resolvingSymlinksInPath()
+                let defaultApp = NSWorkspace.shared.urlForApplication(toOpen: target)
+                // Finder order: the default app first, marked "(default)", then the rest.
+                var apps = NSWorkspace.shared.urlsForApplications(toOpen: target)
+                if let defaultApp {
+                    apps.removeAll { $0.standardizedFileURL == defaultApp.standardizedFileURL }
+                    apps.insert(defaultApp, at: 0)
                 }
+                let openWith = newMenu()
+                for appURL in apps {
+                    var title = FileManager.default.displayName(atPath: appURL.path)
+                    if appURL == defaultApp { title += " (default)" }
+                    let item = ClosureMenuItem(title: title) {
+                        NSWorkspace.shared.open([first.url], withApplicationAt: appURL, configuration: NSWorkspace.OpenConfiguration())
+                    }
+                    let icon = NSWorkspace.shared.icon(forFile: appURL.path)
+                    icon.size = NSSize(width: 16, height: 16)
+                    item.image = icon
+                    openWith.addItem(item)
+                    if appURL == defaultApp, apps.count > 1 { openWith.addItem(.separator()) }
+                }
+                if !apps.isEmpty { openWith.addItem(.separator()) }
+                openWith.addItem(menuItem("Other…", "ellipsis.circle") { openWithOtherApplication(first.url) })
+                addSubmenu(menu, "Open With", "square.grid.2x2", openWith)
             }
             menu.addItem(menuItem("Show in Finder", "folder") { NSWorkspace.shared.activateFileViewerSelecting(items.map(\.url)) })
             menu.addItem(menuItem("AirDrop…", "wifi") { appState.airDrop(items) })
@@ -906,6 +918,42 @@ struct PaneView: View {
             menu.addItem(menuItem("Refresh", "arrow.clockwise") { model.reload() })
         }
         return menu
+    }
+
+    /// Open With ▸ Other…: pick any application, Finder-style. The "Always Open With"
+    /// checkbox also makes it the system default for this file's content type (the
+    /// same Launch Services setting as Finder's Get Info ▸ "Change All…"), so it
+    /// applies to every file of that type, not just this one.
+    private func openWithOtherApplication(_ url: URL) {
+        let panel = NSOpenPanel()
+        panel.title = "Choose Application"
+        panel.message = "Choose an application to open “\(url.lastPathComponent)”."
+        panel.prompt = "Open"
+        panel.directoryURL = URL(fileURLWithPath: "/Applications")
+        panel.allowedContentTypes = [.application]
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        panel.allowsMultipleSelection = false
+        // Without this an .app is browsed into like a folder instead of chosen.
+        panel.treatsFilePackagesAsDirectories = false
+
+        let alwaysCheckbox = NSButton(checkboxWithTitle: "Always Open With", target: nil, action: nil)
+        alwaysCheckbox.sizeToFit()
+        let accessory = NSView(frame: NSRect(x: 0, y: 0, width: alwaysCheckbox.frame.width + 40, height: alwaysCheckbox.frame.height + 16))
+        alwaysCheckbox.frame.origin = NSPoint(x: 20, y: 8)
+        accessory.addSubview(alwaysCheckbox)
+        panel.accessoryView = accessory
+        panel.isAccessoryViewDisclosed = true
+
+        guard panel.runModal() == .OK, let appURL = panel.url else { return }
+        if alwaysCheckbox.state == .on,
+           let type = try? url.resolvingSymlinksInPath().resourceValues(forKeys: [.contentTypeKey]).contentType {
+            NSWorkspace.shared.setDefaultApplication(at: appURL, toOpen: type) { error in
+                guard let error else { return }
+                DispatchQueue.main.async { NSAlert(error: error).runModal() }
+            }
+        }
+        NSWorkspace.shared.open([url], withApplicationAt: appURL, configuration: NSWorkspace.OpenConfiguration())
     }
 
     /// An NSMenu with autoenablesItems = false — ClosureMenuItems are their own
