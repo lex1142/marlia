@@ -96,6 +96,20 @@ targets Ventura: `hdiutil attach build/Marlia-<version>.dmg` → `cmp "/Volumes/
 (not `build/Marlia`: the bundle is re-signed, which rewrites the signature inside the binary)
 and `otool -l … | grep -A3 LC_BUILD_VERSION` → `minos 13.5`.
 
+### Landing page
+
+`docs/index.html` is the project site, served by GitHub Pages from `main` → `/docs` (with
+`docs/.nojekyll`, so it's published as-is). It's one self-contained file: no build step, the only
+external loads are Google Fonts and one call to the GitHub API. It reuses `docs/screenshot.jpg` (also
+the README image) and `docs/marlia-icon.png` (128 px, from `App/Marlia.icns` via `sips`).
+
+The download button needs **no edit on release**: on load the page fetches
+`api.github.com/repos/lex1142/marlia/releases/latest` and takes the version, DMG size and URL from
+the first `.dmg` asset. The `RELEASE` constant at the top of its script is only the fallback for when
+that call fails (rate limit: 60/h per visitor IP), so bump it with each release anyway. The page text
+is in six languages (en/ru/zh/es/ja/de) in one `T` table in the same script; a new string needs a key
+in every language.
+
 Target is macOS 13.5+ (Ventura). Context menus are built as plain AppKit `NSMenu`
 (`ClosureMenuItem` in `PaneInteractionViews.swift`, assembled by `PaneView.contextNSMenu`),
 **not** SwiftUI + `NSHostingMenu` — `NSHostingMenu` requires 14.4 and was the sole thing forcing
