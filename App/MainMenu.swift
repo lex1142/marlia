@@ -51,6 +51,8 @@ final class MainMenuController: NSObject, NSMenuDelegate {
     /// The Commands menu, rebuilt whenever the user commands change.
     private var userCommandsMenu: NSMenu?
     private var userCommandsSubscription: AnyCancellable?
+    private var tabSetsSubscription: AnyCancellable?
+    private weak var tabSetsMenuRef: NSMenu?
 
     private var appState: AppState? { AppStateRegistry.activeState }
 
@@ -160,6 +162,9 @@ final class MainMenuController: NSObject, NSMenuDelegate {
         let menu = NSMenu()
         menu.addItem(command(.newTab) { AppDelegate.requestNewTab() })
         menu.addItem(command(.reopenClosedTab) { AppWindowManager.shared.reopenClosedTab() })
+        let tabSets = NSMenuItem(title: "Tab Sets", action: nil, keyEquivalent: "")
+        tabSets.submenu = tabSetsMenu()
+        menu.addItem(tabSets)
         menu.addItem(.separator())
         menu.addItem(command(.newFolder) { [weak self] in self?.appState?.createFolder() })
         menu.addItem(command(.newFile) { [weak self] in self?.appState?.createFile() })
@@ -448,6 +453,45 @@ final class MainMenuController: NSObject, NSMenuDelegate {
                 }
         }
         return menu
+    }
+
+    /// File ▸ Tab Sets: one item per saved set (opens it in a new window), then Save and
+    /// Delete. Rebuilt whenever the store changes, like the Commands menu — which also
+    /// puts every set into the command palette.
+    private func tabSetsMenu() -> NSMenu {
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+        tabSetsMenuRef = menu
+        fillTabSets(menu, TabSetStore.shared.sets)
+        if tabSetsSubscription == nil {
+            tabSetsSubscription = TabSetStore.shared.$sets
+                .dropFirst()
+                .receive(on: RunLoop.main)
+                .sink { [weak self] sets in
+                    guard let self, let menu = self.tabSetsMenuRef else { return }
+                    self.fillTabSets(menu, sets)
+                }
+        }
+        return menu
+    }
+
+    private func fillTabSets(_ menu: NSMenu, _ sets: [TabSet]) {
+        menu.removeAllItems()
+        for set in sets {
+            let item = ClosureMenuItem(title: set.name) { AppWindowManager.shared.openTabSet(set) }
+            item.toolTip = set.tabs.map { URL(fileURLWithPath: $0.leftPath).lastPathComponent }.joined(separator: ", ")
+            menu.addItem(item)
+        }
+        if !sets.isEmpty { menu.addItem(.separator()) }
+        menu.addItem(ClosureMenuItem(title: "Save Tabs as Set…") { AppWindowManager.shared.saveCurrentTabsAsSet() })
+        let delete = NSMenuItem(title: "Delete Set", action: nil, keyEquivalent: "")
+        let deleteMenu = NSMenu()
+        for set in sets {
+            deleteMenu.addItem(ClosureMenuItem(title: set.name) { TabSetStore.shared.remove(named: set.name) })
+        }
+        delete.submenu = deleteMenu
+        delete.isEnabled = !sets.isEmpty
+        menu.addItem(delete)
     }
 
     private func fillUserCommands(_ menu: NSMenu, _ commands: [UserCommand]) {

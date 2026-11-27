@@ -273,6 +273,59 @@ final class AppWindowManager {
         DispatchQueue.main.async { controller.appState.focusActivePane() }
     }
 
+    // MARK: Tab Sets (File ▸ Tab Sets, see Models/TabSets.swift)
+
+    /// Opens a saved set as a new window, its tabs in order — the same way a session is
+    /// restored at launch. A new window rather than replacing the current tabs: opening a
+    /// set should never throw away what's open.
+    func openTabSet(_ set: TabSet) {
+        guard let firstState = set.tabs.first else { return }
+        let current = NSApp.keyWindow ?? NSApp.mainWindow
+        let first = newWindow(restoring: firstState)
+        // Saved from this very window, the set would open exactly on top of it and look
+        // like nothing happened — offset it the way new windows cascade.
+        if let current, let win = first.window, win.frame.origin == current.frame.origin {
+            win.setFrameTopLeftPoint(NSPoint(x: current.frame.minX + 24, y: current.frame.maxY - 24))
+        }
+        for state in set.tabs.dropFirst() {
+            var state = state
+            state.frame = ""
+            let c = newWindow(restoring: state)
+            if let win = c.window { first.window?.addTabbedWindow(win, ordered: .above) }
+        }
+        first.window?.makeKeyAndOrderFront(nil)
+        DispatchQueue.main.async { first.appState.focusActivePane() }
+    }
+
+    /// The tabs of the key window's group, in tab order, as a set to save.
+    func currentTabs() -> [WindowState] {
+        guard let window = NSApp.keyWindow ?? NSApp.mainWindow else { return [] }
+        return (window.tabGroup?.windows ?? [window])
+            .compactMap { ($0.windowController as? MarliaWindowController)?.appState.snapshotWindowState() }
+    }
+
+    /// Asks for a name and saves the current window's tabs under it.
+    func saveCurrentTabsAsSet() {
+        let tabs = currentTabs()
+        guard !tabs.isEmpty else { NSSound.beep(); return }
+        let alert = NSAlert()
+        alert.messageText = "Save Tabs as Set"
+        alert.informativeText = tabs.count == 1
+            ? "The current tab, with both panes' folders, can be reopened from File ▸ Tab Sets."
+            : "These \(tabs.count) tabs, with both panes' folders, can be reopened together from File ▸ Tab Sets."
+        let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 260, height: 24))
+        field.stringValue = URL(fileURLWithPath: tabs[0].leftPath).lastPathComponent
+        field.placeholderString = "Name"
+        alert.accessoryView = field
+        alert.addButton(withTitle: "Save")
+        alert.addButton(withTitle: "Cancel")
+        alert.window.initialFirstResponder = field
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        let name = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else { NSSound.beep(); return }
+        TabSetStore.shared.save(TabSet(name: name, tabs: tabs))
+    }
+
     // MARK: Reopen Closed Tab (⇧⌘T)
 
     /// Tabs closed during this session, most recent last. In memory only: the session
