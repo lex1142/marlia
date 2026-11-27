@@ -769,6 +769,15 @@ final class AppState: ObservableObject {
         }
     }
 
+    /// Synchronize Folders (⌥⇧F2) between the two panes' folders, opened in its own window.
+    func synchronizeFolders() {
+        if !showSecondPane { showSecondPane = true }
+        AppWindowManager.shared.openFolderSync(left: leftPane.currentURL, right: rightPane.currentURL) { [weak self] in
+            self?.leftPane.reload()
+            self?.rightPane.reload()
+        }
+    }
+
     func copyToOtherPane() {
         transfer(items: activePane.selectedItems, to: passivePane.currentURL, mode: .copy) { [weak self] in
             self?.passivePane.reload()

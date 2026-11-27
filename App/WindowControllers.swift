@@ -360,6 +360,19 @@ final class AppWindowManager {
     }
 
     private var largestFilesControllers: [URL: AuxWindowController] = [:]
+    private var folderSyncController: AuxWindowController?
+
+    /// Synchronize Folders for the two panes' folders (see FolderSyncView). One window at
+    /// a time: a second request replaces it, since the panes it compared have moved on.
+    func openFolderSync(left: URL, right: URL, onFinish: @escaping () -> Void) {
+        folderSyncController?.close()
+        let c = AuxWindowController(title: "Synchronize Folders",
+                                    content: FolderSyncView(left: left, right: right, onFinish: onFinish),
+                                    contentSize: NSSize(width: 860, height: 560), resizable: true)
+        c.onClose = { [weak self, weak c] in if self?.folderSyncController === c { self?.folderSyncController = nil } }
+        folderSyncController = c
+        c.showAndFocus()
+    }
 
     /// Largest Files for a folder (see LargestFilesView). One window per folder; `reveal`
     /// shows a found item in the pane that asked.
