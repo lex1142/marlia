@@ -158,6 +158,7 @@ enum AppCommand: String, CaseIterable, Codable {
     case openInLeftPane, openInRightPane
     case goToFolder, reopenClosedTab
     case calculateFolderSizes
+    case findLargestFiles
 
     /// Zero-based position in the favorites list for the go-to commands.
     var favoriteIndex: Int? {
@@ -238,6 +239,7 @@ enum AppCommand: String, CaseIterable, Codable {
         case .goToFolder: return "Go to Folder…"
         case .reopenClosedTab: return "Reopen Closed Tab"
         case .calculateFolderSizes: return "Calculate Folder Sizes"
+        case .findLargestFiles: return "Largest Files…"
         }
     }
 
@@ -264,7 +266,7 @@ enum AppCommand: String, CaseIterable, Codable {
         case .copyToOtherPane, .moveToOtherPane, .moveToTrash, .deleteImmediately,
              .refresh, .find, .addToWorkspace, .showContextMenu, .addToFavorites,
              .filterItems, .selectByPattern, .invertSelection, .compareFolders,
-             .calculateFolderSizes:
+             .calculateFolderSizes, .findLargestFiles:
             return .actions
         case .help:
             return .help
@@ -372,6 +374,7 @@ enum AppCommand: String, CaseIterable, Codable {
         // ⌥⌘S — "size". Space is Quick Look here, so Total Commander's Space-on-a-folder
         // isn't available.
         case .calculateFolderSizes: return [Shortcut(keyCode: 1, modifiers: [.command, .option], character: "s")]
+        case .findLargestFiles: return [Shortcut(keyCode: 37, modifiers: [.command, .option], character: "l")]
         // ⌘I — Get Info, ⌥⌘I — invert selection, so the info panel is ⌃⌘I.
         case .toggleInspector: return [Shortcut(keyCode: 34, modifiers: [.command, .control], character: "i")]
         // ⌘1…⌘3 are taken by the view modes (as in Finder), and ⌃1…⌃9 are

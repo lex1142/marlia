@@ -419,6 +419,7 @@ final class MainMenuController: NSObject, NSMenuDelegate {
         menu.addItem(.separator())
         menu.addItem(command(.refresh) { [weak self] in self?.appState?.refreshActive() })
         menu.addItem(command(.calculateFolderSizes) { [weak self] in self?.appState?.activePane.calculateFolderSizes() })
+        menu.addItem(command(.findLargestFiles) { [weak self] in self?.appState?.showLargestFiles() })
         menu.addItem(.separator())
         menu.addItem(command(.addToFavorites) { [weak self] in self?.appState?.addSelectionToFavorites() })
         menu.addItem(command(.addToWorkspace) { [weak self] in

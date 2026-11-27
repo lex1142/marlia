@@ -359,6 +359,21 @@ final class AppWindowManager {
         c.showAndFocus()
     }
 
+    private var largestFilesControllers: [URL: AuxWindowController] = [:]
+
+    /// Largest Files for a folder (see LargestFilesView). One window per folder; `reveal`
+    /// shows a found item in the pane that asked.
+    func openLargestFiles(_ root: URL, reveal: @escaping (URL) -> Void) {
+        let key = root.standardizedFileURL
+        if let w = largestFilesControllers[key]?.window { w.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true); return }
+        let name = FileManager.default.displayName(atPath: root.path)
+        let c = AuxWindowController(title: "Largest Files in \(name)", content: LargestFilesView(root: root, reveal: reveal),
+                                    contentSize: NSSize(width: 620, height: 520), resizable: true)
+        c.onClose = { [weak self] in self?.largestFilesControllers[key] = nil }
+        largestFilesControllers[key] = c
+        c.showAndFocus()
+    }
+
     func openArchiveContents(_ url: URL) {
         if let w = archiveControllers[url]?.window { w.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true); return }
         let c = AuxWindowController(title: url.lastPathComponent, content: ArchiveContentsView(url: url),

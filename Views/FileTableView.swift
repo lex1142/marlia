@@ -226,7 +226,7 @@ struct FileTableView: NSViewRepresentable {
                 for columnIndex in tableView.tableColumns.indices {
                     if let cell = tableView.view(atColumn: columnIndex, row: row, makeIfNecessary: false) as? FileTableCellView,
                        coordinator.displayedItems.indices.contains(row) {
-                        cell.configure(item: coordinator.displayedItems[row], column: cell.column, zoomLevel: zoomLevel, isCut: isCut(coordinator.displayedItems[row].url))
+                        cell.configure(item: coordinator.displayedItems[row], column: cell.column, zoomLevel: zoomLevel, isCut: isCut(coordinator.displayedItems[row].url), sizeShare: coordinator.sizeShare(of: coordinator.displayedItems[row]))
                     }
                 }
             }
@@ -265,7 +265,24 @@ struct FileTableView: NSViewRepresentable {
     final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate {
         var parent: FileTableView
         weak var tableView: FileNSTableView?
-        var displayedItems: [FileItem] = []
+        var displayedItems: [FileItem] = [] {
+            didSet {
+                // Size bars only once folder sizes have been calculated (⌥⌘S): before
+                // that folders show "—" and a bar per file would compare files only,
+                // which reads as "this file is the biggest thing here" when it isn't.
+                largestSize = displayedItems.contains(where: \.isFolderSizeCalculated)
+                    ? displayedItems.map(\.size).max() : nil
+            }
+        }
+        private var largestSize: Int64?
+
+        /// The item's share of the largest item in the list, for the Size column's bar
+        /// (Path Finder's size browser, kept inside the list). nil — no bar.
+        func sizeShare(of item: FileItem) -> CGFloat? {
+            guard let largestSize, largestSize > 0 else { return nil }
+            if item.isNavigableFolder && !item.isFolderSizeCalculated { return nil }
+            return CGFloat(Double(item.size) / Double(largestSize))
+        }
         var isSyncingSelectionFromBinding = false
         var lastFocusRequestTrigger = 0
         /// The last applied "affects the cells' look" parameters — so visible cells
@@ -392,7 +409,7 @@ struct FileTableView: NSViewRepresentable {
                 cell = FileTableCellView(column: column)
                 cell.identifier = identifier
             }
-            cell.configure(item: item, column: column, zoomLevel: parent.zoomLevel, isCut: parent.isCut(item.url))
+            cell.configure(item: item, column: column, zoomLevel: parent.zoomLevel, isCut: parent.isCut(item.url), sizeShare: sizeShare(of: item))
             if column == .name {
                 // The name field is NOT editable by default. Confirmed by diagnostics
                 // (2026-07-19): with isEditable=true the native NSTableView enters editing
@@ -859,7 +876,25 @@ final class FileTableCellView: NSTableCellView {
         label.toolTip = textWidth > label.frame.width + 1 ? label.stringValue : nil
     }
 
-    func configure(item: FileItem, column: FileTableColumn, zoomLevel: CGFloat, isCut: Bool) {
+    /// The Size column's bar: the item's share of the largest one in the list, drawn
+    /// behind the text. nil — no bar (see Coordinator.sizeShare).
+    private var sizeShare: CGFloat? {
+        didSet { if sizeShare != oldValue { needsDisplay = true } }
+    }
+
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+        guard column == .size, let sizeShare, sizeShare > 0 else { return }
+        let inset = bounds.insetBy(dx: 2, dy: 3)
+        // At least a sliver, so a tiny item still visibly has a bar.
+        let width = max(3, inset.width * min(sizeShare, 1))
+        let bar = NSRect(x: inset.minX, y: inset.minY, width: width, height: inset.height)
+        Theme.current.accent.withAlphaComponent(0.3).setFill()
+        NSBezierPath(roundedRect: bar, xRadius: 3, yRadius: 3).fill()
+    }
+
+    func configure(item: FileItem, column: FileTableColumn, zoomLevel: CGFloat, isCut: Bool, sizeShare: CGFloat? = nil) {
+        self.sizeShare = column == .size ? sizeShare : nil
         label.font = .systemFont(ofSize: 13 * zoomLevel)
         alphaValue = isCut ? 0.5 : 1
         let palette = Theme.current

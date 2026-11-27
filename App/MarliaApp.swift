@@ -657,6 +657,35 @@ final class AppState: ObservableObject {
         }
     }
 
+    // MARK: Largest Files (⌥⌘L, see Views/LargestFilesView.swift)
+
+    func showLargestFiles() {
+        let pane = activePane
+        let root = pane.currentURL
+        AppWindowManager.shared.openLargestFiles(root) { [weak self, weak pane] url in
+            guard let self, let pane else { return }
+            self.reveal(url, in: pane)
+        }
+    }
+
+    /// Opens the item's folder in `pane` and selects it, bringing this window forward.
+    /// A hidden file (a cache, a dotfile) would not be in the list, so hidden files get
+    /// turned on for it rather than silently selecting nothing.
+    private func reveal(_ url: URL, in pane: PaneViewModel) {
+        let name = url.lastPathComponent
+        // A symlinked folder must be resolved first (see CLAUDE.md, ENOTDIR).
+        pane.navigate(to: url.deletingLastPathComponent().resolvingSymlinksInPath())
+        if !pane.items.contains(where: { $0.name == name }), !pane.showHidden {
+            pane.showHidden = true
+        }
+        if let item = pane.items.first(where: { $0.name == name }) {
+            pane.selection = [item.id]
+        }
+        activate(pane === leftPane ? .left : .right)
+        window?.makeKeyAndOrderFront(nil)
+        focusActivePane()
+    }
+
     // MARK: User commands (Commands menu, see Models/UserCommands.swift)
 
     /// Runs a user command against the active pane: selected paths as arguments, the
