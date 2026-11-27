@@ -44,7 +44,7 @@ enum UndoableAction {
 /// The type deliberately has no UI dependencies: that way it can be compiled with a
 /// scratchpad script and exercised against a real disk (see the verification section in
 /// CLAUDE.md).
-struct UndoHistory {
+struct UndoHistory: Codable {
 
     /// The depth cap. The limit isn't about memory (entries hold only paths) but
     /// about sense: rewinding further than a person remembers is dangerous anyway.
@@ -160,7 +160,7 @@ struct UndoHistory {
             for pair in pairs {
                 switch mode {
                 case .move: try? manager.moveItem(at: pair.dst, to: pair.src)
-                case .copy: try? manager.removeItem(at: pair.dst)
+                case .copy: trashOrRemove(pair.dst)
                 }
             }
         case .trash(let pairs):
@@ -175,7 +175,20 @@ struct UndoHistory {
                 pairs.map { (url: $0.to, newName: $0.from.lastPathComponent) }
             )
         case .createItem(let url, _):
-            try? manager.removeItem(at: url)
+            trashOrRemove(url)
+        }
+    }
+
+    /// Undoing a copy or a creation removes something — to the Trash, as Finder does, not
+    /// for good. The history now outlives the app (see UndoHistoryStore), so days later the
+    /// name may hold an unrelated file; going through the Trash keeps even that case
+    /// recoverable. Volumes without a Trash (network shares, some flash drives) fall back to
+    /// a plain delete.
+    private static func trashOrRemove(_ url: URL) {
+        do {
+            try FileManager.default.trashItem(at: url, resultingItemURL: nil)
+        } catch {
+            try? FileManager.default.removeItem(at: url)
         }
     }
 
@@ -215,5 +228,91 @@ struct UndoHistory {
             }
         }
         return action
+    }
+}
+
+// MARK: - Persistence
+
+
+/// Paths are stored as plain strings: the entries are re-validated against the disk before
+/// every step anyway (see `pruned`), so nothing more than the path is needed.
+extension UndoableAction: Codable {
+    private enum Kind: String, Codable { case transfer, trash, rename, batchRename, createItem }
+    private struct Pair: Codable { let a: String; let b: String }
+    private enum CodingKeys: String, CodingKey { case kind, mode, pairs, isDirectory }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        let pairs = try c.decode([Pair].self, forKey: .pairs)
+        func url(_ path: String) -> URL { URL(fileURLWithPath: path) }
+        switch try c.decode(Kind.self, forKey: .kind) {
+        case .transfer:
+            self = .transfer(mode: try c.decode(TransferMode.self, forKey: .mode),
+                             pairs: pairs.map { (src: url($0.a), dst: url($0.b)) })
+        case .trash:
+            self = .trash(pairs: pairs.map { (original: url($0.a), trashed: url($0.b)) })
+        case .rename:
+            guard let pair = pairs.first else { throw DecodingError.dataCorruptedError(forKey: .pairs, in: c, debugDescription: "empty rename") }
+            self = .rename(from: url(pair.a), to: url(pair.b))
+        case .batchRename:
+            self = .batchRename(pairs: pairs.map { (from: url($0.a), to: url($0.b)) })
+        case .createItem:
+            guard let pair = pairs.first else { throw DecodingError.dataCorruptedError(forKey: .pairs, in: c, debugDescription: "empty create") }
+            self = .createItem(url: url(pair.a), isDirectory: try c.decode(Bool.self, forKey: .isDirectory))
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .transfer(let mode, let pairs):
+            try c.encode(Kind.transfer, forKey: .kind)
+            try c.encode(mode, forKey: .mode)
+            try c.encode(pairs.map { Pair(a: $0.src.path, b: $0.dst.path) }, forKey: .pairs)
+        case .trash(let pairs):
+            try c.encode(Kind.trash, forKey: .kind)
+            try c.encode(pairs.map { Pair(a: $0.original.path, b: $0.trashed.path) }, forKey: .pairs)
+        case .rename(let from, let to):
+            try c.encode(Kind.rename, forKey: .kind)
+            try c.encode([Pair(a: from.path, b: to.path)], forKey: .pairs)
+        case .batchRename(let pairs):
+            try c.encode(Kind.batchRename, forKey: .kind)
+            try c.encode(pairs.map { Pair(a: $0.from.path, b: $0.to.path) }, forKey: .pairs)
+        case .createItem(let url, let isDirectory):
+            try c.encode(Kind.createItem, forKey: .kind)
+            try c.encode([Pair(a: url.path, b: "")], forKey: .pairs)
+            try c.encode(isDirectory, forKey: .isDirectory)
+        }
+    }
+}
+
+/// The app-wide undo history, saved to disk after every change so ⌘Z still works after a
+/// relaunch. One history for all windows and tabs (it used to be one per tab, which made
+/// "undo" depend on which tab happened to be in front — Finder's undo is app-wide too).
+/// An unreadable or missing file simply means an empty history.
+final class UndoHistoryStore {
+    static let shared = UndoHistoryStore()
+
+    var history: UndoHistory { didSet { save() } }
+    private let fileURL: URL
+
+    static var defaultURL: URL {
+        FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Application Support/Marlia/UndoHistory.json")
+    }
+
+    init(fileURL: URL = UndoHistoryStore.defaultURL) {
+        self.fileURL = fileURL
+        if let data = try? Data(contentsOf: fileURL), let decoded = try? JSONDecoder().decode(UndoHistory.self, from: data) {
+            history = decoded
+        } else {
+            history = UndoHistory()
+        }
+    }
+
+    private func save() {
+        guard let data = try? JSONEncoder().encode(history) else { return }
+        try? FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try? data.write(to: fileURL, options: .atomic)
     }
 }

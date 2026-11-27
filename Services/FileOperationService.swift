@@ -1,7 +1,8 @@
 import Foundation
 import AppKit
 
-enum TransferMode { case copy, move }
+/// Codable: it is stored in the persisted undo history (UndoHistoryStore).
+enum TransferMode: Codable { case copy, move }
 
 /// What to do when the destination already has an item with the same name.
 enum ConflictAction { case replace, skip, keepBoth }

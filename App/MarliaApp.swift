@@ -214,8 +214,13 @@ final class AppState: ObservableObject {
     private let ops = FileOperationService()
 
     /// The undo stack lives in UndoHistory (Models/UndoHistory.swift) — together with
-    /// the check that entries still apply to the current state of the disk.
-    private var history = UndoHistory()
+    /// the check that entries still apply to the current state of the disk. It's app-wide
+    /// and persisted (UndoHistoryStore): every window and tab works on the same history,
+    /// and it survives a relaunch. Mutations through this property write it back.
+    private var history: UndoHistory {
+        get { UndoHistoryStore.shared.history }
+        set { UndoHistoryStore.shared.history = newValue }
+    }
 
     var canUndo: Bool { history.canUndo }
     var canRedo: Bool { history.canRedo }
