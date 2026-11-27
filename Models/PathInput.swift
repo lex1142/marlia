@@ -33,19 +33,25 @@ enum PathInput {
             // Not resolved.lastPathComponent: standardizing "~/.." would have consumed it.
             prefix = (typed as NSString).lastPathComponent
         }
+        return subfolders(of: directory, prefix: prefix, showHidden: prefix.hasPrefix("."), limit: limit)
+    }
+
+    /// The folders inside `directory`, in Finder order: symlinks to folders count,
+    /// packages (.app and friends) don't — to a user they're files. `prefix` filters by name
+    /// start, case- and normalization-insensitively. Shared by Tab completion and the path
+    /// bar's subfolder menus.
+    static func subfolders(of directory: URL, prefix: String = "", showHidden: Bool, limit: Int = .max) -> [URL] {
         let fm = FileManager.default
         guard let names = try? fm.contentsOfDirectory(atPath: directory.path) else { return [] }
         let wanted = prefix.precomposedStringWithCanonicalMapping.lowercased()
-        let showHidden = prefix.hasPrefix(".")
         var result: [URL] = []
         for name in names.sorted(by: { $0.localizedStandardCompare($1) == .orderedAscending }) {
             if name.hasPrefix("."), !showHidden { continue }
-            guard name.precomposedStringWithCanonicalMapping.lowercased().hasPrefix(wanted) else { continue }
+            guard wanted.isEmpty || name.precomposedStringWithCanonicalMapping.lowercased().hasPrefix(wanted) else { continue }
             let url = directory.appendingPathComponent(name)
             var isDirectory: ObjCBool = false
             // fileExists follows symlinks, so a link to a folder counts as a folder.
             guard fm.fileExists(atPath: url.path, isDirectory: &isDirectory), isDirectory.boolValue else { continue }
-            // Packages (.app and friends) are files to a user.
             if (try? url.resourceValues(forKeys: [.isPackageKey]))?.isPackage == true { continue }
             result.append(url)
             if result.count == limit { break }

@@ -457,11 +457,11 @@ struct PaneView: View {
                 if index > 0 {
                     // The collapsed middle sits right after the first crumb.
                     if index == 1 && !hidden.isEmpty {
-                        crumbSeparator(after: shown[0])
+                        crumbSeparator(after: shown[0], toward: hidden[0].url)
                         hiddenCrumbsMenu(hidden)
-                        Text("/").foregroundStyle(.secondary)
+                        subfolderSeparator(in: hidden[hidden.count - 1].url, current: segment.url)
                     } else {
-                        crumbSeparator(after: shown[index - 1])
+                        crumbSeparator(after: shown[index - 1], toward: segment.url)
                     }
                 }
                 crumbButton(segment)
@@ -475,7 +475,7 @@ struct PaneView: View {
         HStack(spacing: 2) {
             if segments.count > 1 {
                 hiddenCrumbsMenu(Array(segments.dropLast()))
-                Text("/").foregroundStyle(.secondary)
+                subfolderSeparator(in: segments[segments.count - 2].url, current: segments[segments.count - 1].url)
             }
             if let last = segments.last {
                 crumbButton(last)
@@ -491,7 +491,7 @@ struct PaneView: View {
         HStack(spacing: 2) {
             if segments.count > 1 {
                 hiddenCrumbsMenu(Array(segments.dropLast()))
-                Text("/").foregroundStyle(.secondary)
+                subfolderSeparator(in: segments[segments.count - 2].url, current: segments[segments.count - 1].url)
             }
             if let last = segments.last {
                 crumbButton(last)
@@ -511,10 +511,63 @@ struct PaneView: View {
     /// No separator right after the root "/" (it is one itself), but one after a trimmed
     /// first crumb — a workspace or iCloud Drive.
     @ViewBuilder
-    private func crumbSeparator(after previous: (name: String, url: URL)) -> some View {
+    private func crumbSeparator(after previous: (name: String, url: URL), toward next: URL) -> some View {
         if previous.name != "/" {
-            Text("/").foregroundStyle(.secondary)
+            subfolderSeparator(in: previous.url, current: next)
         }
+    }
+
+    /// A "/" between two crumbs is a button (Path Finder's path navigator, Finder's path
+    /// bar does the same): clicking it lists the folders inside the crumb to its left, the
+    /// one on the path checked, so you can step sideways without going up first.
+    private func subfolderSeparator(in folder: URL, current: URL) -> some View {
+        Button {
+            showSubfolderMenu(of: folder, current: current)
+        } label: {
+            Text("/")
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 1)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .fixedSize()
+        .help("Folders in \(folder.lastPathComponent.isEmpty ? "/" : folder.lastPathComponent)")
+    }
+
+    /// Built with AppKit at click time rather than as a SwiftUI Menu: SwiftUI builds a
+    /// Menu's content on every render of the bar, which would read each crumb's folder from
+    /// disk on every arrow-key step. Here the folder is read only when the menu opens.
+    private func showSubfolderMenu(of folder: URL, current: URL) {
+        appState.activate(side)
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+        let currentPath = current.standardizedFileURL.path
+        var currentItem: NSMenuItem?
+        let folders = PathInput.subfolders(of: folder, showHidden: model.showHidden, limit: 1000)
+        for url in folders {
+            let item = ClosureMenuItem(title: url.lastPathComponent) { [weak model] in
+                // A symlinked folder must be resolved first (see CLAUDE.md, ENOTDIR).
+                model?.navigate(to: url.resolvingSymlinksInPath())
+            }
+            let icon = IconCache.shared.icon(forFileURL: url).copy() as? NSImage
+            icon?.size = NSSize(width: 16, height: 16)
+            item.image = icon
+            if url.standardizedFileURL.path == currentPath {
+                item.state = .on
+                currentItem = item
+            }
+            menu.addItem(item)
+        }
+        if folders.isEmpty {
+            let empty = NSMenuItem(title: "No Folders", action: nil, keyEquivalent: "")
+            empty.isEnabled = false
+            menu.addItem(empty)
+        }
+        // Positioned on the checked item, like a pop-up button: the folder you're in
+        // opens right under the pointer. Screen coordinates (view: nil) from
+        // NSEvent.mouseLocation rather than NSApp.currentEvent, which SwiftUI doesn't
+        // guarantee to be the click inside a Button's action.
+        menu.popUp(positioning: currentItem, at: NSEvent.mouseLocation, in: nil)
     }
 
     private func crumbButton(_ segment: (name: String, url: URL)) -> some View {
