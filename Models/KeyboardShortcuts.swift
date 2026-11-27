@@ -155,6 +155,7 @@ enum AppCommand: String, CaseIterable, Codable {
     case batchRename
     case commandPalette
     case compareFolders
+    case openInLeftPane, openInRightPane
 
     /// Zero-based position in the favorites list for the go-to commands.
     var favoriteIndex: Int? {
@@ -230,6 +231,8 @@ enum AppCommand: String, CaseIterable, Codable {
         case .batchRename: return "Rename Multiple…"
         case .commandPalette: return "Command Palette…"
         case .compareFolders: return "Compare Folders"
+        case .openInLeftPane: return "Open in Left Pane"
+        case .openInRightPane: return "Open in Right Pane"
         }
     }
 
@@ -239,7 +242,8 @@ enum AppCommand: String, CaseIterable, Codable {
              .openSelection, .goToParentDirectory, .switchPane,
              .goBack, .goForward, .goHome, .showRecents, .connectToServer,
              .goToFavorite1, .goToFavorite2, .goToFavorite3, .goToFavorite4, .goToFavorite5,
-             .goToFavorite6, .goToFavorite7, .goToFavorite8, .goToFavorite9:
+             .goToFavorite6, .goToFavorite7, .goToFavorite8, .goToFavorite9,
+             .openInLeftPane, .openInRightPane:
             return .navigation
         case .newTab, .newFolder, .newFile, .getInfo,
              .quickLook, .showInFinder, .openInTerminal,
@@ -352,6 +356,9 @@ enum AppCommand: String, CaseIterable, Codable {
         // ⇧F2 — Total Commander's "Compare directories". A function key reaches the menu
         // like F5/F6 do, so it needs no ⌘ (unlike ⌥-digit, see CLAUDE.md).
         case .compareFolders: return [Shortcut(keyCode: 120, modifiers: .shift, character: "\u{F705}")]
+        // ⌘← / ⌘→ — Total Commander's Ctrl+← / Ctrl+→ (on a Mac ⌃-arrows switch desktops).
+        case .openInLeftPane: return [Shortcut(keyCode: 123, modifiers: .command, character: "\u{F702}")]
+        case .openInRightPane: return [Shortcut(keyCode: 124, modifiers: .command, character: "\u{F703}")]
         // ⌘I — Get Info, ⌥⌘I — invert selection, so the info panel is ⌃⌘I.
         case .toggleInspector: return [Shortcut(keyCode: 34, modifiers: [.command, .control], character: "i")]
         // ⌘1…⌘3 are taken by the view modes (as in Finder), and ⌃1…⌃9 are

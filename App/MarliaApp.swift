@@ -626,6 +626,25 @@ final class AppState: ObservableObject {
         activeSide = activeSide == .left ? .right : .left
     }
 
+    /// ⌘← / ⌘→ (Total Commander's Ctrl+← / Ctrl+→): show a folder in the left / right pane.
+    /// The folder is the selected one when exactly one folder is selected, otherwise the
+    /// active pane's current folder — so ⌘→ on a file mirrors this location on the right.
+    /// The target may be the active pane itself: then it simply enters the selected folder.
+    func openInPane(_ side: PaneSide) {
+        let source = activePane
+        let selected = source.selectedItems
+        let folder: URL
+        if selected.count == 1, selected[0].isNavigableFolder {
+            // A symlinked folder (e.g. inside a Workspace) must be resolved first, or
+            // reload() fails with ENOTDIR (see CLAUDE.md).
+            folder = selected[0].url.resolvingSymlinksInPath()
+        } else {
+            folder = source.currentURL
+        }
+        if side == .right, !showSecondPane { showSecondPane = true }
+        (side == .left ? leftPane : rightPane).navigate(to: folder)
+    }
+
     /// Compare Folders (⇧F2): selects in each pane what the other one lacks or holds an
     /// older copy of (the rules are in FolderComparison). It compares what the panes show,
     /// so hidden files count only while they're shown and an active filter narrows it.

@@ -372,6 +372,16 @@ final class MainMenuController: NSObject, NSMenuDelegate {
         menu.addItem(back)
         menu.addItem(forward)
         menu.addItem(up)
+        // While text is being edited, ⌘← / ⌘→ keep their text meaning (start / end of line):
+        // the key equivalent would otherwise reach the menu before the field.
+        menu.addItem(command(.openInLeftPane) { [weak self] in
+            guard self?.forwardEditingAction(#selector(NSResponder.moveToLeftEndOfLine(_:))) != true else { return }
+            self?.appState?.openInPane(.left)
+        })
+        menu.addItem(command(.openInRightPane) { [weak self] in
+            guard self?.forwardEditingAction(#selector(NSResponder.moveToRightEndOfLine(_:))) != true else { return }
+            self?.appState?.openInPane(.right)
+        })
         menu.addItem(.separator())
         menu.addItem(command(.goHome) { [weak self] in self?.appState?.goHomeActive() })
         menu.addItem(command(.showRecents) { [weak self] in self?.appState?.showRecentsActive() })
