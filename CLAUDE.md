@@ -102,8 +102,13 @@ and `otool -l … | grep -A3 LC_BUILD_VERSION` → `minos 13.5`.
 ### Landing page
 
 `docs/index.html` is the project site, served by GitHub Pages from `main` → `/docs` (with
-`docs/.nojekyll`, so it's published as-is). It's one self-contained file: no build step, the only
-external loads are Google Fonts and one call to the GitHub API. Images and the tour video live in
+`docs/.nojekyll`, so it's published as-is). It's one self-contained file: no build step, and the
+**only** request to another host is one call to the GitHub API. Fonts are served from `docs/fonts/`
+(`fonts.css` + woff2 split by `unicode-range`, OFL license files next to them), deliberately not from
+Google Fonts: loading them from Google sends every visitor's IP there, which German courts have held
+to be a GDPR violation. The page's **Privacy** section lists everything the site and the app send
+anywhere — anything that adds a request to another host (analytics, embeds, CDN scripts) must be
+added there too, in every language. Images and the tour video live in
 `docs/media/` (WebP stills and H.264 video, each in a `-light` and a `-dark` variant; the page shows
 the one matching its theme through the `--only-light`/`--only-dark` tokens, and the README's
 `<picture>` uses the same hero pair). `docs/marlia-icon.png` is 128 px, from `App/Marlia.icns` via `sips`.
@@ -118,8 +123,10 @@ The download button needs **no edit on release**: on load the page fetches
 `api.github.com/repos/lex1142/marlia/releases/latest` and takes the version, DMG size and URL from
 the first `.dmg` asset. The `RELEASE` constant at the top of its script is only the fallback for when
 that call fails (rate limit: 60/h per visitor IP), so bump it with each release anyway. The page text
-is in six languages (en/ru/zh/es/ja/de) in one `T` table in the same script; a new string needs a key
-in every language.
+is in five languages (en/ru/zh/es/ja) in one `T` table in the same script; a new string needs a key
+in every language. German was removed on 2026-11-27 as a precaution, after discussing whether a
+German-language site would need a German *Impressum* (the operator's name and address); settle that
+question before re-adding it.
 
 Target is macOS 13.5+ (Ventura). Context menus are built as plain AppKit `NSMenu`
 (`ClosureMenuItem` in `PaneInteractionViews.swift`, assembled by `PaneView.contextNSMenu`),

@@ -15,9 +15,7 @@
 <meta property="og:url" content="https://lex1142.github.io/marlia/">
 <meta property="og:image" content="https://lex1142.github.io/marlia/media/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;800&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="fonts/fonts.css">
 <style>
 /* Layout: text column + full-width app shot, then a live replica of a Marlia window
    (default System look), then a quiet two-column feature list. Fonts all cover Cyrillic;
@@ -467,6 +465,11 @@ pre {
   font-size: 0.85rem;
 }
 
+/* ---------- privacy ---------- */
+.privacy { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; max-width: 72ch; color: var(--muted); }
+.privacy li::marker { color: var(--accent); }
+.privacy strong { color: var(--ink); font-weight: 600; }
+
 /* ---------- footer ---------- */
 .foot {
   border-top: 1px solid var(--line);
@@ -535,7 +538,6 @@ pre {
         <option value="zh">简体中文</option>
         <option value="es">Español</option>
         <option value="ja">日本語</option>
-        <option value="de">Deutsch</option>
       </select>
       <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
     </label>
@@ -750,6 +752,18 @@ pre {
         </aside>
       </div>
     </section>
+    <section class="section" id="privacy" aria-labelledby="privacy-h">
+      <div class="section-head">
+        <h2 id="privacy-h" data-t="priv.h2">Privacy</h2>
+      </div>
+      <ul class="privacy">
+        <li data-h="priv.1"></li>
+        <li data-h="priv.2"></li>
+        <li data-h="priv.3"></li>
+        <li data-h="priv.4"></li>
+        <li data-h="priv.5"></li>
+      </ul>
+    </section>
   </main>
 
   <footer class="foot">
@@ -758,6 +772,7 @@ pre {
       <a href="https://github.com/lex1142/marlia" target="_blank" rel="noopener" data-t="foot.src">Source</a>
       <a href="https://github.com/lex1142/marlia/releases" target="_blank" rel="noopener" data-t="foot.rel">Releases</a>
       <a href="https://github.com/lex1142/marlia/issues" target="_blank" rel="noopener" data-t="foot.bug">Report a bug</a>
+      <a href="#privacy" data-t="foot.priv">Privacy</a>
     </nav>
   </footer>
 </div>
@@ -834,7 +849,14 @@ pre {
       "c5t": "Workspaces",
       "c5p": "A folder of links to files from anywhere. Nothing is moved.",
       "c6t": "Recursive search",
-      "c6p": "Search a whole folder tree by name, substring or regex."
+      "c6p": "Search a whole folder tree by name, substring or regex.",
+      "priv.h2": "Privacy",
+      "foot.priv": "Privacy",
+      "priv.1": "<strong>The Marlia app sends nothing anywhere:</strong> no analytics, no crash reports, no update checks. It only goes to the network when you ask it to, for example to connect to an SMB server.",
+      "priv.2": "This site uses no cookies, analytics or tracking. Fonts and images are served from the site itself.",
+      "priv.3": "The language you pick is remembered in your browser (local storage) and is never sent anywhere.",
+      "priv.4": "To show the latest version, the page asks the GitHub API about Marlia's releases once per visit. GitHub receives your IP address with that request.",
+      "priv.5": "The site is hosted on GitHub Pages. Like any web host, GitHub logs requests, including IP addresses. See the <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub Privacy Statement</a>."
     },
     ru: {
       "nav.demo": "Демо", "nav.features": "Возможности", "nav.install": "Установка", "lang": "Язык",
@@ -894,7 +916,14 @@ pre {
       "c5t": "Рабочие пространства",
       "c5p": "Папка ссылок на файлы откуда угодно. Ничего не перемещается.",
       "c6t": "Рекурсивный поиск",
-      "c6p": "Поиск по всему дереву папок: по имени, подстроке или регулярному выражению."
+      "c6p": "Поиск по всему дереву папок: по имени, подстроке или регулярному выражению.",
+      "priv.h2": "Конфиденциальность",
+      "foot.priv": "Конфиденциальность",
+      "priv.1": "<strong>Само приложение Marlia ничего никуда не отправляет:</strong> ни аналитики, ни отчётов о сбоях, ни проверки обновлений. В сеть оно выходит, только когда вы сами об этом просите, например при подключении к SMB-серверу.",
+      "priv.2": "Сайт не использует cookies, аналитику и трекинг. Шрифты и изображения загружаются с самого сайта.",
+      "priv.3": "Выбранный язык запоминается в вашем браузере (local storage) и никуда не передаётся.",
+      "priv.4": "Чтобы показать последнюю версию, страница при каждом посещении один раз запрашивает у GitHub API сведения о релизах Marlia. При этом GitHub получает ваш IP-адрес.",
+      "priv.5": "Сайт размещён на GitHub Pages. Как и любой хостинг, GitHub ведёт журналы запросов, включая IP-адреса. Подробнее в <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub Privacy Statement</a>."
     },
     zh: {
       "nav.demo": "试用", "nav.features": "功能", "nav.install": "安装", "lang": "语言",
@@ -954,7 +983,14 @@ pre {
       "c5t": "工作区",
       "c5p": "一个链接文件夹，收纳来自任何位置的文件，不移动任何东西。",
       "c6t": "递归搜索",
-      "c6p": "按名称、子串或正则表达式搜索整个文件夹树。"
+      "c6p": "按名称、子串或正则表达式搜索整个文件夹树。",
+      "priv.h2": "隐私",
+      "foot.priv": "隐私",
+      "priv.1": "<strong>Marlia 应用本身不会向任何地方发送数据：</strong>没有统计分析，没有崩溃报告，也不检查更新。只有在你主动要求时（例如连接 SMB 服务器）才会访问网络。",
+      "priv.2": "本网站不使用 Cookie、统计分析或跟踪。字体和图片都由本网站自身提供。",
+      "priv.3": "你选择的语言保存在浏览器的本地存储中，不会发送到任何地方。",
+      "priv.4": "为显示最新版本，页面每次访问时会向 GitHub API 查询一次 Marlia 的版本发布信息，GitHub 会因此获得你的 IP 地址。",
+      "priv.5": "本网站托管在 GitHub Pages 上。与任何网站托管服务一样，GitHub 会记录访问请求，包括 IP 地址。详见 <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub 隐私声明</a>。"
     },
     es: {
       "nav.demo": "Pruébalo", "nav.features": "Funciones", "nav.install": "Instalación", "lang": "Idioma",
@@ -1014,7 +1050,14 @@ pre {
       "c5t": "Espacios de trabajo",
       "c5p": "Una carpeta de enlaces a archivos de cualquier lugar. No se mueve nada.",
       "c6t": "Búsqueda recursiva",
-      "c6p": "Busca en todo un árbol de carpetas por nombre, subcadena o regex."
+      "c6p": "Busca en todo un árbol de carpetas por nombre, subcadena o regex.",
+      "priv.h2": "Privacidad",
+      "foot.priv": "Privacidad",
+      "priv.1": "<strong>La app Marlia no envía nada a ninguna parte:</strong> ni analíticas, ni informes de errores, ni comprobación de actualizaciones. Solo se conecta a la red cuando tú se lo pides, por ejemplo a un servidor SMB.",
+      "priv.2": "Este sitio no usa cookies, analíticas ni seguimiento. Las fuentes y las imágenes se sirven desde el propio sitio.",
+      "priv.3": "El idioma que eliges se guarda en tu navegador (almacenamiento local) y no se envía a ninguna parte.",
+      "priv.4": "Para mostrar la última versión, la página consulta una vez por visita la API de GitHub sobre las versiones de Marlia. GitHub recibe tu dirección IP con esa petición.",
+      "priv.5": "El sitio está alojado en GitHub Pages. Como cualquier alojamiento web, GitHub registra las peticiones, incluidas las direcciones IP. Consulta la <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">Declaración de privacidad de GitHub</a>."
     },
     ja: {
       "nav.demo": "試す", "nav.features": "機能", "nav.install": "インストール", "lang": "言語",
@@ -1074,67 +1117,14 @@ pre {
       "c5t": "ワークスペース",
       "c5p": "どこにあるファイルでも、リンクで1つのフォルダに。何も移動しません。",
       "c6t": "再帰検索",
-      "c6p": "フォルダツリー全体を名前、部分一致、正規表現で検索。"
-    },
-    de: {
-      "nav.demo": "Ausprobieren", "nav.features": "Funktionen", "nav.install": "Installation", "lang": "Sprache",
-      "hero.eyebrow": "Kostenlos und Open Source · macOS 13.5+ · Apple Silicon",
-      "hero.h1": "Ein Dateimanager mit zwei Fenstern für alle, die mit der Tastatur arbeiten",
-      "hero.lede": "Marlia bringt die Arbeitsweise des Total Commander auf den Mac. <kbd>F5</kbd> kopiert ins andere Fenster, <kbd>F6</kbd> verschiebt, <kbd>Tab</kbd> wechselt das Fenster. Gebaut mit <strong>nativen AppKit-Ansichten</strong>, bleibt Marlia auch in Ordnern mit Tausenden Dateien schnell.",
-      "hero.dl": "Für macOS herunterladen", "hero.dlmeta": "v{ver} · DMG · {size}", "hero.gh": "Auf GitHub ansehen",
-      "hero.meta": "GPL-3.0 · nur ad hoc signiert, siehe <a href=\"#install\">erster Start</a>", "hero.uiEn": " · App-Oberfläche auf Englisch",
-      f1b: "Nativ", f1s: "AppKit-Tabellen und -Raster. Kein Electron, keine Webseite.",
-      f2b: "{size}", f2s: "Der komplette Download. Keine Laufzeitumgebung nötig.",
-      f3b: "50 Schritte", f3s: "Rückgängig und Wiederholen für Kopieren, Verschieben, Umbenennen und Papierkorb.",
-      f4b: "Kostenlos", f4s: "GPL-3.0. Kein Konto, keine Telemetrie, keine Testphase.",
-      "demo.eyebrow": "Hier ausprobieren", "demo.h2": "Zwei Fenster, eine Taste pro Aktion",
-      "demo.p": "Klicken Sie in ein Fenster und nutzen Sie die Tastatur oder die Tasten unten. Datei wählen, Taste drücken, und sie landet im anderen Fenster. So sieht Marlia im Standard-Theme System aus.",
-      "demo.aria": "Interaktive Demo. Pfeiltasten wählen, Tab wechselt das Fenster, F5 kopiert, F6 verschiebt.",
-      "k.up": "Hoch", "k.down": "Runter", "k.switch": "Wechseln", "k.copy": "Kopieren", "k.move": "Verschieben", "k.reset": "Zurücksetzen",
-      "demo.hint": "In der App laufen F5 und F6 im Hintergrund mit einer Fortschrittsanzeige zum Pausieren oder Abbrechen. Bei Namenskonflikten wählen Sie Ersetzen, Überspringen oder Beide behalten.",
-      "log.ready": "Bereit.", "log.L": "Aktiv: linkes Fenster.", "log.R": "Aktiv: rechtes Fenster.",
-      "log.copied": "{n} nach {p} kopiert.", "log.moved": "{n} nach {p} verschoben.",
-      "log.kept": "{n} existiert dort bereits, beide behalten als {m}.", "log.pick": "Wählen Sie zuerst eine Datei. Ordner bleiben in dieser Demo, wo sie sind.",
-      "feat.eyebrow": "Funktionen", "feat.h2": "Alles, was ein Dateimanager können muss, ohne die Tastatur loszulassen",
-      ft1h: "Zwei Fenster, Tabs, drei Ansichten", ft1p: "Liste, Symbole und Spalten im Finder-Stil mit Vorschauspalte. Jedes Fenster hat einen eigenen Verlauf, und jeder Ordner merkt sich seine Sortierung.",
-      ft2h: "Der Total-Commander-Workflow", ft2p: "Kopieren und Verschieben ins andere Fenster, Auswahl durch Tippen, Auswahl per Muster wie <code>*.jpg</code>, Auswahl umkehren.",
-      ft3h: "Dateioperationen im Hintergrund", ft3p: "Kopieren, Verschieben, Duplizieren, Papierkorb und Umbenennen laufen im Hintergrund und lassen sich pausieren oder abbrechen. Die Stapelumbenennung zeigt jeden neuen Namen sofort an.",
-      ft4h: "Archive", ft4p: "Archive mit den Systemwerkzeugen erstellen, entpacken und durchsuchen, auch passwortgeschützte ZIPs. Das Entpacken ist gegen Zip-Slip-Pfade abgesichert.",
-      ft5h: "Workspaces", ft5p: "Sammeln Sie Dateien von überall auf der Festplatte in einem Ordner voller Verknüpfungen. Nichts wird kopiert oder verschoben, und Entfernen löscht nur die Verknüpfung.",
-      ft6h: "Suchen, Filtern, Vorschau", ft6p: "Rekursive Suche nach Teilstring oder Regex, eine Sofortfilterleiste, Übersicht mit der Leertaste, Informationen und ein Live-Infobereich.",
-      ft7h: "Zu Hause auf macOS", ft7p: "Drag-and-drop mit dem Finder, Farbtags, AirDrop, Im Terminal öffnen, SMB-Freigaben verbinden, Laufwerke auswerfen und Apps direkt aus einer .dmg installieren.",
-      ft8h: "Eigene Kurzbefehle", ft8p: "Jede Belegung lässt sich in den Einstellungen ändern. Favoriten 1 bis 9 liegen auf <kbd>⌥⌘1</kbd> bis <kbd>⌥⌘9</kbd>, die vollständige Liste steht in der Hilfe.",
-      "th.eyebrow": "Themes", "th.h2": "Sieben Themes, auf Kontrast geprüft",
-      "th.p": "Jede Palette hält Dateinamen mit mindestens 4,5:1 lesbar, auf dem Fenster wie auf der Auswahl.",
-      "th.system": "System", "th.auto1": "folgt dem System", "th.auto2": "hell ↔ dunkel",
-      "in.eyebrow": "Installation", "in.h2": "In einer Minute startklar",
-      s1b: "Image herunterladen.", s1t: "{DMG} oder eine beliebige Version unter {REL}.",
-      s2b: "Marlia auf „Programme“ ziehen.", s2t: "Im Image liegen die App und eine Verknüpfung zu „Programme“ nebeneinander.",
-      s3b: "Einmal von Hand öffnen.", s3t: "Marlia.app mit Rechtsklick öffnen und „Öffnen“ wählen. Ab macOS 15 unter Systemeinstellungen → Datenschutz & Sicherheit auf „Dennoch öffnen“ klicken.",
-      s4b: "Optional: Festplattenvollzugriff erlauben.", s4t: "Dann öffnen sich Schreibtisch, Dokumente und Downloads ohne wiederholte Nachfragen.",
-      "note.h": "Warum macOS zuerst nachfragt",
-      "note.p1": "Marlia ist nur ad hoc signiert, ohne Apple Developer ID, deshalb hält Gatekeeper die App beim ersten Start an. Meldet macOS, die App sei „beschädigt und kann nicht geöffnet werden“, was nach einem Browser-Download oder AirDrop häufig vorkommt, entfernen Sie die Quarantäne-Markierung:",
-      "note.p2": "Lieber selbst bauen? Es gibt kein Xcode-Projekt, nur ein Skript: <code>./build.sh --run</code>.",
-      "foot.lic": "Marlia ist freie Software unter der GNU GPL v3.0.", "foot.src": "Quellcode", "foot.rel": "Releases", "foot.bug": "Fehler melden",
-      "nav.tour": "In Aktion",
-      "hero.alt": "Marlia im Theme System: links Fotos aus Lissabon in der Listenansicht, vier davon ausgewählt, rechts Fotos aus Kyoto als Miniaturen.",
-      "hero.cap": "Links Liste, rechts Symbole, daneben eine Seitenleiste mit Favoriten, Laufwerken und Workspaces.",
-      "tour.eyebrow": "In Aktion",
-      "tour.h2": "Fünf Fotos, eine Taste",
-      "tour.p": "Dateien links auswählen, F5 drücken, und sie liegen auf dem Backup-Laufwerk. Tab und ⌘2 wechseln ins andere Fenster und zeigen sie als Miniaturen.",
-      "tour.aria": "Video: Fünf Fotos werden ausgewählt, mit F5 auf ein Backup-Laufwerk kopiert und dann als Miniaturen angezeigt.",
-      "c1t": "Spalten mit Vorschau",
-      "c1p": "Spalten wie im Finder. Der gewählte Ordner öffnet sich rechts.",
-      "c2t": "Stapelumbenennung",
-      "c2p": "Ein Muster wie „Lisbon 2026 – ##“ mit Live-Vorschau jedes neuen Namens.",
-      "c3t": "Namenskonflikte",
-      "c3p": "Überspringen, Ersetzen oder Beide behalten, für eine Datei oder für alle.",
-      "c4t": "Kopieren im Hintergrund",
-      "c4p": "Große Kopien laufen im Hintergrund und lassen sich jederzeit pausieren oder abbrechen.",
-      "c5t": "Workspaces",
-      "c5p": "Ein Ordner mit Verknüpfungen zu Dateien von überall. Nichts wird verschoben.",
-      "c6t": "Rekursive Suche",
-      "c6p": "Einen ganzen Ordnerbaum nach Name, Teilstring oder Regex durchsuchen."
+      "c6p": "フォルダツリー全体を名前、部分一致、正規表現で検索。",
+      "priv.h2": "プライバシー",
+      "foot.priv": "プライバシー",
+      "priv.1": "<strong>Marlia アプリ自体はどこにも何も送信しません。</strong>分析も、クラッシュレポートも、アップデートの確認もありません。ネットワークに接続するのは、SMB サーバーへの接続など、あなたが指示したときだけです。",
+      "priv.2": "このサイトは Cookie、アクセス解析、トラッキングを使用しません。フォントと画像はサイト自体から配信されます。",
+      "priv.3": "選んだ言語はブラウザ（ローカルストレージ）に保存され、どこにも送信されません。",
+      "priv.4": "最新バージョンを表示するため、ページは訪問ごとに一度 GitHub API に Marlia のリリース情報を問い合わせます。その際、GitHub はあなたの IP アドレスを受け取ります。",
+      "priv.5": "このサイトは GitHub Pages でホストされています。一般的なホスティングと同様に、GitHub は IP アドレスを含むリクエストを記録します。詳しくは<a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub プライバシーステートメント</a>をご覧ください。"
     }
   };
 
