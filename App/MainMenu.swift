@@ -395,6 +395,7 @@ final class MainMenuController: NSObject, NSMenuDelegate {
         menu.addItem(.separator())
         menu.addItem(command(.copyToOtherPane) { [weak self] in self?.appState?.copyToOtherPane() })
         menu.addItem(command(.moveToOtherPane) { [weak self] in self?.appState?.moveToOtherPane() })
+        menu.addItem(command(.compareFolders) { [weak self] in self?.appState?.compareFolders() })
         menu.addItem(.separator())
         menu.addItem(command(.moveToTrash) { [weak self] in self?.appState?.trashSelection() })
         menu.addItem(command(.deleteImmediately) { [weak self] in self?.appState?.deletePermanently() })

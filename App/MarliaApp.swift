@@ -626,6 +626,26 @@ final class AppState: ObservableObject {
         activeSide = activeSide == .left ? .right : .left
     }
 
+    /// Compare Folders (⇧F2): selects in each pane what the other one lacks or holds an
+    /// older copy of (the rules are in FolderComparison). It compares what the panes show,
+    /// so hidden files count only while they're shown and an active filter narrows it.
+    func compareFolders() {
+        if !showSecondPane { showSecondPane = true }
+        func entries(_ pane: PaneViewModel) -> [FolderComparison.Entry] {
+            pane.items.map { .init(name: $0.name, isFolder: $0.isNavigableFolder, size: $0.size, modified: $0.modified) }
+        }
+        let result = FolderComparison.compare(left: entries(leftPane), right: entries(rightPane))
+        leftPane.selection = Set(leftPane.items.filter { result.left.contains($0.name) }.map(\.id))
+        rightPane.selection = Set(rightPane.items.filter { result.right.contains($0.name) }.map(\.id))
+        // With nothing selected it would look as if the command did nothing at all.
+        if result.left.isEmpty, result.right.isEmpty, let window {
+            let alert = NSAlert()
+            alert.messageText = "No Differences"
+            alert.informativeText = "Both folders hold the same items, with the same dates and sizes."
+            alert.beginSheetModal(for: window)
+        }
+    }
+
     func copyToOtherPane() {
         transfer(items: activePane.selectedItems, to: passivePane.currentURL, mode: .copy) { [weak self] in
             self?.passivePane.reload()
