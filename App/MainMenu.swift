@@ -154,6 +154,7 @@ final class MainMenuController: NSObject, NSMenuDelegate {
     private func fileMenu() -> NSMenu {
         let menu = NSMenu()
         menu.addItem(command(.newTab) { AppDelegate.requestNewTab() })
+        menu.addItem(command(.reopenClosedTab) { AppWindowManager.shared.reopenClosedTab() })
         menu.addItem(.separator())
         menu.addItem(command(.newFolder) { [weak self] in self?.appState?.createFolder() })
         menu.addItem(command(.newFile) { [weak self] in self?.appState?.createFile() })
@@ -242,7 +243,7 @@ final class MainMenuController: NSObject, NSMenuDelegate {
     private func viewMenu() -> NSMenu {
         let menu = NSMenu()
         menu.delegate = self  // menuNeedsUpdate will refresh the checkmarks/title
-        menu.addItem(command(.commandPalette) { CommandPaletteController.shared.toggle() })
+        menu.addItem(command(.commandPalette) { QuickPickerController.commands.toggle() })
         menu.addItem(.separator())
         menu.addItem(standard("Toggle Sidebar", Selector(("toggleSidebar:"))))
         menu.addItem(.separator())
@@ -383,6 +384,7 @@ final class MainMenuController: NSObject, NSMenuDelegate {
             self?.appState?.openInPane(.right)
         })
         menu.addItem(.separator())
+        menu.addItem(command(.goToFolder) { QuickPickerController.folders.toggle() })
         menu.addItem(command(.goHome) { [weak self] in self?.appState?.goHomeActive() })
         menu.addItem(command(.showRecents) { [weak self] in self?.appState?.showRecentsActive() })
         menu.addItem(.separator())

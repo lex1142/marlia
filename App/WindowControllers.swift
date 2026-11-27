@@ -58,6 +58,7 @@ final class MarliaWindowController: NSWindowController, NSWindowDelegate, NSTool
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     func windowWillClose(_ notification: Notification) {
+        AppWindowManager.shared.rememberClosed(appState.snapshotWindowState())
         AppWindowManager.shared.removeMain(self)
     }
 
@@ -269,6 +270,31 @@ final class AppWindowManager {
         // The AppKit split leaves first responder on the sidebar — move focus to the
         // active pane (async — after the window has become key and the hierarchy is
         // built).
+        DispatchQueue.main.async { controller.appState.focusActivePane() }
+    }
+
+    // MARK: Reopen Closed Tab (⇧⌘T)
+
+    /// Tabs closed during this session, most recent last. In memory only: the session
+    /// itself (open tabs) is already saved on quit; this is for "oops, wrong tab".
+    private var closedTabs: [WindowState] = []
+    private static let closedTabsLimit = 20
+
+    func rememberClosed(_ state: WindowState) {
+        closedTabs.append(state)
+        if closedTabs.count > Self.closedTabsLimit { closedTabs.removeFirst() }
+    }
+
+    /// Reopens the most recently closed tab (both panes, view modes, info panel) into the
+    /// current window's tab group; with no window left it opens on its own, at its old frame.
+    func reopenClosedTab() {
+        guard var state = closedTabs.popLast() else { NSSound.beep(); return }
+        let host = NSApp.keyWindow.flatMap { $0.windowController is MarliaWindowController ? $0 : nil }
+            ?? mainControllers.last?.window
+        if host != nil { state.frame = "" }   // a tab takes its group's frame
+        let controller = newWindow(restoring: state)
+        if let host, let win = controller.window { host.addTabbedWindow(win, ordered: .above) }
+        controller.window?.makeKeyAndOrderFront(nil)
         DispatchQueue.main.async { controller.appState.focusActivePane() }
     }
 

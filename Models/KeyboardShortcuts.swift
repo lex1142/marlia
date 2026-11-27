@@ -156,6 +156,7 @@ enum AppCommand: String, CaseIterable, Codable {
     case commandPalette
     case compareFolders
     case openInLeftPane, openInRightPane
+    case goToFolder, reopenClosedTab
 
     /// Zero-based position in the favorites list for the go-to commands.
     var favoriteIndex: Int? {
@@ -233,6 +234,8 @@ enum AppCommand: String, CaseIterable, Codable {
         case .compareFolders: return "Compare Folders"
         case .openInLeftPane: return "Open in Left Pane"
         case .openInRightPane: return "Open in Right Pane"
+        case .goToFolder: return "Go to Folder…"
+        case .reopenClosedTab: return "Reopen Closed Tab"
         }
     }
 
@@ -243,9 +246,9 @@ enum AppCommand: String, CaseIterable, Codable {
              .goBack, .goForward, .goHome, .showRecents, .connectToServer,
              .goToFavorite1, .goToFavorite2, .goToFavorite3, .goToFavorite4, .goToFavorite5,
              .goToFavorite6, .goToFavorite7, .goToFavorite8, .goToFavorite9,
-             .openInLeftPane, .openInRightPane:
+             .openInLeftPane, .openInRightPane, .goToFolder:
             return .navigation
-        case .newTab, .newFolder, .newFile, .getInfo,
+        case .newTab, .reopenClosedTab, .newFolder, .newFile, .getInfo,
              .quickLook, .showInFinder, .openInTerminal,
              .compress, .extractArchive, .viewArchiveContents:
             return .file
@@ -359,6 +362,10 @@ enum AppCommand: String, CaseIterable, Codable {
         // ⌘← / ⌘→ — Total Commander's Ctrl+← / Ctrl+→ (on a Mac ⌃-arrows switch desktops).
         case .openInLeftPane: return [Shortcut(keyCode: 123, modifiers: .command, character: "\u{F702}")]
         case .openInRightPane: return [Shortcut(keyCode: 124, modifiers: .command, character: "\u{F703}")]
+        // ⇧⌘G — Finder's Go to Folder; ⇧⌘T — the browsers' Reopen Closed Tab (AppKit's
+        // own tab items use ⇧⌘\ and no shortcut, checked in the running menu).
+        case .goToFolder: return [Shortcut(keyCode: 5, modifiers: [.command, .shift], character: "g")]
+        case .reopenClosedTab: return [Shortcut(keyCode: 17, modifiers: [.command, .shift], character: "t")]
         // ⌘I — Get Info, ⌥⌘I — invert selection, so the info panel is ⌃⌘I.
         case .toggleInspector: return [Shortcut(keyCode: 34, modifiers: [.command, .control], character: "i")]
         // ⌘1…⌘3 are taken by the view modes (as in Finder), and ⌃1…⌃9 are

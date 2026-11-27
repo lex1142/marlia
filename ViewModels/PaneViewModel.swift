@@ -197,6 +197,7 @@ final class PaneViewModel: ObservableObject, Identifiable {
         applyStoredSort(for: url)
         reload()
         startWatching()
+        RecentFolders.shared.record(url)   // Go to Folder's recent list
     }
 
     func open(_ item: FileItem) {
