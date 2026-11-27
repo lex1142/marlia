@@ -24,11 +24,13 @@ struct HelpView: View {
                     bullet("Click anywhere in a pane (or an item in it) to make it active.")
                     bullet("⌘← / ⌘→ — open the selected folder (or the current one) in the left / right pane.")
                     bullet("⇧F2 — Compare Folders: each pane selects what the other one lacks or has an older copy of.")
+                    bullet("⌥⇧F2 — Synchronize Folders: compares the two folders recursively and lists every difference with what will happen (→, ←, skip, Trash). Both ways or one way, optionally deleting extras; nothing changes until you press Synchronize, and replaced or deleted files go to the Trash.")
                 }
 
                 section("Browsing") {
                     bullet("◀ ▶ — back/forward, ▲ — up one level, Delete/Backspace — also goes up one level.")
-                    bullet("Click the path text to type a path directly (supports “~”). Return to go, Esc to cancel.")
+                    bullet("Click empty space in the path bar to type a path directly (supports “~”). Return to go, Esc to cancel.")
+                    bullet("Click a / between two folders in the path to list the folders next to it and jump sideways. In a narrow pane the middle of the path folds into “…”, a menu of the hidden folders.")
                     bullet("⇧⌘G — Go to Folder: type a path (Tab completes it) or pick one of the recently visited folders.")
                     bullet("Sidebar: AirDrop, Favorites (★ button in the path bar, or right-click a folder; drag to reorder), and mounted Drives (⏏ to eject).")
                 }
@@ -49,6 +51,7 @@ struct HelpView: View {
 
                 section("File Operations") {
                     bullet("⌘C / ⌘X / ⌘V — copy / cut / paste (interoperates with Finder's clipboard).")
+                    bullet("⇧⌘C / ⇧⌘X — Add to Clipboard / Add to Cut: gather files from several folders, then paste them all with one ⌘V. The status bar shows how many are collected.")
                     bullet("F5 — copy selection to the other pane, F6 — move it to the other pane.")
                     bullet("⌘⌫ — move to Trash, ⌥⌘⌫ — delete immediately (cannot be undone).")
                     bullet("⌘D — duplicate, ⇧⌘N — new folder, ⌥⇧⌘N — new file.")
@@ -56,7 +59,8 @@ struct HelpView: View {
                     bullet("Drag and drop files between panes, tabs, separate windows, and Finder.")
                     bullet("If a name already exists at the destination, a dialog offers Replace, Skip, or Keep Both, with an “apply to all” option for batches.")
                     bullet("Copying to a FAT/exFAT flash drive or camera card doesn’t leave hidden “._” files next to your files (apps and installers keep theirs, so Gatekeeper still checks them).")
-                    bullet("⌥⌘S — Calculate Folder Sizes: sizes the selected folders, or all of them, shown in the Size column.")
+                    bullet("⌥⌘S — Calculate Folder Sizes: sizes the selected folders, or all of them, shown in the Size column with a bar for each item's share.")
+                    bullet("⌥⌘L — Largest Files: the biggest files anywhere under the current folder; Return or double-click shows one in the pane.")
                     bullet("⌥⌘R — Rename Multiple: a pattern with a counter (#), the old name (*), and file details: [Date] [Time] taken, [Track] [Artist] [Title] [Album]; change case and lowercase extensions; live preview.")
                 }
 
@@ -70,6 +74,15 @@ struct HelpView: View {
                     bullet("Settings ▸ Commands: add shell scripts with a name and an optional shortcut; they appear in the Commands menu and in the palette.")
                     bullet("A script gets the selected items as \"$@\" and $MARLIA_DIR, $MARLIA_OTHER_DIR, $MARLIA_SELECTION, $MARLIA_FILE. It runs in the active pane’s folder, in a zsh login shell.")
                     bullet("Running commands appear with the other operations, where you can pause or cancel them (including whatever the script started).")
+                }
+
+                section("Tabs & Windows") {
+                    bullet("File ▸ Tab Sets ▸ Save Tabs as Set… — keep the current window's tabs (both panes' folders in each) under a name; pick the set later to open it as a new window.")
+                }
+
+                section("Info") {
+                    bullet("The info panel previews the selected file itself — text, code, PDF, images, audio, video.")
+                    bullet("⌘I — Get Info, with Permissions: read/write/execute checkboxes for owner, group and everyone, and Apply to Enclosed Items for folders.")
                 }
 
                 section("Search") {

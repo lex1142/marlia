@@ -18,15 +18,15 @@ A two-pane, keyboard-driven file manager for macOS in the spirit of Total Comman
 ## Features
 
 - **Two panes, tabs, three view modes.** List, Icons and Finder-style Columns with a preview column. Each pane keeps its own history, and every folder remembers its sort order.
-- **Total Commander workflow.** F5/F6 copy/move to the other pane, Tab switches panes, ⌘←/⌘→ open a folder in the left/right pane, ⇧F2 compares the two folders, type-to-select, select by pattern (`*.jpg`), invert selection.
-- **Command palette and Go to Folder.** ⇧⌘P finds any command by a few letters; ⇧⌘G takes a typed path (Tab completes) or a recent folder; ⇧⌘T reopens a closed tab.
-- **File operations.** Copy, move, duplicate, trash and rename run in the background, with a progress HUD where you can pause or cancel. Name conflicts get Replace / Skip / Keep Both. Folder sizes on demand (⌥⌘S). Copies to FAT/exFAT drives leave no `._` files behind.
+- **Total Commander workflow.** F5/F6 copy/move to the other pane, Tab switches panes, ⌘←/⌘→ open a folder in the left/right pane, ⇧F2 compares the two folders and ⌥⇧F2 synchronizes them (recursive, with a reviewable plan; replaced files go to the Trash), type-to-select, select by pattern (`*.jpg`), invert selection.
+- **Command palette and Go to Folder.** ⇧⌘P finds any command by a few letters; ⇧⌘G takes a typed path (Tab completes) or a recent folder; each / in the path bar opens the folders beside it; ⇧⌘T reopens a closed tab; Tab Sets save a window's tabs under a name.
+- **File operations.** Copy, move, duplicate, trash and rename run in the background, with a progress HUD where you can pause or cancel. Name conflicts get Replace / Skip / Keep Both. Folder sizes on demand (⌥⌘S) with size bars, and Largest Files (⌥⌘L) for where the space went. Gather files from several folders with Add to Clipboard (⇧⌘C) and paste them at once. Copies to FAT/exFAT drives leave no `._` files behind.
 - **Batch rename.** Counters, the old name, photo dates ([Date] [Time] from EXIF), music tags ([Track] [Artist] [Title] [Album]), case changes, all with a live preview.
 - **Undo that lasts.** Up to 50 steps across all windows, kept across relaunches; undoing a copy moves it to the Trash.
 - **Your own commands.** Shell scripts with a name and a shortcut, run on the selection from the Commands menu or the palette, with pause and cancel.
 - **Archives.** Create, extract and browse ZIP and tar (gz/bz2/xz) using the system tools. Includes password-protected ZIP and zip-slip protection.
 - **Workspaces.** Collect files from anywhere into a folder of symlinks. Nothing is copied or moved.
-- **Search and preview.** Recursive search (substring or regex), an instant filter bar, Quick Look on Space, Get Info and a live info panel.
+- **Search and preview.** Recursive search (substring or regex), an instant filter bar, Quick Look on Space, a live info panel that previews the file itself, and Get Info with editable permissions.
 - **macOS integration.** Drag and drop with Finder, Finder color tags, AirDrop, Open in Terminal, SMB connect, ejecting drives, and installing apps from `.dmg` files.
 - **Themes.** System, Dracula, Gruvbox Dark, Nord, Solarized Dark/Light/Auto.
 - **Rebindable shortcuts.** Change them in Settings (⌘,). The full list is in Help (⌘?).

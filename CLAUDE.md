@@ -703,6 +703,45 @@ AVFoundation. The naming rules stay in Foundation-only `BatchRenamePlan` (`FileM
 struct passed in), so they remain testable from a script; a token with no data marks the row as a
 problem instead of producing an empty name.
 
+**The path bar folds instead of squeezing** (`PaneView.breadcrumbPath`). Every crumb used to be a
+button in one HStack, and a narrow pane compressed each to a glyph or two ("/ \/ E"). Now
+`ViewThatFits` picks the widest form whose natural width fits: full path, first crumb + "…" + last
+4/3/2/1, "…" + current name, the name truncated in the middle (only while ≥ 60 pt are left — any
+narrower drew a stray glyph), then a lone "…" whose menu holds the whole path. Each "/" between crumbs
+is a button that lists the folders inside the crumb to its left (Path Finder's path navigator); that
+menu is built with AppKit at click time, because a SwiftUI `Menu` builds its content on every render
+and would read each crumb's folder from disk on every arrow step.
+
+**Testing pop-up menus through System Events: they open at the real pointer.** `click at {x, y}`
+doesn't move the actual cursor, and `NSMenu.popUp(…, at: NSEvent.mouseLocation, in: nil)` opens where
+the cursor really is — so a screenshot cropped around the clicked spot shows no menu and looks like a
+bug. Capture the whole screen before concluding a menu didn't open (it cost a round of wrong fixes).
+
+**A modifier on an empty view never runs.** `Group { if let x { … } }.task { load() }` — while `x` is
+nil the Group is empty, SwiftUI drops its modifiers, and the task that would set `x` never fires.
+Anchor such a view with something real (`VStack { Color.clear.frame(height: 0); if … }`), as
+`PermissionsSection` does.
+
+**`resolvingSymlinksInPath()` strips `/private`** from `/private/tmp/…` (and `/private/var`), while
+`FileManager`'s enumerator keeps it — comparing the two as path prefixes silently never matches. Use
+`realpath(3)` on both sides when a relative path is needed (`LargestFilesView.relativeFolder`).
+
+**Synchronize Folders never loses data by construction** (`Models/FolderSync.swift`): a replaced file
+is copied under a temporary name first and the old one goes to the Trash only after that copy
+succeeded; deletes go to the Trash; same-date-different-size conflicts are skipped unless the user
+picks a side; one-way modes never write to the source. Folders present on one side only are a single
+item. Verified in a scratchpad harness against real directories (including "a failed copy leaves the
+old file untouched") — harness runs put real files in `~/.Trash`, so name test files distinctively and
+remove exactly those afterwards.
+
+**Add to Clipboard / Add to Cut** (`FileClipboard.add`) — Path Finder's Drop Stack on top of the
+existing clipboard: appends instead of replacing, shows "N collected" in the status bars until a paste.
+Copy plus cut makes the whole set a copy, so a paste never moves files that were only copied.
+
+**SwiftUI `List(selection:)` + double-click** — use `.contextMenu(forSelectionType:menu:primaryAction:)`
+(macOS 13), not a tap gesture on rows: gestures on rows break native selection (same lesson as the
+sidebar). Largest Files does it this way.
+
 ## Known limitations (not bugs to "fix" reflexively)
 
 - List view drag-selecting rows over empty space highlights rows but draws no rubber-band rectangle —
