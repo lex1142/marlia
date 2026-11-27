@@ -6,7 +6,7 @@
 
 A two-pane, keyboard-driven file manager for macOS in the spirit of Total Commander, with native AppKit views.
 
-**Website: [lex1142.github.io/marlia](https://lex1142.github.io/marlia/)** (a feature tour, a live demo you can try in the browser, and the download)
+**Website: [marlia.app](https://marlia.app/)** (a feature tour, a live demo you can try in the browser, and the download)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/media/hero-dark.webp">
@@ -81,7 +81,9 @@ To build against a specific SDK, set `SDK=/path/to/MacOSX.sdk`.
 
 ## Contributing
 
-Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md). Please report bugs in
+[Issues](https://github.com/lex1142/marlia/issues), so others can find them. For anything else, write to
+**hello@marlia.app**.
 
 ## License
 

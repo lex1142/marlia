@@ -101,8 +101,9 @@ and `otool -l … | grep -A3 LC_BUILD_VERSION` → `minos 13.5`.
 
 ### Landing page
 
-`docs/index.html` is the project site, served by GitHub Pages from `main` → `/docs` (with
-`docs/.nojekyll`, so it's published as-is). It's one self-contained file: no build step, and the
+`docs/index.html` is the project site at **https://marlia.app**, served by GitHub Pages from `main` →
+`/docs` (with `docs/.nojekyll`, so it's published as-is; `docs/CNAME` binds the custom domain, DNS is
+at Namecheap, and `lex1142.github.io/marlia/` redirects there). It's one self-contained file: no build step, and the
 **only** request to another host is one call to the GitHub API. Fonts are served from `docs/fonts/`
 (`fonts.css` + woff2 split by `unicode-range`, OFL license files next to them), deliberately not from
 Google Fonts: loading them from Google sends every visitor's IP there, which German courts have held
