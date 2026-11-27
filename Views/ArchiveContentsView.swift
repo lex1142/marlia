@@ -35,9 +35,12 @@ struct ArchiveContentsView: View {
             } else {
                 List(entries) { entry in
                     HStack {
+                        // Fixed width: "folder" is wider than "doc", which shifted
+                        // folder names to the right of file names.
                         Image(systemName: entry.isDirectory ? "folder" : "doc")
                             .foregroundStyle(.secondary)
-                        Text(entry.path)
+                            .frame(width: 18)
+                        Text(entry.isDirectory && entry.path.hasSuffix("/") ? String(entry.path.dropLast()) : entry.path)
                             .lineLimit(1)
                             .truncationMode(.middle)
                         Spacer()
@@ -54,6 +57,18 @@ struct ArchiveContentsView: View {
         .onAppear { load() }
     }
 
+    /// Finder order: compared component by component, so a folder comes right before its
+    /// own contents and names compare the way Finder does ("v2" before "v10"). Archive
+    /// tools list entries in storage order, which is whatever order they were added in.
+    /// A plain string sort isn't enough: it would put "a b/x" between "a/" and "a/x".
+    static func finderOrder(_ a: ArchiveService.Entry, _ b: ArchiveService.Entry) -> Bool {
+        let ca = a.path.split(separator: "/"), cb = b.path.split(separator: "/")
+        for (x, y) in zip(ca, cb) where x != y {
+            return String(x).localizedStandardCompare(String(y)) == .orderedAscending
+        }
+        return ca.count < cb.count
+    }
+
     private func load() {
         guard let format = ArchiveFormat(url: url) else {
             errorMessage = "Unrecognized archive format"
@@ -63,7 +78,7 @@ struct ArchiveContentsView: View {
         service.listContents(url: url, format: format) { result in
             isLoading = false
             switch result {
-            case .success(let items): entries = items
+            case .success(let items): entries = items.sorted(by: Self.finderOrder)
             case .failure(let error): errorMessage = error.localizedDescription
             }
         }

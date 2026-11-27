@@ -1091,11 +1091,18 @@ struct PaneView: View {
                 Text("\(model.items.count) items")
                 if !model.selection.isEmpty {
                     // Folder sizes aren't included in the total — that needs a
-                    // subtree walk. This is stated explicitly, otherwise the number
-                    // would simply look wrong.
-                    let size = ByteCountFormatter.string(fromByteCount: model.selectedSize, countStyle: .file)
-                    let suffix = model.selectionContainsFolders ? " (folders not counted)" : ""
-                    Text("· selected: \(model.selection.count) · \(size)\(suffix)")
+                    // subtree walk. With files and folders mixed this is stated
+                    // explicitly, otherwise the number would simply look wrong; with
+                    // only folders there is no number to show at all ("Zero KB" read
+                    // as if the folders were empty).
+                    let visible = model.selectedItems
+                    if visible.allSatisfy(\.isNavigableFolder) {
+                        Text("· selected: \(model.selection.count)")
+                    } else {
+                        let size = ByteCountFormatter.string(fromByteCount: model.selectedSize, countStyle: .file)
+                        let suffix = model.selectionContainsFolders ? " (folders not counted)" : ""
+                        Text("· selected: \(model.selection.count) · \(size)\(suffix)")
+                    }
                 }
             }
             Spacer()
@@ -1117,15 +1124,19 @@ struct PaneView: View {
 struct NewItemSheet: View {
     let title: String
     let prompt: String
+    /// The confirm button's label. "Create" fits the new folder/file sheets; Select by
+    /// Pattern reuses this sheet and passes "Select".
+    let actionTitle: String
     @State private var name: String
     let onCreate: (String) -> Void
     let onCancel: () -> Void
     @FocusState private var focused: Bool
 
-    init(title: String, prompt: String, defaultName: String,
+    init(title: String, prompt: String, defaultName: String, actionTitle: String = "Create",
          onCreate: @escaping (String) -> Void, onCancel: @escaping () -> Void) {
         self.title = title
         self.prompt = prompt
+        self.actionTitle = actionTitle
         _name = State(initialValue: defaultName)
         self.onCreate = onCreate
         self.onCancel = onCancel
@@ -1143,7 +1154,7 @@ struct NewItemSheet: View {
                 Spacer()
                 Button("Cancel", role: .cancel) { onCancel() }
                     .keyboardShortcut(.cancelAction)
-                Button("Create", action: commit)
+                Button(actionTitle, action: commit)
                     .keyboardShortcut(.defaultAction)
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
             }

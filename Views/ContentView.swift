@@ -71,7 +71,8 @@ struct PanesRootView: View {
                 NewItemSheet(
                     title: "Select by Pattern",
                     prompt: "Pattern (for example *.jpg)",
-                    defaultName: "*"
+                    defaultName: "*",
+                    actionTitle: "Select"
                 ) { pattern in
                     appState.applyPatternSelection(pattern)
                 } onCancel: {
