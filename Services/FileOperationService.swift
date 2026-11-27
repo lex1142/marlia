@@ -39,6 +39,9 @@ final class FileOperationService {
                     Task { @MainActor in onProgress(done) }
                 }
                 let dst = destination.appendingPathComponent(item.name)
+                // FAT/exFAT and similar: copy without leaving `._name` twins (see PlainCopy).
+                // Checked per item but cheap (one getattrlist on the volume root).
+                let foreignTarget = !PlainCopy.volumeStoresExtendedAttributes(destination)
                 // The target is the item itself — i.e. copying/moving it to where it
                 // already is. For a move there's nothing to do, but copying into its own
                 // folder is a meaningful "make a copy next to it" (file 2.txt), like ⌘D
@@ -91,8 +94,18 @@ final class FileOperationService {
                         try Self.copyIntoSelf(source: item.url, to: finalDst)
                     } else {
                         switch mode {
-                        case .copy: try FileManager.default.copyItem(at: item.url, to: finalDst)
-                        case .move: try FileManager.default.moveItem(at: item.url, to: finalDst)
+                        case .copy where foreignTarget:
+                            try PlainCopy.copy(item.url, to: finalDst)
+                        case .copy:
+                            try FileManager.default.copyItem(at: item.url, to: finalDst)
+                        case .move where foreignTarget && !PlainCopy.sameVolume(item.url, destination):
+                            // Across volumes a move is a copy plus a delete anyway; done in
+                            // two steps so the copy leaves no twins. The original is removed
+                            // only once the copy has fully succeeded.
+                            try PlainCopy.copy(item.url, to: finalDst)
+                            try FileManager.default.removeItem(at: item.url)
+                        case .move:
+                            try FileManager.default.moveItem(at: item.url, to: finalDst)
                         }
                     }
                     performed.append((item.url, finalDst))
