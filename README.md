@@ -18,8 +18,12 @@ A two-pane, keyboard-driven file manager for macOS in the spirit of Total Comman
 ## Features
 
 - **Two panes, tabs, three view modes.** List, Icons and Finder-style Columns with a preview column. Each pane keeps its own history, and every folder remembers its sort order.
-- **Total Commander workflow.** F5/F6 copy/move to the other pane, Tab switches panes, type-to-select, select by pattern (`*.jpg`), invert selection.
-- **File operations.** Copy, move, duplicate, trash and rename run in the background, with a progress HUD where you can pause or cancel. Name conflicts get Replace / Skip / Keep Both. Batch rename shows a live preview. Undo/redo goes up to 50 steps.
+- **Total Commander workflow.** F5/F6 copy/move to the other pane, Tab switches panes, ⌘←/⌘→ open a folder in the left/right pane, ⇧F2 compares the two folders, type-to-select, select by pattern (`*.jpg`), invert selection.
+- **Command palette and Go to Folder.** ⇧⌘P finds any command by a few letters; ⇧⌘G takes a typed path (Tab completes) or a recent folder; ⇧⌘T reopens a closed tab.
+- **File operations.** Copy, move, duplicate, trash and rename run in the background, with a progress HUD where you can pause or cancel. Name conflicts get Replace / Skip / Keep Both. Folder sizes on demand (⌥⌘S). Copies to FAT/exFAT drives leave no `._` files behind.
+- **Batch rename.** Counters, the old name, photo dates ([Date] [Time] from EXIF), music tags ([Track] [Artist] [Title] [Album]), case changes, all with a live preview.
+- **Undo that lasts.** Up to 50 steps across all windows, kept across relaunches; undoing a copy moves it to the Trash.
+- **Your own commands.** Shell scripts with a name and a shortcut, run on the selection from the Commands menu or the palette, with pause and cancel.
 - **Archives.** Create, extract and browse ZIP and tar (gz/bz2/xz) using the system tools. Includes password-protected ZIP and zip-slip protection.
 - **Workspaces.** Collect files from anywhere into a folder of symlinks. Nothing is copied or moved.
 - **Search and preview.** Recursive search (substring or regex), an instant filter bar, Quick Look on Space, Get Info and a live info panel.

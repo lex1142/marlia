@@ -638,6 +638,59 @@ clearing the filter brings a selection back intact, while operations stay safe b
 is computed from the visible list), and navigating to another folder clears the filter text but leaves
 the bar open — a filter carried into a new folder would show a near-empty list for no visible reason.
 
+**The command palette and Go to Folder are one picker over the main menu** (`Views/QuickPicker.swift`).
+The palette has no list of its own: it walks `NSApp.mainMenu` when it opens (after
+`MainMenuController.refreshDynamicState()`), so everything in the menu — sort fields, themes, favorites by
+real name, "Undo Rename", user commands — is reachable, and running an entry is `NSApp.sendAction` on the
+menu item itself. Anything new added to the menu shows up in the palette for free; something that should
+be reachable from the palette must therefore be a menu item. The panel is AppKit with an explicit
+`makeFirstResponder` for the same reason as the search/filter bars, and an entry runs on the next run-loop
+turn after the host window is key again (commands find their `AppState` through `NSApp.keyWindow`).
+Ranking is `Models/FuzzyMatch.swift` (Foundation only; tested from a scratchpad script).
+
+**⌘← / ⌘→ and other text-editing keys on menu items must forward to an active field editor.** A key
+equivalent reaches the menu before the focused text field, so Open in Left/Right Pane would otherwise
+steal "start/end of line" from rename, search and the path editor — the same `forwardEditingAction`
+trick the Edit menu uses for ⌘C/⌘X/⌘V/⌘A. ⇧F2 needs no ⌘: function keys reach the menu like F5/F6.
+
+**Copying to FAT/exFAT deletes the `._` twins afterwards, because they can't be avoided**
+(`Services/PlainCopy.swift`). Measured on FAT32/exFAT disk images, macOS 26: the kernel attaches
+`com.apple.provenance` to every file a process creates or modifies — even `echo > f` from a shell — so
+every write produces an AppleDouble twin, not copying attributes changes nothing, and `removexattr`
+reports success while the attribute stays. Deleting the twin after the last write works: reading,
+listing, Spotlight and Quick Look don't bring it back, only a later write does. Twins are deleted children
+first (removing an entry modifies its folder). Quarantined runnables (apps, executables, installers,
+archives, scripts) keep their twin — it's the only place quarantine can live on FAT, and dropping it
+would let a downloaded app skip Gatekeeper. Volumes are detected by the `VOL_CAP_INT_EXTENDED_ATTR`
+capability, **not** `pathconf(_PC_XATTR_SIZE_BITS)`, which reports FAT/exFAT as supporting xattrs (it
+means the emulation). `PlainCopy.copy` refuses an existing destination without touching it — an early
+version's "clean up on failure" deleted the existing item, caught by the harness.
+
+**The undo history is app-wide and on disk** (`UndoHistoryStore`, `~/Library/Application
+Support/Marlia/UndoHistory.json`). `AppState.history` is a computed property over the store, so every
+mutation through it is written back. Because entries can now be days old, undoing a copy or a created
+item moves it to the **Trash** (Finder does the same) instead of deleting it: a name reoccupied by an
+unrelated file since then stays recoverable. `TransferMode` is `Codable` in its own declaration (Swift
+can't synthesize it from an extension in another file).
+
+**Folder sizes live in the items themselves** (`FileItem.size` + `isFolderSizeCalculated`, filled by
+`PaneViewModel.calculateFolderSizes`): the List's existing "items changed → reload" path shows them and
+sorting by size includes them, with no new view plumbing. Results are re-stamped on reloads and dropped
+on navigation, which also cancels the background walk (`Models/FolderSize.swift`).
+
+**User commands run in their own process group** (`Models/UserCommands.swift`, `UserCommandRunner`):
+`posix_spawn` with `POSIX_SPAWN_SETPGROUP`, so pause/cancel (SIGSTOP/SIGCONT/SIGTERM to `-pid`) reach
+whatever the script started, not just the shell — with `Process`, cancelling `rsync` from a script left
+it running. Cancel sends SIGCONT before SIGTERM for the same reason as with archives. Scripts run via
+`zsh -l -c` so the user's ~/.zprofile PATH applies regardless of their interactive shell. A user command
+shortcut without ⌘ (other than a function key) would be swallowed by the panes, so Settings warns about it.
+
+**Batch rename metadata** (`Services/FileMetadataReader.swift`): EXIF DateTimeOriginal via ImageIO (local
+wall-clock time, no zone), movie creation date and iTunes `trkn` / ID3 `TRCK` track numbers via
+AVFoundation. The naming rules stay in Foundation-only `BatchRenamePlan` (`FileMetadata` is a plain
+struct passed in), so they remain testable from a script; a token with no data marks the row as a
+problem instead of producing an empty name.
+
 ## Known limitations (not bugs to "fix" reflexively)
 
 - List view drag-selecting rows over empty space highlights rows but draws no rubber-band rectangle —

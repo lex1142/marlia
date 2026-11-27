@@ -12,16 +12,24 @@ struct HelpView: View {
                     bullet("⌘T or the “+” button — open a new tab. Tabs share one title bar, like Safari.")
                     bullet("⌘W — close the current tab/window.")
                     bullet("Open tabs, their folders, and view modes are remembered between launches.")
+                    bullet("⇧⌘T — reopen the tab you just closed, with both panes as they were.")
+                }
+
+                section("Command Palette") {
+                    bullet("⇧⌘P — type a few letters of any menu command and press Return: “nf” finds New Folder, “sort size” finds View ▸ Sort By ▸ Size. Your own commands are there too.")
                 }
 
                 section("Two Panes") {
                     bullet("Each window has a left and right pane; the active one is marked with a colored bar on top.")
                     bullet("Click anywhere in a pane (or an item in it) to make it active.")
+                    bullet("⌘← / ⌘→ — open the selected folder (or the current one) in the left / right pane.")
+                    bullet("⇧F2 — Compare Folders: each pane selects what the other one lacks or has an older copy of.")
                 }
 
                 section("Browsing") {
                     bullet("◀ ▶ — back/forward, ▲ — up one level, Delete/Backspace — also goes up one level.")
                     bullet("Click the path text to type a path directly (supports “~”). Return to go, Esc to cancel.")
+                    bullet("⇧⌘G — Go to Folder: type a path (Tab completes it) or pick one of the recently visited folders.")
                     bullet("Sidebar: AirDrop, Favorites (★ button in the path bar, or right-click a folder; drag to reorder), and mounted Drives (⏏ to eject).")
                 }
 
@@ -47,11 +55,21 @@ struct HelpView: View {
                     bullet("Rename: click the name of an already-selected item (Return/double-click opens files and enters folders instead).")
                     bullet("Drag and drop files between panes, tabs, separate windows, and Finder.")
                     bullet("If a name already exists at the destination, a dialog offers Replace, Skip, or Keep Both, with an “apply to all” option for batches.")
+                    bullet("Copying to a FAT/exFAT flash drive or camera card doesn’t leave hidden “._” files next to your files (apps and installers keep theirs, so Gatekeeper still checks them).")
+                    bullet("⌥⌘S — Calculate Folder Sizes: sizes the selected folders, or all of them, shown in the Size column.")
+                    bullet("⌥⌘R — Rename Multiple: a pattern with a counter (#), the old name (*), and file details: [Date] [Time] taken, [Track] [Artist] [Title] [Album]; change case and lowercase extensions; live preview.")
                 }
 
                 section("Undo & Redo") {
-                    bullet("⌘Z — undo the last operation, ⇧⌘Z — redo it.")
+                    bullet("⌘Z — undo the last operation, ⇧⌘Z — redo it, up to 50 steps, across all windows and tabs.")
                     bullet("Covers copy, move, rename, trash, and new folder. Permanent delete is not undoable.")
+                    bullet("The history survives quitting the app. Undoing a copy or a new item moves it to the Trash rather than deleting it.")
+                }
+
+                section("Your Own Commands") {
+                    bullet("Settings ▸ Commands: add shell scripts with a name and an optional shortcut; they appear in the Commands menu and in the palette.")
+                    bullet("A script gets the selected items as \"$@\" and $MARLIA_DIR, $MARLIA_OTHER_DIR, $MARLIA_SELECTION, $MARLIA_FILE. It runs in the active pane’s folder, in a zsh login shell.")
+                    bullet("Running commands appear with the other operations, where you can pause or cancel them (including whatever the script started).")
                 }
 
                 section("Search") {
@@ -118,6 +136,12 @@ struct HelpView: View {
             shortcutRow("⌘+ / ⌘− / ⌘0", "Zoom in / out / reset")
             shortcutRow("Delete / ⌫", "Go up one level")
             shortcutRow("Space", "Quick Look preview")
+            shortcutRow("⇧⌘P", "Command palette")
+            shortcutRow("⇧⌘G", "Go to Folder")
+            shortcutRow("⇧⌘T", "Reopen closed tab")
+            shortcutRow("⌘← / ⌘→", "Open in left / right pane")
+            shortcutRow("⇧F2", "Compare folders")
+            shortcutRow("⌥⌘S", "Calculate folder sizes")
         }
     }
 
