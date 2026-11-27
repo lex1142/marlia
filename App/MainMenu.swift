@@ -242,6 +242,8 @@ final class MainMenuController: NSObject, NSMenuDelegate {
     private func viewMenu() -> NSMenu {
         let menu = NSMenu()
         menu.delegate = self  // menuNeedsUpdate will refresh the checkmarks/title
+        menu.addItem(command(.commandPalette) { CommandPaletteController.shared.toggle() })
+        menu.addItem(.separator())
         menu.addItem(standard("Toggle Sidebar", Selector(("toggleSidebar:"))))
         menu.addItem(.separator())
 
@@ -458,6 +460,10 @@ final class MainMenuController: NSObject, NSMenuDelegate {
     }
 
     // MARK: NSMenuDelegate — dynamic state
+
+    /// Brings titles, checkmarks and enabled states up to date without a menu being opened
+    /// (the command palette reads the menu directly).
+    func refreshDynamicState() { menuNeedsUpdate(NSMenu()) }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         // The title changes along with the state: "Undo Rename" is clearer than a

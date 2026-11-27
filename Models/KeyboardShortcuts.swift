@@ -143,6 +143,7 @@ enum AppCommand: String, CaseIterable, Codable {
     // Go to a favorite by its position — like Places in Dolphin.
     case goToFavorite1, goToFavorite2, goToFavorite3, goToFavorite4, goToFavorite5, goToFavorite6, goToFavorite7, goToFavorite8, goToFavorite9
     case batchRename
+    case commandPalette
 
     /// Zero-based position in the favorites list for the go-to commands.
     var favoriteIndex: Int? {
@@ -216,6 +217,7 @@ enum AppCommand: String, CaseIterable, Codable {
              .goToFavorite6, .goToFavorite7, .goToFavorite8, .goToFavorite9:
             return "Favorite \((favoriteIndex ?? 0) + 1)"
         case .batchRename: return "Rename Multiple…"
+        case .commandPalette: return "Command Palette…"
         }
     }
 
@@ -236,7 +238,7 @@ enum AppCommand: String, CaseIterable, Codable {
             return .edit
         case .zoomIn, .zoomOut, .actualSize, .toggleHiddenFiles,
              .toggleRecentsInSidebar, .toggleSecondPane, .toggleInspector,
-             .viewAsList, .viewAsIcons, .viewAsColumns:
+             .viewAsList, .viewAsIcons, .viewAsColumns, .commandPalette:
             return .view
         case .copyToOtherPane, .moveToOtherPane, .moveToTrash, .deleteImmediately,
              .refresh, .find, .addToWorkspace, .showContextMenu, .addToFavorites,
@@ -332,6 +334,9 @@ enum AppCommand: String, CaseIterable, Codable {
         case .invertSelection: return [Shortcut(keyCode: 34, modifiers: [.command, .option], character: "i")]
         // ⌘R is taken by refreshing the pane, so batch rename is ⌥⌘R.
         case .batchRename: return [Shortcut(keyCode: 15, modifiers: [.command, .option], character: "r")]
+        // ⇧⌘P — the command palette convention of code editors (VS Code, Sublime), which is
+        // where most people who'd reach for it learned it.
+        case .commandPalette: return [Shortcut(keyCode: 35, modifiers: [.command, .shift], character: "p")]
         // ⌘I — Get Info, ⌥⌘I — invert selection, so the info panel is ⌃⌘I.
         case .toggleInspector: return [Shortcut(keyCode: 34, modifiers: [.command, .control], character: "i")]
         // ⌘1…⌘3 are taken by the view modes (as in Finder), and ⌃1…⌃9 are
