@@ -54,28 +54,31 @@ says 13.5** — macOS honours the Mach-O `minos`, not just the plist. Verify a r
 CI (`.github/workflows/build.yml`) runs `./build.sh` on push/PR to `main` and checks `minos 13.5` —
 compile-check only, since there are no automated tests (see below).
 
-**CI compiles with an older Swift than yours, and a green local build proves nothing about it.**
-The runner is `macos-14`, which ships **Swift 5.10**; a current local toolchain is 6.x. The gap that
-actually bites is region-based isolation: Swift 6 accepts a concurrent closure that reads a mutable
-`var` from the enclosing scope, while 5.10 rejects it outright —
-`error: reference to captured var 'x' in concurrently-executing code`. That single difference kept the
-Build workflow red from July until it was fixed on 2026-08-29, in code that compiled cleanly on every
-developer machine the whole time; the failures were in `FileOperationService` (`transfer`, `trash`,
-`duplicate`, `deletePermanently`) and `ArchiveService` (`stderrText`), all of them long-standing.
+**CI builds against an older SDK than yours, so a green local build doesn't prove CI will pass.**
+The runner is `macos-15` (Xcode 16, **Swift 6.1, macOS 15 SDK**); a current local machine has the
+26.x SDK. An API that first appears in the 26 SDK compiles locally (even behind
+`if #available(macOS 26, *)`) but is an unknown symbol on CI. Conversely, an API re-annotated in a
+newer SDK can break the local build while CI stays green: that's what happened to the
+`URLResourceValues.tagNames` setter (see the deployment-target paragraph below).
 
-The fix is always the same and is safe under both compilers: snapshot into a `let` immediately before
-the closure, at a point where the value has stopped changing.
+History, because it explains code you'll see: until 2026-11-27 the runner was `macos-14` with
+**Swift 5.10**, which rejects a concurrent closure that reads a mutable `var` from the enclosing scope
+(`error: reference to captured var 'x' in concurrently-executing code`), while Swift 6 accepts it. That
+kept the Build workflow red from July to 2026-08-29 in code that compiled on every developer machine
+(`FileOperationService` `transfer`/`trash`/`duplicate`/`deletePermanently`, `ArchiveService`
+`stderrText`). The fix there, snapshotting into a `let` right before the closure, is still the
+preferred style and is valid under every compiler:
 
 ```swift
 let collectedErrors = errors          // the loop is done, the value no longer changes
 Task { @MainActor in completion(collectedErrors) }
 ```
 
-There is no way to reproduce 5.10 locally (no older toolchain, and no flag makes 6.x behave like it),
-so **whenever you add a `Task { … }` or any other concurrent closure inside a `DiskOperationQueue`
-operation, check by eye whether it reads a `var` from the surrounding scope** — that is cheaper than
-finding out from CI. Note also that the compiler stops after the first batch of errors, so one red run
-can hide the next one: the August fix took two rounds for exactly that reason.
+The runner moved to `macos-15` because GitHub retired the `macos-14` image: every run was cancelled
+before its first step with `The configuration 'macos-14-arm64-us-default' is not supported`. A Build
+run that is *cancelled* within seconds, with no steps, means the runner label is gone, not that the
+code broke. Note also that the compiler stops after the first batch of errors, so one red run can hide
+the next one.
 
 ### Building the DMG
 
@@ -114,7 +117,7 @@ Target is macOS 13.5+ (Ventura). Context menus are built as plain AppKit `NSMenu
 (`ClosureMenuItem` in `PaneInteractionViews.swift`, assembled by `PaneView.contextNSMenu`),
 **not** SwiftUI + `NSHostingMenu` — `NSHostingMenu` requires 14.4 and was the sole thing forcing
 that floor; dropping it lowered the deployment target to 13.5. CI enforces the floor with
-`swiftc -target arm64-apple-macosx13.5` (the runner is still `macos-14`, using a newer SDK).
+`swiftc -target arm64-apple-macosx13.5` (the runner is `macos-15`, whose SDK is newer than the deployment target).
 (Watch availability against the *deployment* target, not just the host SDK: e.g. the
 `URLResourceValues.tagNames` **setter** got re-annotated `@available(macOS 26)` in a newer SDK and
 broke the CI build — color tags are now set via the `NSURL.setResourceValue(_:forKey:)`

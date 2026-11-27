@@ -32,9 +32,11 @@ There is no automated test suite, so please describe in your pull request how yo
 
 ## Things to keep in mind
 
-- **CI compiles with Swift 5.10** (the `macos-14` runner), which is stricter than Swift 6 in one way:
-  a concurrent closure (`Task { … }`, a `DiskOperationQueue` operation) must not capture a mutable `var`
-  from the surrounding scope. Copy it into a `let` first. A green local build doesn't prove CI will pass.
+- **CI compiles with the macOS 15 SDK** (the `macos-15` runner, Swift 6.1), which is likely older than
+  yours. An API that only exists in a newer SDK builds locally but fails on CI, even behind
+  `if #available`. A green local build doesn't prove CI will pass.
+- **In concurrent closures** (`Task { … }`, a `DiskOperationQueue` operation), copy a mutable `var` from
+  the surrounding scope into a `let` first rather than capturing it.
 - **The deployment target is macOS 13.5.** Check API availability against 13.5, not against your SDK.
   `./build.sh` passes `-target arm64-apple-macosx13.5`, so such errors show up locally.
 - **List, Icons and Columns are AppKit views** (`NSTableView` / `NSCollectionView`) wrapped for SwiftUI.
