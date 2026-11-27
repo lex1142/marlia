@@ -17,12 +17,21 @@ struct BatchRenameView: View {
     let onCancel: () -> Void
 
     @State private var settings = BatchRenameSettings()
+    /// File name → what the [Date]/[Track]/… tokens read from it. Filled in the background
+    /// the first time the pattern uses a metadata token.
+    @State private var metadata: [String: FileMetadata] = [:]
+    @State private var isReadingMetadata = false
+
+    private var usesMetadata: Bool {
+        settings.mode == .pattern && BatchRenameToken.usesMetadata(settings.pattern)
+    }
 
     private var entries: [BatchRenameEntry] {
         BatchRenamePlan.build(
             names: items.map(\.name),
             existingNames: existingNames,
-            settings: settings
+            settings: settings,
+            metadata: metadata
         )
     }
 
@@ -46,13 +55,19 @@ struct BatchRenameView: View {
             case .pattern: patternFields
             case .findReplace: findReplaceFields
             }
+            caseFields
 
             Divider()
             preview
             Divider()
 
             HStack(spacing: 8) {
-                if problemCount > 0 {
+                if usesMetadata && isReadingMetadata {
+                    ProgressView().controlSize(.small)
+                    Text("Reading metadata…")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else if problemCount > 0 {
                     Label(
                         problemCount == 1 ? "1 name can’t be used" : "\(problemCount) names can’t be used",
                         systemImage: "exclamationmark.triangle.fill"
@@ -69,11 +84,22 @@ struct BatchRenameView: View {
                     .keyboardShortcut(.cancelAction)
                 Button("Rename") { apply() }
                     .keyboardShortcut(.defaultAction)
-                    .disabled(problemCount > 0 || changedCount == 0)
+                    .disabled(problemCount > 0 || changedCount == 0 || (usesMetadata && isReadingMetadata))
             }
         }
         .padding(20)
         .frame(width: 520)
+        .task(id: usesMetadata) {
+            guard usesMetadata, metadata.isEmpty else { return }
+            isReadingMetadata = true
+            var loaded: [String: FileMetadata] = [:]
+            for item in items {
+                loaded[item.name] = await FileMetadataReader.read(item.url, modified: item.modified)
+                if Task.isCancelled { return }
+            }
+            metadata = loaded
+            isReadingMetadata = false
+        }
     }
 
     private var patternFields: some View {
@@ -81,6 +107,12 @@ struct BatchRenameView: View {
             HStack {
                 TextField("Pattern", text: $settings.pattern)
                     .textFieldStyle(.roundedBorder)
+                Menu("Insert") {
+                    ForEach(BatchRenameToken.allCases, id: \.self) { token in
+                        Button("[\(token.rawValue)] — \(token.hint)") { settings.pattern += "[\(token.rawValue)]" }
+                    }
+                }
+                .fixedSize()
                 Text("Start at")
                     .foregroundStyle(.secondary)
                 TextField("", value: $settings.startIndex, format: .number)
@@ -88,7 +120,7 @@ struct BatchRenameView: View {
                     .frame(width: 60)
                     .multilineTextAlignment(.trailing)
             }
-            Text("“#” becomes the number (### gives 001), “*” keeps the original name. The extension is always kept; a number is added automatically when the pattern has none.")
+            Text("“#” becomes the number (### gives 001), “*” keeps the original name, [Date] [Time] [Track] [Artist] [Title] [Album] come from the file (Insert lists them). The extension is always kept; a number is added when the pattern has neither “#” nor a metadata token.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -108,6 +140,21 @@ struct BatchRenameView: View {
             Text("Matches the whole file name, including the extension. Case-sensitive.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+        }
+    }
+
+    /// Applies in both modes: to the name, and to the extension only via the toggle.
+    private var caseFields: some View {
+        HStack(spacing: 12) {
+            Picker("Case", selection: $settings.nameCase) {
+                ForEach(BatchRenameCase.allCases) { style in
+                    Text(style.title).tag(style)
+                }
+            }
+            .pickerStyle(.menu)
+            .fixedSize()
+            Toggle("Lowercase extension", isOn: $settings.lowercaseExtension)
+            Spacer()
         }
     }
 

@@ -25,7 +25,7 @@ SOURCES=(
   Views/BatchRenameView.swift Views/InspectorView.swift Views/DiskImageInstallView.swift
   Views/QuickPicker.swift
   Services/FileOperationService.swift Services/ArchiveService.swift Services/NetworkMountService.swift
-  Services/DiskOperationQueue.swift Services/OperationControl.swift Services/PlainCopy.swift Services/DirectoryWatcher.swift
+  Services/DiskOperationQueue.swift Services/OperationControl.swift Services/PlainCopy.swift Services/FileMetadataReader.swift Services/DirectoryWatcher.swift
   Services/ThumbnailCache.swift Services/WorkspaceStore.swift Services/QuickLookController.swift
 )
 
