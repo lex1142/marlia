@@ -10,7 +10,10 @@ struct FileItem: Identifiable, Hashable, Sendable {
     let isPackage: Bool
     let isHidden: Bool
     let isSymbolicLink: Bool
-    let size: Int64
+    /// For a folder: 0 until Calculate Folder Sizes fills it in (then
+    /// `isFolderSizeCalculated` is set), so sorting by size includes calculated folders.
+    var size: Int64
+    var isFolderSizeCalculated = false
     let modified: Date
     /// Dates for the "Show View Options" columns. Non-optional (defaulting to
     /// .distantPast) so they can be sorted directly with KeyPathComparator (Optional
@@ -38,7 +41,7 @@ struct FileItem: Identifiable, Hashable, Sendable {
     var icon: NSImage { IconCache.shared.icon(for: self) }
 
     var displaySize: String {
-        isNavigableFolder ? "—" : ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
+        isNavigableFolder && !isFolderSizeCalculated ? "—" : ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
     }
 
     /// Images/videos — for these the Icons mode loads a real thumbnail instead

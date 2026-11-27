@@ -103,10 +103,65 @@ final class PaneViewModel: ObservableObject, Identifiable {
     /// real weight needs a subtree walk, which is Get Info's job with its asynchronous
     /// count.
     var selectedSize: Int64 {
-        selectedItems.reduce(0) { $0 + ($1.isNavigableFolder ? 0 : $1.size) }
+        selectedItems.reduce(0) { $0 + ($1.isNavigableFolder && !$1.isFolderSizeCalculated ? 0 : $1.size) }
     }
 
-    var selectionContainsFolders: Bool { selectedItems.contains(where: \.isNavigableFolder) }
+    /// Selected folders whose size isn't known (Calculate Folder Sizes hasn't reached them).
+    var selectionContainsUncountedFolders: Bool {
+        selectedItems.contains { $0.isNavigableFolder && !$0.isFolderSizeCalculated }
+    }
+
+    // MARK: Folder sizes (Calculate Folder Sizes, ⌥⌘S)
+
+    @Published private(set) var isCalculatingFolderSizes = false
+    /// Sizes found in the current folder; kept across reloads (a file appearing must not
+    /// wipe them), dropped on navigation.
+    private var folderSizes: [URL: Int64] = [:]
+    private var folderSizeTask: Task<Void, Never>?
+
+    /// Sizes the selected folders, or every folder shown when no folder is selected — one
+    /// after another in the background, each result appearing as soon as it's known.
+    func calculateFolderSizes() {
+        let selectedFolders = selectedItems.filter(\.isNavigableFolder)
+        let targets = (selectedFolders.isEmpty ? items.filter(\.isNavigableFolder) : selectedFolders).map(\.url)
+        guard !targets.isEmpty else { return }
+        folderSizeTask?.cancel()
+        isCalculatingFolderSizes = true
+        folderSizeTask = Task { [weak self] in
+            for url in targets {
+                let job = Task.detached(priority: .utility) {
+                    FolderSize.measure(url, isCancelled: { Task.isCancelled })
+                }
+                let size = await withTaskCancellationHandler { await job.value } onCancel: { job.cancel() }
+                guard !Task.isCancelled else { return }
+                if let size { self?.applyFolderSize(size, for: url) }
+            }
+            self?.isCalculatingFolderSizes = false
+        }
+    }
+
+    private func cancelFolderSizes() {
+        folderSizeTask?.cancel()
+        folderSizeTask = nil
+        folderSizes.removeAll()
+        if isCalculatingFolderSizes { isCalculatingFolderSizes = false }
+    }
+
+    private func applyFolderSize(_ size: Int64, for url: URL) {
+        folderSizes[url] = size
+        stampFolderSizes(&allItems)
+        applySort()   // re-sort (sorting by size now sees it) and refresh the visible slice
+    }
+
+    private func stampFolderSizes(_ list: inout [FileItem]) {
+        guard !folderSizes.isEmpty else { return }
+        for index in list.indices {
+            if let size = folderSizes[list[index].url] {
+                list[index].size = size
+                list[index].isFolderSizeCalculated = true
+            }
+        }
+    }
 
     // MARK: Select by pattern
 
@@ -187,6 +242,7 @@ final class PaneViewModel: ObservableObject, Identifiable {
         }
         currentURL = url
         selection.removeAll()
+        cancelFolderSizes()
         // The bar stays open but its text is reset: a filter carried into a new folder
         // would show an almost empty list there for no obvious reason.
         if !filterQuery.isEmpty { filterQuery = "" }
@@ -272,6 +328,7 @@ final class PaneViewModel: ObservableObject, Identifiable {
             // /System/Applications lives there (see its comment).
             let urls = try FileItem.contentURLs(in: currentURL, includeHidden: showHidden)
             var newItems = urls.compactMap(FileItem.init)
+            stampFolderSizes(&newItems)
             newItems.sort(by: isBefore)
             // De-dup: the recursive FSEvents stream on currentURL often fires for changes
             // deep in the subtree that don't affect the listing itself — then newItems is

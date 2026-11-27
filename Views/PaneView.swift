@@ -1096,14 +1096,17 @@ struct PaneView: View {
                     // only folders there is no number to show at all ("Zero KB" read
                     // as if the folders were empty).
                     let visible = model.selectedItems
-                    if visible.allSatisfy(\.isNavigableFolder) {
+                    if visible.allSatisfy({ $0.isNavigableFolder && !$0.isFolderSizeCalculated }) {
                         Text("· selected: \(model.selection.count)")
                     } else {
                         let size = ByteCountFormatter.string(fromByteCount: model.selectedSize, countStyle: .file)
-                        let suffix = model.selectionContainsFolders ? " (folders not counted)" : ""
+                        let suffix = model.selectionContainsUncountedFolders ? " (folders not counted)" : ""
                         Text("· selected: \(model.selection.count) · \(size)\(suffix)")
                     }
                 }
+            }
+            if model.isCalculatingFolderSizes {
+                Text("· calculating sizes…").foregroundStyle(.secondary)
             }
             Spacer()
             if let free = model.freeSpace {

@@ -413,6 +413,7 @@ final class MainMenuController: NSObject, NSMenuDelegate {
         menu.addItem(command(.deleteImmediately) { [weak self] in self?.appState?.deletePermanently() })
         menu.addItem(.separator())
         menu.addItem(command(.refresh) { [weak self] in self?.appState?.refreshActive() })
+        menu.addItem(command(.calculateFolderSizes) { [weak self] in self?.appState?.activePane.calculateFolderSizes() })
         menu.addItem(.separator())
         menu.addItem(command(.addToFavorites) { [weak self] in self?.appState?.addSelectionToFavorites() })
         menu.addItem(command(.addToWorkspace) { [weak self] in
