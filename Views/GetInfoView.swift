@@ -8,8 +8,13 @@ struct GetInfoView: View {
     let url: URL
 
     var body: some View {
-        ItemDetailsView(url: url, thumbnailSize: 128, showsPath: true)
-            .frame(width: 340)
+        ScrollView {
+            ItemDetailsView(url: url, thumbnailSize: 128, showsPath: true)
+            // Only in the Get Info window: the info panel is for looking, not editing.
+            PermissionsSection(url: url)
+                .padding([.horizontal, .bottom], 20)
+        }
+        .frame(width: 340)
     }
 }
 
@@ -148,5 +153,139 @@ struct ItemDetailsView: View {
         var values = URLResourceValues()
         values.isUserImmutable = locked
         try? mutableURL.setResourceValues(values)
+    }
+}
+
+/// Get Info ▸ Permissions: read/write/execute for owner, group and everyone, as
+/// checkboxes, plus Apply to Enclosed Items for folders (the bit math and the recursive
+/// mode are in Models/Permissions.swift). A change the user isn't allowed to make is
+/// retried behind the administrator password, the same path file operations use.
+/// Ownership is shown, not edited: changing it always needs root, and getting it wrong
+/// locks people out of their own files.
+struct PermissionsSection: View {
+    let url: URL
+    @State private var info: Permissions.Info?
+    @State private var message: String?
+    @State private var confirmingEnclosed = false
+
+    var body: some View {
+        // Not a bare Group: with nothing loaded yet it would be empty, and SwiftUI drops
+        // modifiers on an empty view — .task never ran, so nothing ever loaded.
+        VStack(spacing: 0) {
+            Color.clear.frame(height: 0)
+            if let info {
+                content(info)
+            }
+        }
+        .task(id: url) { reload() }
+    }
+
+    private func content(_ info: Permissions.Info) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Divider()
+            HStack {
+                Text("Permissions").font(.headline)
+                Spacer()
+                Text(Permissions.string(info.mode))
+                    .font(.caption.monospaced())
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+            }
+            Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 6) {
+                GridRow {
+                    Text("")
+                    Text("Read").font(.caption).foregroundStyle(.secondary)
+                    Text("Write").font(.caption).foregroundStyle(.secondary)
+                    // For a folder the execute bit means "may open it".
+                    Text(info.isFolder ? "Open" : "Execute").font(.caption).foregroundStyle(.secondary)
+                }
+                ForEach(Permissions.Who.allCases) { who in
+                    GridRow {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text(title(who))
+                            if who != .everyone {
+                                Text(who == .owner ? info.owner : info.group)
+                                    .font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                        ForEach(Permissions.Access.allCases) { access in
+                            Toggle("", isOn: binding(info, who, access))
+                                .labelsHidden()
+                                .toggleStyle(.checkbox)
+                        }
+                    }
+                }
+            }
+            .font(.callout)
+            if info.isFolder {
+                Button("Apply to Enclosed Items…") { confirmingEnclosed = true }
+                    .help("Give everything inside this folder the same read/write access; subfolders can be opened, files keep their own execute setting")
+            }
+            if let message {
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .alert("Apply these permissions to everything inside “\(url.lastPathComponent)”?", isPresented: $confirmingEnclosed) {
+            Button("Apply") { applyToEnclosed(info) }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Every file and folder inside gets \(Permissions.enclosedItemsMode(for: info.mode)). Files that are executable stay executable; others don't become so. This can't be undone with ⌘Z.")
+        }
+    }
+
+    private func title(_ who: Permissions.Who) -> String {
+        switch who { case .owner: return "Owner"; case .group: return "Group"; case .everyone: return "Everyone" }
+    }
+
+    private func binding(_ info: Permissions.Info, _ who: Permissions.Who, _ access: Permissions.Access) -> Binding<Bool> {
+        Binding(
+            get: { Permissions.has(info.mode, who, access) },
+            set: { on in apply(Permissions.setting(info.mode, who, access, on)) }
+        )
+    }
+
+    private func reload() {
+        info = Permissions.read(url)
+    }
+
+    @MainActor
+    private func apply(_ mode: UInt16) {
+        message = nil
+        do {
+            try Permissions.write(mode, to: url)
+        } catch where FileOperationService.isPermissionError(error) {
+            let path = url.resolvingSymlinksInPath().path
+            switch FileOperationService.runWithAdministratorPrivileges(["/bin/chmod", String(mode, radix: 8), path]) {
+            case .success, .cancelled: break
+            case .failed(let text): message = text
+            }
+        } catch {
+            message = error.localizedDescription
+        }
+        reload()
+    }
+
+    @MainActor
+    private func applyToEnclosed(_ info: Permissions.Info) {
+        message = nil
+        let mode = Permissions.enclosedItemsMode(for: info.mode)
+        if let error = Permissions.applyToEnclosed(url, mode: mode) {
+            // chmod -R carries on past items it may not change; offer to redo it as admin.
+            let alert = NSAlert()
+            alert.messageText = "Some items couldn't be changed"
+            alert.informativeText = error.count > 600 ? String(error.prefix(600)) + "…" : error
+            alert.addButton(withTitle: "Try as Administrator")
+            alert.addButton(withTitle: "Cancel")
+            if alert.runModal() == .alertFirstButtonReturn {
+                let path = url.resolvingSymlinksInPath().path
+                if case .failed(let text) = FileOperationService.runWithAdministratorPrivileges(["/bin/chmod", "-R", mode, path]) {
+                    message = text
+                }
+            }
+        }
+        reload()
     }
 }

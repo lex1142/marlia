@@ -15,7 +15,7 @@ SOURCES=(
   App/MarliaApp.swift App/MainMenu.swift App/WindowControllers.swift App/main.swift
   Models/FileItem.swift Models/WindowStateStore.swift Models/KeyboardShortcuts.swift
   Models/SortPreferencesStore.swift Models/FileClipboard.swift Models/Theme.swift
-  Models/BatchRenamePlan.swift Models/UndoHistory.swift Models/FuzzyMatch.swift Models/FolderComparison.swift Models/PathInput.swift Models/FolderSize.swift Models/LargestFiles.swift Models/FolderSync.swift Models/TabSets.swift Models/UserCommands.swift
+  Models/BatchRenamePlan.swift Models/UndoHistory.swift Models/FuzzyMatch.swift Models/FolderComparison.swift Models/PathInput.swift Models/FolderSize.swift Models/LargestFiles.swift Models/FolderSync.swift Models/TabSets.swift Models/Permissions.swift Models/UserCommands.swift
   ViewModels/PaneViewModel.swift
   Views/ContentView.swift Views/PaneView.swift Views/PaneView+Columns.swift
   Views/PaneInteractionViews.swift Views/Sidebar.swift Views/GetInfoView.swift Views/HelpView.swift

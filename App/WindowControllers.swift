@@ -406,7 +406,7 @@ final class AppWindowManager {
     func openGetInfo(_ url: URL) {
         if let w = getInfoControllers[url]?.window { w.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true); return }
         let c = AuxWindowController(title: url.lastPathComponent, content: GetInfoView(url: url),
-                                    contentSize: NSSize(width: 340, height: 420), resizable: false)
+                                    contentSize: NSSize(width: 340, height: 680), resizable: false)
         c.onClose = { [weak self] in self?.getInfoControllers[url] = nil }
         getInfoControllers[url] = c
         c.showAndFocus()
