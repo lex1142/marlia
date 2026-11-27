@@ -221,6 +221,8 @@ final class MainMenuController: NSObject, NSMenuDelegate {
             guard self?.forwardEditingAction(#selector(NSText.copy(_:))) != true else { return }
             self?.appState?.copySelection()
         })
+        menu.addItem(command(.addToCut) { [weak self] in self?.appState?.addSelectionToClipboard(mode: .cut) })
+        menu.addItem(command(.addToClipboard) { [weak self] in self?.appState?.addSelectionToClipboard(mode: .copy) })
         menu.addItem(command(.paste) { [weak self] in
             guard self?.forwardEditingAction(#selector(NSText.paste(_:))) != true else { return }
             self?.appState?.pasteIntoActive()

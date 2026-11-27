@@ -1265,6 +1265,9 @@ struct PaneView: View {
                 Text("· calculating sizes…").foregroundStyle(.secondary)
             }
             Spacer()
+            if clipboard.isCollecting {
+                collectedBadge
+            }
             if let free = model.freeSpace {
                 Text("\(ByteCountFormatter.string(fromByteCount: free, countStyle: .file)) free")
                     .foregroundStyle(.secondary)
@@ -1273,6 +1276,26 @@ struct PaneView: View {
         .font(.caption)
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
+    }
+}
+
+extension PaneView {
+    /// "N collected" while Add to Clipboard / Add to Cut is gathering items, with × to
+    /// drop the set. Same badge in both panes — the clipboard is app-wide.
+    var collectedBadge: some View {
+        HStack(spacing: 3) {
+            Image(systemName: clipboard.mode == .cut ? "scissors" : "doc.on.clipboard")
+            Text("\(clipboard.urls.count) collected")
+            Button {
+                clipboard.clear()
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+            }
+            .buttonStyle(.borderless)
+            .help("Empty the clipboard")
+        }
+        .foregroundStyle(.secondary)
+        .help(clipboard.mode == .cut ? "⌘V moves these here" : "⌘V copies these here")
     }
 }
 

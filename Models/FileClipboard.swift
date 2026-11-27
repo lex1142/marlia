@@ -19,6 +19,12 @@ final class FileClipboard: ObservableObject {
 
     @Published private(set) var mode: ClipboardMode?
     @Published private(set) var urls: Set<URL> = []
+    /// Items gathered with Add to Clipboard / Add to Cut (Path Finder's Drop Stack): the
+    /// panes show a "N collected" badge while this is on. Ends with a paste or a new
+    /// plain copy/cut.
+    @Published private(set) var isCollecting = false
+    /// In the order they were added, for the pasteboard (a Set loses it).
+    private var ordered: [URL] = []
 
     /// The pasteboard's changeCount at the time of our write. Needed to tell "the
     /// pasteboard still holds our data" from "someone put their own on top" — after a
@@ -34,8 +40,30 @@ final class FileClipboard: ObservableObject {
         pasteboard.writeObjects(urls as [NSURL])
         changeCount = pasteboard.changeCount
         self.urls = Set(urls)
+        self.ordered = urls
         self.mode = mode
+        isCollecting = false
     }
+
+    /// Whether the pasteboard still holds what we put there (nobody copied anything since).
+    var isOurs: Bool { mode != nil && NSPasteboard.general.changeCount == changeCount }
+
+    /// Adds to what's already on the clipboard instead of replacing it, so files from
+    /// several folders can be gathered and pasted in one go. Copy plus cut makes the
+    /// whole set a copy: a paste must never move files that were only copied.
+    func add(_ new: [URL], mode newMode: ClipboardMode) {
+        guard isOurs, let current = mode else {
+            set(new, mode: newMode)
+            isCollecting = true
+            return
+        }
+        let combined = ordered + new.filter { !urls.contains($0) }
+        set(combined, mode: current == .cut && newMode == .cut ? .cut : .copy)
+        isCollecting = true
+    }
+
+    /// A paste "drops the stack": the badge goes, the items stay on the clipboard.
+    func endCollecting() { isCollecting = false }
 
     /// Whether a paste is currently pending as a move: it was a cut that went on the
     /// pasteboard, and nobody has overwritten the pasteboard since.
@@ -51,6 +79,8 @@ final class FileClipboard: ObservableObject {
     func clear() {
         mode = nil
         urls = []
+        ordered = []
+        isCollecting = false
         changeCount = -1
         NSPasteboard.general.clearContents()
     }

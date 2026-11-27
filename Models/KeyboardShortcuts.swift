@@ -135,6 +135,7 @@ enum AppCommand: String, CaseIterable, Codable {
     case newTab
     case undo, redo
     case copy, cut, paste, selectAll, duplicate
+    case addToClipboard, addToCut
     case copyToOtherPane, moveToOtherPane
     case moveToTrash, deleteImmediately
     case newFolder, newFile
@@ -186,6 +187,8 @@ enum AppCommand: String, CaseIterable, Codable {
         case .undo: return "Undo"
         case .redo: return "Redo"
         case .copy: return "Copy"
+        case .addToClipboard: return "Add to Clipboard"
+        case .addToCut: return "Add to Cut"
         case .cut: return "Cut"
         case .paste: return "Paste"
         case .selectAll: return "Select All"
@@ -258,7 +261,7 @@ enum AppCommand: String, CaseIterable, Codable {
              .quickLook, .showInFinder, .openInTerminal,
              .compress, .extractArchive, .viewArchiveContents:
             return .file
-        case .undo, .redo, .copy, .cut, .paste, .selectAll, .duplicate, .copyPath, .rename,
+        case .undo, .redo, .copy, .cut, .paste, .addToClipboard, .addToCut, .selectAll, .duplicate, .copyPath, .rename,
              .batchRename:
             return .edit
         case .zoomIn, .zoomOut, .actualSize, .toggleHiddenFiles,
@@ -302,6 +305,8 @@ enum AppCommand: String, CaseIterable, Codable {
         case .undo: return [Shortcut(keyCode: 6, modifiers: .command, character: "z")]
         case .redo: return [Shortcut(keyCode: 6, modifiers: [.command, .shift], character: "z")]
         case .copy: return [Shortcut(keyCode: 8, modifiers: .command, character: "c")]
+        case .addToClipboard: return [Shortcut(keyCode: 8, modifiers: [.command, .shift], character: "c")]
+        case .addToCut: return [Shortcut(keyCode: 7, modifiers: [.command, .shift], character: "x")]
         case .cut: return [Shortcut(keyCode: 7, modifiers: .command, character: "x")]
         case .paste: return [Shortcut(keyCode: 9, modifiers: .command, character: "v")]
         case .selectAll: return [Shortcut(keyCode: 0, modifiers: .command, character: "a")]

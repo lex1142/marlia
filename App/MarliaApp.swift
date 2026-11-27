@@ -343,14 +343,19 @@ final class AppState: ObservableObject {
     func copySelection(_ items: [FileItem]) { setClipboard(items, mode: .copy) }
     func cutSelection(_ items: [FileItem]) { setClipboard(items, mode: .cut) }
 
-    private func setClipboard(_ items: [FileItem], mode: ClipboardMode) {
+    /// Add to Clipboard (⇧⌘C) / Add to Cut (⇧⌘X): gather from several folders, paste once.
+    func addSelectionToClipboard(mode: ClipboardMode) {
+        setClipboard(activePane.selectedItems, mode: mode, append: true)
+    }
+
+    private func setClipboard(_ items: [FileItem], mode: ClipboardMode, append: Bool = false) {
         guard !items.isEmpty else { return }
         // Copying a symbolic link (e.g. from a Workspace) puts the real file on the
         // pasteboard, not the link itself — pasting elsewhere produces a real copy of
         // the contents. Cut deliberately doesn't do this: it must move the link
         // itself (rather than pulling the original out of its real location).
         let urls = mode == .copy ? items.map { $0.url.resolvingSymlinksInPath() } : items.map(\.url)
-        FileClipboard.shared.set(urls, mode: mode)
+        if append { FileClipboard.shared.add(urls, mode: mode) } else { FileClipboard.shared.set(urls, mode: mode) }
     }
 
     func selectAllInActive() {
@@ -509,7 +514,7 @@ final class AppState: ObservableObject {
         // The "cut" flag comes from the shared clipboard: it also checks that nobody
         // has put anything on top of our write since ⌘X.
         let isCut = FileClipboard.shared.isCutPending && Set(urls) == FileClipboard.shared.urls
-        if isCut { FileClipboard.shared.clear() }
+        if isCut { FileClipboard.shared.clear() } else { FileClipboard.shared.endCollecting() }
         transfer(items: items, to: pane.currentURL, mode: isCut ? .move : .copy) { [weak self] in
             pane.reload()
             if isCut { self?.activePane.reload(); self?.passivePane.reload() }
