@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Site pages are up to date with site/template.html
+        run: python3 site/build.py --check
+
       - name: Swift version
         run: swift --version
 

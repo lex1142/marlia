@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="zh-Hans" data-lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- seo:start (generated per language by site/build.py) -->
+<title>Marlia：免费的 Mac 双栏文件管理器，Total Commander 风格</title>
+<meta name="description" content="免费开源的 macOS 双栏文件管理器。F5 复制，F6 移动，Tab 切换栏。原生 AppKit，支持标签页、压缩包、工作区和主题。适用于 Apple 芯片，macOS 13.5+。">
+<link rel="canonical" href="https://marlia.app/zh/">
+<link rel="alternate" hreflang="en" href="https://marlia.app/">
+<link rel="alternate" hreflang="ru" href="https://marlia.app/ru/">
+<link rel="alternate" hreflang="zh-Hans" href="https://marlia.app/zh/">
+<link rel="alternate" hreflang="es" href="https://marlia.app/es/">
+<link rel="alternate" hreflang="ja" href="https://marlia.app/ja/">
+<link rel="alternate" hreflang="x-default" href="https://marlia.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Marlia">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="Marlia：免费的 Mac 双栏文件管理器，Total Commander 风格">
+<meta property="og:description" content="免费开源的 macOS 双栏文件管理器。F5 复制，F6 移动，Tab 切换栏。原生 AppKit，支持标签页、压缩包、工作区和主题。适用于 Apple 芯片，macOS 13.5+。">
+<meta property="og:url" content="https://marlia.app/zh/">
+<meta property="og:image" content="https://marlia.app/media/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="717">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Marlia：免费的 Mac 双栏文件管理器，Total Commander 风格">
+<meta name="twitter:description" content="免费开源的 macOS 双栏文件管理器。F5 复制，F6 移动，Tab 切换栏。原生 AppKit，支持标签页、压缩包、工作区和主题。适用于 Apple 芯片，macOS 13.5+。">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Marlia", "url": "https://marlia.app/zh/", "description": "免费开源的 macOS 双栏文件管理器。F5 复制，F6 移动，Tab 切换栏。原生 AppKit，支持标签页、压缩包、工作区和主题。适用于 Apple 芯片，macOS 13.5+。", "inLanguage": "zh-Hans", "applicationCategory": "UtilitiesApplication", "applicationSubCategory": "File manager", "operatingSystem": "macOS 13.5 or later", "processorRequirements": "Apple Silicon (arm64)", "softwareVersion": "1.2", "downloadUrl": "https://github.com/lex1142/marlia/releases/download/v1.2/Marlia-1.2.dmg", "fileSize": "3.4 MB", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "license": "https://www.gnu.org/licenses/gpl-3.0.html", "image": "https://marlia.app/media/og.jpg", "screenshot": "https://marlia.app/media/hero-light.webp", "sameAs": ["https://github.com/lex1142/marlia"]}</script>
+<!-- seo:end -->
+<meta name="theme-color" content="#f3f5fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" href="../marlia-icon.png">
+<link rel="apple-touch-icon" href="../marlia-icon.png">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<style>
+/* Layout: text column + full-width app shot, then a live replica of a Marlia window
+   (default System look), then a quiet two-column feature list. Fonts all cover Cyrillic;
+   CJK falls through to the system faces picked per language. */
+:root {
+  --paper: #f3f5fa;
+  --surface: #ffffff;
+  --ink: #0f1630;
+  --muted: #56607a;
+  --line: #d9deea;
+  --accent: #2342c8;
+  --accent-ink: #ffffff;
+  --mark: #f5c518;
+  --code-bg: #e8ecf6;
+
+  /* replica of Marlia's System theme (follows the page's light/dark, like the app follows macOS) */
+  --m-pane: #ffffff;
+  --m-chrome: #f5f5f7;
+  --m-title: #e9e9ec;
+  --m-text: #1d1d1f;
+  --m-sec: #86868b;
+  --m-sep: #dedee2;
+  --m-sel: #0a64d8;
+  --m-sel-text: #ffffff;
+  --m-sel-off: #dcdce0;
+  --m-folder: #4aa8f0;
+  --m-folder-tab: #3a95dc;
+  --m-doc: #ffffff;
+  --m-doc-line: #b9b9c0;
+  --m-seg: #e3e3e7;
+  --m-seg-on: #ffffff;
+  --only-light: block;
+  --only-dark: none;
+
+  --cjk: "Hiragino Sans", "PingFang SC", "Noto Sans JP", "Noto Sans SC";
+  --f-display: "Manrope", "Avenir Next", "Helvetica Neue", var(--cjk), Arial, sans-serif;
+  --f-body: "Onest", -apple-system, BlinkMacSystemFont, "Helvetica Neue", var(--cjk), Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, var(--cjk), monospace;
+  --f-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+
+  --step-0: 1rem;
+  --step-1: 1.2rem;
+  --step-2: 1.75rem;
+  --step-3: clamp(2.2rem, 5.2vw, 4rem);
+  --radius: 10px;
+}
+:root:lang(zh) { --cjk: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei"; }
+:root:lang(ja) { --cjk: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic"; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #0b1020;
+    --surface: #121a33;
+    --ink: #e8ecf7;
+    --muted: #9aa4bf;
+    --line: #243052;
+    --accent: #8197ff;
+    --accent-ink: #0b1020;
+    --code-bg: #18213f;
+    --m-pane: #1e1e1f;
+    --m-chrome: #2a2a2c;
+    --m-title: #333336;
+    --m-text: #ececee;
+    --m-sec: #98989d;
+    --m-sep: #3c3c3f;
+    --m-sel: #0a5ed7;
+    --m-sel-text: #ffffff;
+    --m-sel-off: #46464a;
+    --m-folder: #5ab4f2;
+    --m-folder-tab: #3f9ade;
+    --m-doc: #f2f2f4;
+    --m-doc-line: #9a9aa2;
+    --m-seg: #3a3a3d;
+    --m-seg-on: #636367;
+    --only-light: none;
+    --only-dark: block;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0b1020;
+  --surface: #121a33;
+  --ink: #e8ecf7;
+  --muted: #9aa4bf;
+  --line: #243052;
+  --accent: #8197ff;
+  --accent-ink: #0b1020;
+  --code-bg: #18213f;
+  --m-pane: #1e1e1f;
+  --m-chrome: #2a2a2c;
+  --m-title: #333336;
+  --m-text: #ececee;
+  --m-sec: #98989d;
+  --m-sep: #3c3c3f;
+  --m-sel: #0a5ed7;
+  --m-sel-text: #ffffff;
+  --m-sel-off: #46464a;
+  --m-folder: #5ab4f2;
+  --m-folder-tab: #3f9ade;
+  --m-doc: #f2f2f4;
+  --m-doc-line: #9a9aa2;
+  --m-seg: #3a3a3d;
+  --m-seg-on: #636367;
+  --only-light: none;
+  --only-dark: block;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, select:focus-visible, .demo:focus-visible {
+  outline: 3px solid var(--mark);
+  outline-offset: 3px;
+}
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.12; }
+h2 { font-size: var(--step-2); font-weight: 800; letter-spacing: -0.01em; }
+:lang(zh) h1, :lang(zh) h2, :lang(ja) h1, :lang(ja) h2 { letter-spacing: 0; line-height: 1.3; }
+:lang(ja) h1, :lang(ja) h2, :lang(ja) h3 { word-break: auto-phrase; }
+p { margin: 0; }
+.eyebrow {
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+kbd {
+  font-family: var(--f-mono);
+  font-size: 0.8em;
+  font-weight: 600;
+  display: inline-block;
+  min-width: 1.9em;
+  text-align: center;
+  padding: 0.1em 0.45em;
+  border: 1px solid var(--line);
+  border-bottom-width: 3px;
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
+
+/* ---------- header ---------- */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 16px 24px;
+  padding-block: 20px;
+}
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--f-display); font-weight: 800; font-size: 1.3rem;
+  color: var(--ink); text-decoration: none;
+  margin-right: auto;
+}
+.brand { gap: 8px; }
+.brand-icon { width: 40px; height: 40px; display: block; flex: none; margin-left: -4px; }
+.top nav { display: flex; gap: 22px; flex-wrap: wrap; }
+.top nav a { color: var(--muted); text-decoration: none; font-weight: 500; }
+.top nav a:hover { color: var(--ink); }
+
+.lang { position: relative; display: inline-flex; align-items: center; }
+.lang svg { position: absolute; pointer-events: none; color: var(--muted); }
+.lang .globe { left: 10px; width: 16px; height: 16px; }
+.lang .chev { right: 10px; width: 12px; height: 12px; }
+.lang select {
+  appearance: none; -webkit-appearance: none;
+  font: inherit; font-weight: 500; font-size: 0.92rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 30px 7px 32px;
+  cursor: pointer;
+}
+.lang select:hover { border-color: var(--muted); }
+
+/* ---------- hero ---------- */
+.hero { padding-block: 36px 28px; display: grid; gap: 26px; }
+.hero h1 { font-size: var(--step-3); font-weight: 800; letter-spacing: -0.025em; max-width: 17ch; }
+:lang(zh) .hero h1, :lang(ja) .hero h1 { max-width: 15em; }
+.lede { font-size: var(--step-1); color: var(--muted); max-width: 60ch; line-height: 1.55; }
+.lede strong { color: var(--ink); font-weight: 600; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch; }
+.btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 12px 22px;
+  border-radius: var(--radius);
+  font-weight: 600; font-size: 1rem;
+  text-decoration: none;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.btn-text { display: grid; gap: 1px; text-align: left; }
+.btn-label { white-space: nowrap; line-height: 1.3; }
+.btn small { font-family: var(--f-mono); font-weight: 400; font-size: 0.76rem; opacity: 0.85; white-space: nowrap; line-height: 1.3; }
+.btn-primary {
+  background: var(--accent); color: var(--accent-ink);
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--accent) 60%, #000);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 0 color-mix(in srgb, var(--accent) 60%, #000); }
+.btn-primary:active { transform: translateY(2px); box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 60%, #000); }
+.btn-ghost { color: var(--ink); border: 1px solid var(--line); background: var(--surface); }
+.btn-ghost:hover { border-color: var(--muted); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.meta { font-family: var(--f-mono); font-size: 0.8rem; color: var(--muted); }
+
+.only-light { display: var(--only-light); }
+.only-dark { display: var(--only-dark); }
+
+.shot {
+  margin: 8px 0 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 60px -30px rgba(15, 22, 48, 0.45);
+  background: var(--surface);
+}
+.shot img { width: 100%; height: auto; max-width: 100%; aspect-ratio: 2880 / 1720; }
+.shot-cap { margin-top: -12px; font-size: 0.85rem; color: var(--muted); }
+
+/* ---------- facts strip ---------- */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-block: 1px solid var(--line);
+  margin-block: 48px;
+}
+.fact { padding: 22px 20px 22px 0; display: grid; gap: 4px; align-content: start; }
+.fact + .fact { padding-left: 20px; border-left: 1px solid var(--line); }
+.fact b { font-family: var(--f-display); font-size: 1.35rem; font-weight: 800; white-space: nowrap; }
+.fact span { color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+
+/* ---------- sections ---------- */
+.section { padding-block: 24px 56px; display: grid; gap: 24px; }
+.section-head { display: grid; gap: 10px; max-width: 64ch; }
+.section-head p { color: var(--muted); }
+
+/* ---------- demo: a Marlia window, System theme ---------- */
+.demo {
+  font-family: var(--f-ui);
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--m-text);
+  background: var(--m-chrome);
+  border: 1px solid var(--m-sep);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 50px -28px rgba(15, 22, 48, 0.5);
+  outline: none;
+}
+.m-titlebar {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 14px;
+  background: var(--m-title);
+  border-bottom: 1px solid var(--m-sep);
+}
+.m-lights { display: flex; gap: 8px; flex: none; }
+.m-lights i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+.m-lights i:nth-child(1) { background: #ff5f57; }
+.m-lights i:nth-child(2) { background: #febc2e; }
+.m-lights i:nth-child(3) { background: #28c840; }
+.m-title { font-weight: 600; font-size: 14px; }
+.m-panes { display: grid; grid-template-columns: 1fr 1fr; }
+.m-pane { position: relative; min-width: 0; display: grid; grid-template-rows: auto auto 1fr auto; background: var(--m-pane); cursor: default; }
+.m-pane + .m-pane { border-left: 1px solid var(--m-sep); }
+.m-pane::before { content: ""; position: absolute; inset: 0 0 auto; height: 2px; background: transparent; }
+.m-pane.active::before { background: var(--m-sel); }
+.m-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  background: var(--m-chrome);
+  border-bottom: 1px solid var(--m-sep);
+  min-width: 0;
+}
+.m-nav { display: flex; gap: 6px; color: var(--m-sec); flex: none; }
+.m-nav svg { width: 14px; height: 14px; }
+.m-path { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--f-mono); font-size: 12.5px; }
+.m-path b { color: var(--m-sec); font-weight: 400; margin-inline: 3px; }
+.m-seg { display: flex; gap: 2px; background: var(--m-seg); border-radius: 6px; padding: 2px; flex: none; }
+.m-seg span { width: 26px; height: 20px; display: grid; place-items: center; border-radius: 4px; color: var(--m-sec); }
+.m-seg span.on { background: var(--m-seg-on); color: var(--m-text); box-shadow: 0 1px 1px rgba(0,0,0,.12); }
+.m-seg svg { width: 13px; height: 13px; }
+.m-head, .m-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 118px 64px;
+  gap: 10px;
+  padding: 0 12px;
+  align-items: center;
+}
+.m-head {
+  height: 26px;
+  color: var(--m-sec);
+  font-size: 12px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--m-sep);
+  background: var(--m-pane);
+}
+.m-head .sorted::after { content: " ⌃"; font-size: 10px; }
+.m-list { list-style: none; margin: 0; padding: 4px 6px; min-height: 216px; }
+.m-row { height: 26px; border-radius: 5px; padding: 0 6px; }
+.m-row .n { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.m-row .n span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-row .n svg { width: 16px; height: 16px; flex: none; }
+.m-row .d, .m-row .s { color: var(--m-sec); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.m-row.sel { background: var(--m-sel-off); }
+.m-pane.active .m-row.sel { background: var(--m-sel); color: var(--m-sel-text); }
+.m-pane.active .m-row.sel .d, .m-pane.active .m-row.sel .s { color: var(--m-sel-text); opacity: .85; }
+.m-row.fresh { animation: fresh 1s ease-out; }
+@keyframes fresh { from { background: color-mix(in srgb, var(--m-sel) 30%, transparent); } }
+.ic-folder .body { fill: var(--m-folder); }
+.ic-folder .tab { fill: var(--m-folder-tab); }
+.ic-doc .page { fill: var(--m-doc); stroke: var(--m-doc-line); }
+.ic-doc .lines { stroke: var(--m-doc-line); }
+.m-status {
+  display: flex; justify-content: space-between; gap: 8px;
+  padding: 5px 12px;
+  font-size: 11.5px;
+  border-top: 1px solid var(--m-sep);
+  background: var(--m-chrome);
+  white-space: nowrap;
+}
+.m-status span { overflow: hidden; text-overflow: ellipsis; }
+.m-status .free { color: var(--m-sec); flex: none; }
+
+.keys { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.key {
+  font: inherit; font-size: 0.92rem;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 5px 12px 5px 5px;
+  cursor: pointer;
+}
+.key:hover { border-color: var(--muted); }
+.key kbd { transition: background .12s ease, color .12s ease; }
+.key.pressed kbd { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.demo-log { margin-left: auto; color: var(--muted); font-size: 0.9rem; min-height: 1.4em; }
+.demo-hint { font-size: 0.9rem; color: var(--muted); max-width: 80ch; }
+
+/* ---------- features ---------- */
+.features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
+.feature {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 16px;
+  padding-block: 22px;
+  border-top: 1px solid var(--line);
+  align-items: baseline;
+}
+.feature h3 { font-size: 1.12rem; font-weight: 800; }
+.feature .tag { font-family: var(--f-mono); font-size: 0.78rem; color: var(--accent); white-space: nowrap; }
+.feature p { grid-column: 1 / -1; color: var(--muted); max-width: 54ch; }
+
+/* ---------- tour: video + feature shots ---------- */
+.tour-video {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 60px -30px rgba(15, 22, 48, 0.45);
+  background: var(--surface);
+}
+.tour-video video { width: 100%; height: auto; max-width: 100%; aspect-ratio: 1920 / 1146; }
+.gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 24px; }
+.gallery figure { margin: 0; display: grid; gap: 12px; align-content: start; }
+.gallery .frame {
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--code-bg);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 10px;
+}
+.gallery .frame img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 6px; }
+.gallery figcaption { display: grid; gap: 4px; }
+.gallery figcaption b { font-family: var(--f-display); font-weight: 800; font-size: 1.02rem; }
+.gallery figcaption span { color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+
+/* ---------- themes ---------- */
+.themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.theme {
+  border-radius: 10px;
+  padding: 12px;
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--line);
+}
+.theme .row { padding: 2px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.theme .label { margin-top: 6px; font-family: var(--f-body); font-weight: 600; font-size: 0.9rem; }
+.theme-system { background: var(--m-pane); color: var(--m-text); }
+.theme-system .sel { background: var(--m-sel); color: var(--m-sel-text); }
+
+/* ---------- install ---------- */
+.install { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 16px; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 2.2em 1fr; gap: 12px; }
+.steps li::before {
+  content: counter(s);
+  font-family: var(--f-display); font-weight: 800; font-size: 1.05rem;
+  width: 2em; height: 2em; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--accent); color: var(--accent-ink);
+}
+.note {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  display: grid;
+  gap: 12px;
+  font-size: 0.95rem;
+}
+.note h3 { font-size: 1.1rem; font-weight: 800; }
+.note p { color: var(--muted); }
+pre {
+  margin: 0;
+  background: var(--code-bg);
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  font-family: var(--f-mono);
+  font-size: 0.85rem;
+}
+
+/* ---------- privacy ---------- */
+.privacy { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; max-width: 72ch; color: var(--muted); }
+.privacy li::marker { color: var(--accent); }
+.privacy strong { color: var(--ink); font-weight: 600; }
+
+/* ---------- footer ---------- */
+.foot {
+  border-top: 1px solid var(--line);
+  padding-block: 28px 40px;
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px;
+  color: var(--muted); font-size: 0.9rem;
+}
+.foot nav { display: flex; gap: 20px; flex-wrap: wrap; }
+.foot .langs { gap: 14px; flex-basis: 100%; }
+.foot .langs a[aria-current] { color: var(--ink); text-decoration: none; font-weight: 600; }
+.foot a { color: var(--muted); }
+
+@media (max-width: 900px) {
+  .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fact:nth-child(3) { padding-left: 0; border-left: 0; }
+  .fact:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .features { grid-template-columns: 1fr; }
+  .install { grid-template-columns: 1fr; }
+  .top nav { display: none; }
+}
+@media (max-width: 760px) {
+  .m-panes { grid-template-columns: 1fr; }
+  .m-pane + .m-pane { border-left: 0; border-top: 1px solid var(--m-sep); }
+  .m-list { min-height: 0; }
+  .m-head, .m-row { grid-template-columns: minmax(0, 1fr) 64px; }
+  .m-head .d, .m-row .d { display: none; }
+  .demo-log { margin-left: 0; width: 100%; }
+}
+@media (max-width: 560px) {
+  .gallery { grid-template-columns: 1fr; }
+  .facts { grid-template-columns: 1fr; }
+  .fact, .fact + .fact, .fact:nth-child(3) { padding-left: 0; border-left: 0; }
+  .fact + .fact { border-top: 1px solid var(--line); }
+  .cta .btn { width: 100%; }
+  .m-seg { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-folder" viewBox="0 0 16 16"><g class="ic-folder"><path class="tab" d="M1.5 3.5a1 1 0 0 1 1-1h3.6l1.4 1.5h6a1 1 0 0 1 1 1V6h-13z"/><rect class="body" x="1.5" y="5" width="13" height="8.5" rx="1.2"/></g></symbol>
+  <symbol id="i-doc" viewBox="0 0 16 16"><g class="ic-doc"><path class="page" d="M3.5 1.5h6l3 3v10h-9z" stroke-width="1"/><path class="lines" d="M5.5 8h5M5.5 10h5M5.5 12h3" stroke-width="1"/></g></symbol>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#top" aria-label="Marlia">
+      <img class="brand-icon" src="../marlia-icon.png" alt="" width="40" height="40">
+      Marlia
+    </a>
+    <nav aria-label="Sections">
+      <a href="#tour" data-t="nav.tour">实际操作</a>
+      <a href="#demo" data-t="nav.demo">试用</a>
+      <a href="#features" data-t="nav.features">功能</a>
+      <a href="#install" data-t="nav.install">安装</a>
+      <a href="https://github.com/lex1142/marlia" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <label class="lang">
+      <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>
+      <select id="langSelect" aria-label="Language">
+        <option value="en">English</option>
+        <option value="ru">Русский</option>
+        <option value="zh" selected>简体中文</option>
+        <option value="es">Español</option>
+        <option value="ja">日本語</option>
+      </select>
+      <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+    </label>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <p class="eyebrow" data-t="hero.eyebrow">免费开源 · macOS 13.5+ · Apple 芯片</p>
+      <h1 data-h="hero.h1">为离不开键盘的人打造的双栏文件管理器</h1>
+      <p class="lede" data-h="hero.lede">Marlia 把 Total Commander 的工作方式带到了 Mac 上。按 <kbd>F5</kbd> 复制到另一栏，按 <kbd>F6</kbd> 移动，按 <kbd>Tab</kbd> 切换栏。它基于<strong>原生 AppKit 视图</strong>构建，即使文件夹里有成千上万个文件也依然流畅。</p>
+      <div class="cta">
+        <a class="btn btn-primary" data-dl href="https://github.com/lex1142/marlia/releases/download/v1.2/Marlia-1.2.dmg" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6 10 6 6 6-6"/><path d="M4 20h16"/></svg>
+          <span class="btn-text"><span class="btn-label" data-t="hero.dl">下载 macOS 版</span><small data-t="hero.dlmeta">v1.2 · DMG · 3.4 MB</small></span>
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/lex1142/marlia" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+          <span class="btn-label" data-t="hero.gh">在 GitHub 上查看</span>
+        </a>
+      </div>
+      <p class="meta"><span data-h="hero.meta">GPL-3.0 · 仅 ad-hoc 签名，参见<a href="#install">首次启动</a></span><span data-t="hero.uiEn"> · 应用界面为英文</span></p>
+
+      <figure class="shot" style="margin-inline:0">
+        <img class="only-light" src="../media/hero-light.webp" fetchpriority="high" data-alt="hero.alt" alt="系统主题下的 Marlia：左栏以列表显示里斯本的照片，选中了四张；右栏以缩略图显示京都的照片。" width="2880" height="1720">
+        <img class="only-dark" src="../media/hero-dark.webp" data-alt="hero.alt" alt="系统主题下的 Marlia：左栏以列表显示里斯本的照片，选中了四张；右栏以缩略图显示京都的照片。" width="2880" height="1720" loading="lazy">
+      </figure>
+      <p class="shot-cap" data-t="hero.cap">左侧列表，右侧图标，侧边栏汇集收藏、磁盘和工作区。</p>
+    </section>
+
+    <section class="facts" aria-label="At a glance">
+      <div class="fact"><b data-t="f1b">原生</b><span data-t="f1s">使用 AppKit 表格与网格，不是 Electron，也不是网页。</span></div>
+      <div class="fact"><b data-t="f2b">3.4 MB</b><span data-t="f2s">这就是完整下载，无需安装任何运行时。</span></div>
+      <div class="fact"><b data-t="f3b">50 步</b><span data-t="f3s">复制、移动、重命名和移到废纸篓都可撤销和重做。</span></div>
+      <div class="fact"><b data-t="f4b">免费</b><span data-t="f4s">GPL-3.0。无需账户，没有遥测，没有试用期。</span></div>
+    </section>
+
+    <section class="section" id="tour">
+      <div class="section-head">
+        <p class="eyebrow" data-t="tour.eyebrow">实际操作</p>
+        <h2 data-t="tour.h2">五张照片，一个按键</h2>
+        <p data-t="tour.p">在左侧选中文件，按 F5，它们就到了备份盘上。按 Tab 和 ⌘2 切换到另一栏，以缩略图查看。</p>
+      </div>
+      <div class="tour-video">
+        <video class="only-light" data-tour muted loop playsinline preload="none" poster="../media/tour-light-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。">
+          <source src="../media/tour-light.mp4" type="video/mp4">
+        </video>
+        <video class="only-dark" data-tour muted loop playsinline preload="none" poster="../media/tour-dark-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。">
+          <source src="../media/tour-dark.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="gallery">
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="../media/columns-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="../media/columns-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c1t">带预览的分栏</b><span data-t="c1p">Finder 式分栏，选中的文件夹会在右侧展开。</span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="../media/rename-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="../media/rename-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c2t">批量重命名</b><span data-t="c2p">使用“Lisbon 2026 – ##”这样的模式，实时预览每个新名称。</span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="../media/conflict-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="../media/conflict-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c3t">同名冲突</b><span data-t="c3p">跳过、替换或保留两者，可只针对当前文件，也可应用到全部。</span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="../media/progress-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="../media/progress-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c4t">后台复制</b><span data-t="c4p">大文件复制在后台进行，随时可以暂停或取消。</span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="../media/workspace-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="../media/workspace-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c5t">工作区</b><span data-t="c5p">一个链接文件夹，收纳来自任何位置的文件，不移动任何东西。</span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="../media/search-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="../media/search-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c6t">递归搜索</b><span data-t="c6p">按名称、子串或正则表达式搜索整个文件夹树。</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="demo">
+      <div class="section-head">
+        <p class="eyebrow" data-t="demo.eyebrow">动手试试</p>
+        <h2 data-t="demo.h2">双栏操作，一键一步</h2>
+        <p data-t="demo.p">点击一栏后用键盘操作，或点击下面的按键。选中文件，按一个键，它就会出现在另一栏里。这就是 Marlia 默认的“系统”外观。</p>
+      </div>
+
+      <div class="demo" id="demoBox" tabindex="0" data-aria="demo.aria" aria-label="交互演示。方向键选择，Tab 切换栏，F5 复制，F6 移动。">
+        <div class="m-titlebar">
+          <div class="m-lights" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="m-title" id="mTitle">Trip</span>
+        </div>
+        <div class="m-panes">
+          <div class="m-pane" id="paneL" data-side="L">
+            <div class="m-bar">
+              <div class="m-nav" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 3 5 8l5 5"/></svg>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 3 5 5-5 5"/></svg>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg>
+              </div>
+              <div class="m-path"><b>/</b>Users<b>/</b>demo<b>/</b>Pictures<b>/</b>Trip</div>
+              <div class="m-seg" aria-hidden="true">
+                <span class="on"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 4h9M5 8h9M5 12h9"/><circle cx="2" cy="4" r=".6" fill="currentColor"/><circle cx="2" cy="8" r=".6" fill="currentColor"/><circle cx="2" cy="12" r=".6" fill="currentColor"/></svg></span>
+                <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></span>
+                <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M6 2.5v11M10 2.5v11"/></svg></span>
+              </div>
+            </div>
+            <div class="m-head"><span class="sorted">Name</span><span class="d">Date Modified</span><span>Size</span></div>
+            <ul class="m-list"></ul>
+            <div class="m-status"><span class="cnt"></span><span class="free">98.9 GB free</span></div>
+          </div>
+          <div class="m-pane" id="paneR" data-side="R">
+            <div class="m-bar">
+              <div class="m-nav" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 3 5 8l5 5"/></svg>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 3 5 5-5 5"/></svg>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg>
+              </div>
+              <div class="m-path"><b>/</b>Users<b>/</b>demo<b>/</b>Desktop<b>/</b>Album</div>
+              <div class="m-seg" aria-hidden="true">
+                <span class="on"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 4h9M5 8h9M5 12h9"/><circle cx="2" cy="4" r=".6" fill="currentColor"/><circle cx="2" cy="8" r=".6" fill="currentColor"/><circle cx="2" cy="12" r=".6" fill="currentColor"/></svg></span>
+                <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></span>
+                <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M6 2.5v11M10 2.5v11"/></svg></span>
+              </div>
+            </div>
+            <div class="m-head"><span class="sorted">Name</span><span class="d">Date Modified</span><span>Size</span></div>
+            <ul class="m-list"></ul>
+            <div class="m-status"><span class="cnt"></span><span class="free">98.9 GB free</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="keys">
+        <button class="key" type="button" data-k="ArrowUp" id="kUp"><kbd>↑</kbd><span data-t="k.up">上</span></button>
+        <button class="key" type="button" data-k="ArrowDown" id="kDown"><kbd>↓</kbd><span data-t="k.down">下</span></button>
+        <button class="key" type="button" data-k="Tab" id="kTab"><kbd>Tab</kbd><span data-t="k.switch">切换</span></button>
+        <button class="key" type="button" data-k="F5" id="kF5"><kbd>F5</kbd><span data-t="k.copy">复制</span></button>
+        <button class="key" type="button" data-k="F6" id="kF6"><kbd>F6</kbd><span data-t="k.move">移动</span></button>
+        <button class="key" type="button" data-k="reset" id="kReset"><kbd>↺</kbd><span data-t="k.reset">重置</span></button>
+        <span class="demo-log" id="demoLog" aria-live="polite"></span>
+      </div>
+      <p class="demo-hint" data-t="demo.hint">在应用中，F5 和 F6 在后台运行，进度面板可暂停或取消；遇到同名文件时，可选择替换、跳过或保留两者。</p>
+    </section>
+
+    <section class="section" id="features">
+      <div class="section-head">
+        <p class="eyebrow" data-t="feat.eyebrow">功能</p>
+        <h2 data-t="feat.h2">文件管理器该有的功能，全都不用离开键盘</h2>
+      </div>
+      <div class="features">
+        <div class="feature"><h3 data-t="ft1h">双栏、标签页、三种视图</h3><span class="tag">Tab · ⌘1 ⌘2 ⌘3</span><p data-h="ft1p">列表、图标，以及带预览栏的 Finder 式分栏。每一栏有独立的历史记录，每个文件夹都会记住你的排序方式。</p></div>
+        <div class="feature"><h3 data-t="ft2h">Total Commander 式操作</h3><span class="tag">F5 · F6</span><p data-h="ft2p">复制、移动到另一栏，输入名称快速定位，按 <code>*.jpg</code> 这样的模式选择，反选。</p></div>
+        <div class="feature"><h3 data-t="ft3h">后台文件操作</h3><span class="tag">⌘Z · ⇧⌘Z</span><p data-h="ft3p">复制、移动、创建副本、移到废纸篓和重命名都在后台运行，可暂停或取消。批量重命名会实时预览每个新名称。</p></div>
+        <div class="feature"><h3 data-t="ft4h">压缩包</h3><span class="tag">zip · tar.gz/bz2/xz</span><p data-h="ft4p">使用系统工具创建、解压和浏览压缩包，支持带密码的 ZIP。解压时会防范 zip-slip 路径。</p></div>
+        <div class="feature"><h3 data-t="ft5h">工作区</h3><span class="tag">symlinks</span><p data-h="ft5p">把分散在磁盘各处的文件汇集到一个链接文件夹中。不会复制或移动任何文件，删除项目只会删除链接。</p></div>
+        <div class="feature"><h3 data-t="ft6h">搜索、筛选、预览</h3><span class="tag">⌘F · ⌥⌘F · Space</span><p data-h="ft6p">按子串或正则表达式递归搜索，即时筛选栏，按空格键快速查看，显示简介和实时信息面板。</p></div>
+        <div class="feature"><h3 data-t="ft7h">融入 macOS</h3><span class="tag">Finder · AirDrop · SMB</span><p data-h="ft7p">与 Finder 互相拖放，颜色标签，AirDrop，在终端中打开，连接 SMB 共享，推出磁盘，直接从 .dmg 安装应用。</p></div>
+        <div class="feature"><h3 data-t="ft8h">自定义快捷键</h3><span class="tag">⌘, · ⌘?</span><p data-h="ft8p">所有快捷键都可以在设置中修改。收藏 1 到 9 对应 <kbd>⌥⌘1</kbd> 到 <kbd>⌥⌘9</kbd>，完整列表见帮助。</p></div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="themes-h">
+      <div class="section-head">
+        <p class="eyebrow" data-t="th.eyebrow">主题</p>
+        <h2 id="themes-h" data-t="th.h2">七种主题，均经过对比度检查</h2>
+        <p data-t="th.p">每套配色中，文件名在面板背景和选中高亮上的对比度都不低于 4.5:1。</p>
+      </div>
+      <div class="themes">
+        <div class="theme theme-system"><div class="row">Documents</div><div class="row sel">report.pdf</div><div class="row">notes.md</div><div class="label" data-t="th.system">系统</div></div>
+        <div class="theme" style="background:#282a36;color:#f8f8f2;border-color:#282a36"><div class="row">Documents</div><div class="row" style="background:#44475a">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#bd93f9">Dracula</div></div>
+        <div class="theme" style="background:#282828;color:#ebdbb2;border-color:#282828"><div class="row">Documents</div><div class="row" style="background:#504945">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#fe8019">Gruvbox Dark</div></div>
+        <div class="theme" style="background:#2e3440;color:#d8dee9;border-color:#2e3440"><div class="row">Documents</div><div class="row" style="background:#434c5e">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#88c0d0">Nord</div></div>
+        <div class="theme" style="background:#002b36;color:#eee8d5;border-color:#002b36"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.4)">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#268bd2">Solarized Dark</div></div>
+        <div class="theme" style="background:#fdf6e3;color:#073642;border-color:#eee8d5"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.35)">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#1f6fa8">Solarized Light</div></div>
+        <div class="theme" style="background:linear-gradient(135deg,#fdf6e3 50%,#002b36 50%);color:#586e75;border-color:#eee8d5"><div class="row" style="background:rgba(253,246,227,.85)" data-t="th.auto1">跟随系统</div><div class="row" style="background:rgba(38,139,210,.4);color:#073642">report.pdf</div><div class="row" style="background:rgba(0,43,54,.85);color:#eee8d5" data-t="th.auto2">浅色 ↔ 深色</div><div class="label" style="color:#268bd2;background:rgba(0,43,54,.85);padding:2px 6px;border-radius:4px;justify-self:start">Solarized (Auto)</div></div>
+      </div>
+    </section>
+
+    <section class="section" id="install">
+      <div class="section-head">
+        <p class="eyebrow" data-t="in.eyebrow">安装</p>
+        <h2 data-t="in.h2">一分钟就能用起来</h2>
+      </div>
+      <div class="install">
+        <ol class="steps">
+          <li><div><b data-t="s1b">下载磁盘映像。</b><br><span data-h="s1t"><a href="https://github.com/lex1142/marlia/releases/download/v1.2/Marlia-1.2.dmg" target="_blank" rel="noopener">Marlia-1.2.dmg</a>，或从 <a href="https://github.com/lex1142/marlia/releases" target="_blank" rel="noopener">Releases</a> 获取任意版本。</span></div></li>
+          <li><div><b data-t="s2b">把 Marlia 拖到“应用程序”。</b><br><span data-t="s2t">映像中应用和“应用程序”快捷方式并排放着。</span></div></li>
+          <li><div><b data-t="s3b">首次手动打开。</b><br><span data-t="s3t">右键点按 Marlia.app 并选择“打开”。在 macOS 15 及更高版本中，前往“系统设置”→“隐私与安全性”，点按“仍要打开”。</span></div></li>
+          <li><div><b data-t="s4b">可选：授予“完全磁盘访问权限”。</b><br><span data-t="s4t">这样打开“桌面”“文稿”和“下载”时就不会反复弹出提示。</span></div></li>
+        </ol>
+        <aside class="note">
+          <h3 data-t="note.h">为什么 macOS 会先拦一下</h3>
+          <p data-t="note.p1">Marlia 仅做了 ad-hoc 签名，没有 Apple Developer ID，所以首次启动时会被 Gatekeeper 拦下。如果 macOS 提示应用“已损坏，无法打开”（通过浏览器下载或 AirDrop 后常见），请清除隔离标记：</p>
+          <pre><code>xattr -cr /Applications/Marlia.app</code></pre>
+          <p data-h="note.p2">想自己编译？没有 Xcode 工程，只需一个脚本：<code>./build.sh --run</code>。</p>
+        </aside>
+      </div>
+    </section>
+    <section class="section" id="privacy" aria-labelledby="privacy-h">
+      <div class="section-head">
+        <h2 id="privacy-h" data-t="priv.h2">隐私</h2>
+      </div>
+      <ul class="privacy">
+        <li data-h="priv.1"><strong>Marlia 应用本身不会向任何地方发送数据：</strong>没有统计分析，没有崩溃报告，也不检查更新。只有在你主动要求时（例如连接 SMB 服务器）才会访问网络。</li>
+        <li data-h="priv.2">本网站不使用 Cookie、统计分析或跟踪。字体和图片都由本网站自身提供。</li>
+        <li data-h="priv.3">你选择的语言保存在浏览器的本地存储中，不会发送到任何地方。</li>
+        <li data-h="priv.4">为显示最新版本，页面每次访问时会向 GitHub API 查询一次 Marlia 的版本发布信息，GitHub 会因此获得你的 IP 地址。</li>
+        <li data-h="priv.5">本网站托管在 GitHub Pages 上。与任何网站托管服务一样，GitHub 会记录访问请求，包括 IP 地址。详见 <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub 隐私声明</a>。</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span data-t="foot.lic">Marlia 是基于 GNU GPL v3.0 的自由软件。</span>
+    <nav aria-label="Links">
+      <a href="https://github.com/lex1142/marlia" target="_blank" rel="noopener" data-t="foot.src">源代码</a>
+      <a href="https://github.com/lex1142/marlia/releases" target="_blank" rel="noopener" data-t="foot.rel">版本发布</a>
+      <a href="https://github.com/lex1142/marlia/issues" target="_blank" rel="noopener" data-t="foot.bug">报告问题</a>
+      <a href="mailto:hello@marlia.app">hello@marlia.app</a>
+    </nav>
+    <nav class="langs" data-aria="langs" aria-label="语言"><a href="../" hreflang="en" lang="en" data-lang-link="en">English</a><a href="../ru/" hreflang="ru" lang="ru" data-lang-link="ru">Русский</a><a href="../zh/" hreflang="zh-Hans" lang="zh-Hans" data-lang-link="zh" aria-current="page">简体中文</a><a href="../es/" hreflang="es" lang="es" data-lang-link="es">Español</a><a href="../ja/" hreflang="ja" lang="ja" data-lang-link="ja">日本語</a></nav>
+  </footer>
+</div>
+
+<script type="application/json" id="i18n">
+{"zh":{"nav.demo":"试用","nav.features":"功能","nav.install":"安装","lang":"语言","hero.eyebrow":"免费开源 · macOS 13.5+ · Apple 芯片","hero.h1":"为离不开键盘的人打造的双栏文件管理器","hero.lede":"Marlia 把 Total Commander 的工作方式带到了 Mac 上。按 <kbd>F5<\/kbd> 复制到另一栏，按 <kbd>F6<\/kbd> 移动，按 <kbd>Tab<\/kbd> 切换栏。它基于<strong>原生 AppKit 视图<\/strong>构建，即使文件夹里有成千上万个文件也依然流畅。","hero.dl":"下载 macOS 版","hero.dlmeta":"v{ver} · DMG · {size}","hero.gh":"在 GitHub 上查看","hero.meta":"GPL-3.0 · 仅 ad-hoc 签名，参见<a href=\"#install\">首次启动<\/a>","hero.uiEn":" · 应用界面为英文","f1b":"原生","f1s":"使用 AppKit 表格与网格，不是 Electron，也不是网页。","f2b":"{size}","f2s":"这就是完整下载，无需安装任何运行时。","f3b":"50 步","f3s":"复制、移动、重命名和移到废纸篓都可撤销和重做。","f4b":"免费","f4s":"GPL-3.0。无需账户，没有遥测，没有试用期。","demo.eyebrow":"动手试试","demo.h2":"双栏操作，一键一步","demo.p":"点击一栏后用键盘操作，或点击下面的按键。选中文件，按一个键，它就会出现在另一栏里。这就是 Marlia 默认的“系统”外观。","demo.aria":"交互演示。方向键选择，Tab 切换栏，F5 复制，F6 移动。","k.up":"上","k.down":"下","k.switch":"切换","k.copy":"复制","k.move":"移动","k.reset":"重置","demo.hint":"在应用中，F5 和 F6 在后台运行，进度面板可暂停或取消；遇到同名文件时，可选择替换、跳过或保留两者。","log.ready":"就绪。","log.L":"当前：左栏。","log.R":"当前：右栏。","log.copied":"已复制 {n} 到 {p}。","log.moved":"已移动 {n} 到 {p}。","log.kept":"目标中已有 {n}，两者都保留，新文件名为 {m}。","log.pick":"请先选择一个文件。此演示中文件夹不能移动。","feat.eyebrow":"功能","feat.h2":"文件管理器该有的功能，全都不用离开键盘","ft1h":"双栏、标签页、三种视图","ft1p":"列表、图标，以及带预览栏的 Finder 式分栏。每一栏有独立的历史记录，每个文件夹都会记住你的排序方式。","ft2h":"Total Commander 式操作","ft2p":"复制、移动到另一栏，输入名称快速定位，按 <code>*.jpg<\/code> 这样的模式选择，反选。","ft3h":"后台文件操作","ft3p":"复制、移动、创建副本、移到废纸篓和重命名都在后台运行，可暂停或取消。批量重命名会实时预览每个新名称。","ft4h":"压缩包","ft4p":"使用系统工具创建、解压和浏览压缩包，支持带密码的 ZIP。解压时会防范 zip-slip 路径。","ft5h":"工作区","ft5p":"把分散在磁盘各处的文件汇集到一个链接文件夹中。不会复制或移动任何文件，删除项目只会删除链接。","ft6h":"搜索、筛选、预览","ft6p":"按子串或正则表达式递归搜索，即时筛选栏，按空格键快速查看，显示简介和实时信息面板。","ft7h":"融入 macOS","ft7p":"与 Finder 互相拖放，颜色标签，AirDrop，在终端中打开，连接 SMB 共享，推出磁盘，直接从 .dmg 安装应用。","ft8h":"自定义快捷键","ft8p":"所有快捷键都可以在设置中修改。收藏 1 到 9 对应 <kbd>⌥⌘1<\/kbd> 到 <kbd>⌥⌘9<\/kbd>，完整列表见帮助。","th.eyebrow":"主题","th.h2":"七种主题，均经过对比度检查","th.p":"每套配色中，文件名在面板背景和选中高亮上的对比度都不低于 4.5:1。","th.system":"系统","th.auto1":"跟随系统","th.auto2":"浅色 ↔ 深色","in.eyebrow":"安装","in.h2":"一分钟就能用起来","s1b":"下载磁盘映像。","s1t":"{DMG}，或从 {REL} 获取任意版本。","s2b":"把 Marlia 拖到“应用程序”。","s2t":"映像中应用和“应用程序”快捷方式并排放着。","s3b":"首次手动打开。","s3t":"右键点按 Marlia.app 并选择“打开”。在 macOS 15 及更高版本中，前往“系统设置”→“隐私与安全性”，点按“仍要打开”。","s4b":"可选：授予“完全磁盘访问权限”。","s4t":"这样打开“桌面”“文稿”和“下载”时就不会反复弹出提示。","note.h":"为什么 macOS 会先拦一下","note.p1":"Marlia 仅做了 ad-hoc 签名，没有 Apple Developer ID，所以首次启动时会被 Gatekeeper 拦下。如果 macOS 提示应用“已损坏，无法打开”（通过浏览器下载或 AirDrop 后常见），请清除隔离标记：","note.p2":"想自己编译？没有 Xcode 工程，只需一个脚本：<code>./build.sh --run<\/code>。","foot.lic":"Marlia 是基于 GNU GPL v3.0 的自由软件。","foot.src":"源代码","foot.rel":"版本发布","foot.bug":"报告问题","nav.tour":"实际操作","hero.alt":"系统主题下的 Marlia：左栏以列表显示里斯本的照片，选中了四张；右栏以缩略图显示京都的照片。","hero.cap":"左侧列表，右侧图标，侧边栏汇集收藏、磁盘和工作区。","tour.eyebrow":"实际操作","tour.h2":"五张照片，一个按键","tour.p":"在左侧选中文件，按 F5，它们就到了备份盘上。按 Tab 和 ⌘2 切换到另一栏，以缩略图查看。","tour.aria":"视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。","c1t":"带预览的分栏","c1p":"Finder 式分栏，选中的文件夹会在右侧展开。","c2t":"批量重命名","c2p":"使用“Lisbon 2026 – ##”这样的模式，实时预览每个新名称。","c3t":"同名冲突","c3p":"跳过、替换或保留两者，可只针对当前文件，也可应用到全部。","c4t":"后台复制","c4p":"大文件复制在后台进行，随时可以暂停或取消。","c5t":"工作区","c5p":"一个链接文件夹，收纳来自任何位置的文件，不移动任何东西。","c6t":"递归搜索","c6p":"按名称、子串或正则表达式搜索整个文件夹树。","priv.h2":"隐私","priv.1":"<strong>Marlia 应用本身不会向任何地方发送数据：<\/strong>没有统计分析，没有崩溃报告，也不检查更新。只有在你主动要求时（例如连接 SMB 服务器）才会访问网络。","priv.2":"本网站不使用 Cookie、统计分析或跟踪。字体和图片都由本网站自身提供。","priv.3":"你选择的语言保存在浏览器的本地存储中，不会发送到任何地方。","priv.4":"为显示最新版本，页面每次访问时会向 GitHub API 查询一次 Marlia 的版本发布信息，GitHub 会因此获得你的 IP 地址。","priv.5":"本网站托管在 GitHub Pages 上。与任何网站托管服务一样，GitHub 会记录访问请求，包括 IP 地址。详见 <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub 隐私声明<\/a>。","meta.title":"Marlia：免费的 Mac 双栏文件管理器，Total Commander 风格","meta.desc":"免费开源的 macOS 双栏文件管理器。F5 复制，F6 移动，Tab 切换栏。原生 AppKit，支持标签页、压缩包、工作区和主题。适用于 Apple 芯片，macOS 13.5+。","langs":"语言"}}
+</script>
+
+<script>
+(() => {
+  /* Release shown on the page. These values are only the fallback: on load the page asks the
+     GitHub API for the latest release and replaces them, so a new release shows up without
+     editing this file. Bump them anyway when releasing, for visitors whose API call fails. */
+  const RELEASE = {
+    version: "1.2",
+    bytes: 3383947,
+    url: "https://github.com/lex1142/marlia/releases/download/v1.2/Marlia-1.2.dmg"
+  };
+  const REL_URL = "https://github.com/lex1142/marlia/releases";
+  const NB = "\u00a0";
+
+  /* Strings for this page. In site/template.html the block holds every language; each generated
+     page carries only its own (merged over English), see site/build.py. */
+  const T = JSON.parse(document.getElementById("i18n").textContent);
+
+  /* Non-breaking spaces where a line break would split a unit from its number or a product name. */
+  const glue = (s) => s
+    .replace(/(\d) (MB|МБ|KB|КБ|GB|ГБ)/g, "$1" + NB + "$2")
+    .replace(/macOS (\d)/g, "macOS" + NB + "$1")
+    .replace(/Apple (Silicon|シリコン|芯片)/g, "Apple" + NB + "$1")
+    .replace(/(\d) (steps|шагов|pasos|Schritte|ステップ|步)/g, "$1" + NB + "$2")
+    .replace(/Total Commander/g, "Total" + NB + "Commander")
+    .replace(/ (·|—)/g, NB + "$1")
+    .replace(/ (→)/g, NB + "$1");
+
+  const SITE_LANGS = ["en", "ru", "zh", "es", "ja"];
+  const PAGE_LANG = document.documentElement.dataset.lang || "en";
+  let lang = PAGE_LANG;
+
+  function tr(key) {
+    if (T[lang] && T[lang][key] != null) return T[lang][key];
+    return T.en && T.en[key] != null ? T.en[key] : "";
+  }
+
+  /* Decimal megabytes, like Finder; decimal comma and unit follow the language. */
+  function sizeText() {
+    const loc = lang === "zh" ? "zh-Hans" : lang;
+    const num = new Intl.NumberFormat(loc, { maximumFractionDigits: 1 }).format(RELEASE.bytes / 1e6);
+    return num + " " + (lang === "ru" ? "МБ" : "MB");
+  }
+  function fill(s) {
+    return s.replace(/\{ver\}/g, RELEASE.version).replace(/\{size\}/g, sizeText());
+  }
+
+  function applyLang(next) {
+    lang = T[next] ? next : PAGE_LANG;
+    document.documentElement.lang = lang === "zh" ? "zh-Hans" : lang;
+    document.querySelectorAll("[data-t]").forEach(el => { el.textContent = glue(fill(tr(el.dataset.t))); });
+    document.querySelectorAll("[data-h]").forEach(el => {
+      let html = glue(fill(tr(el.dataset.h)));
+      html = html.replace("{DMG}", '<a href="' + RELEASE.url + '" target="_blank" rel="noopener">Marlia-' + RELEASE.version + '.dmg</a>')
+                 .replace("{REL}", '<a href="' + REL_URL + '" target="_blank" rel="noopener">Releases</a>');
+      el.innerHTML = html;
+    });
+    document.querySelectorAll("[data-dl]").forEach(el => { el.href = RELEASE.url; });
+    document.querySelectorAll("[data-alt]").forEach(el => { el.alt = tr(el.dataset.alt); });
+    document.querySelectorAll("[data-aria]").forEach(el => { el.setAttribute("aria-label", tr(el.dataset.aria)); });
+    const sel = document.getElementById("langSelect");
+    sel.value = lang;
+    sel.setAttribute("aria-label", tr("lang"));
+    logKey(lastLog.key, lastLog.vars);
+  }
+
+  /* ---------- demo ---------- */
+  const PATHS = { L: "~/Pictures/Trip", R: "~/Desktop/Album" };
+  const TITLES = { L: "Trip", R: "Album" };
+  const initial = () => ({
+    L: [
+      { n: "Raw", dir: true, d: "11/20/26, 18:42" },
+      { n: "IMG_0412.heic", b: 2.8, d: "11/14/26, 09:31" },
+      { n: "IMG_0413.heic", b: 3.1, d: "11/14/26, 09:32" },
+      { n: "IMG_0420.jpg", b: 1.6, d: "11/14/26, 11:05" },
+      { n: "route.gpx", b: 0.092, d: "11/15/26, 20:17" },
+      { n: "sunset.mov", b: 48, d: "11/15/26, 17:54" },
+      { n: "notes.txt", b: 0.004, d: "11/16/26, 08:03" }
+    ],
+    R: [
+      { n: "cover.jpg", b: 0.74, d: "11/18/26, 13:20" },
+      { n: "README.md", b: 0.002, d: "11/18/26, 13:22" }
+    ],
+    cur: { L: 1, R: 0 },
+    side: "L"
+  });
+  let st = initial();
+  let fresh = null;
+  let lastLog = { key: "log.ready", vars: {} };
+
+  const box = document.getElementById("demoBox");
+  const logEl = document.getElementById("demoLog");
+  const title = document.getElementById("mTitle");
+  const panes = { L: document.getElementById("paneL"), R: document.getElementById("paneR") };
+
+  const fmt = (mb) => mb >= 1 ? (Math.round(mb * 10) / 10) + " MB" : Math.max(1, Math.round(mb * 1000)) + " KB";
+  const sortByName = (a, b) => a.n.localeCompare(b.n, "en", { sensitivity: "base", numeric: true });
+
+  function logKey(key, vars) {
+    lastLog = { key, vars: vars || {} };
+    let s = tr(key);
+    for (const k in lastLog.vars) s = s.replace("{" + k + "}", lastLog.vars[k]);
+    logEl.textContent = s;
+  }
+
+  function render() {
+    title.textContent = TITLES[st.side];
+    for (const side of ["L", "R"]) {
+      const p = panes[side];
+      p.classList.toggle("active", st.side === side);
+      const ul = p.querySelector(".m-list");
+      ul.innerHTML = "";
+      st[side].forEach((it, i) => {
+        const li = document.createElement("li");
+        li.className = "m-row" + (i === st.cur[side] ? " sel" : "") + (fresh && fresh.side === side && fresh.name === it.n ? " fresh" : "");
+        const n = document.createElement("span"); n.className = "n";
+        n.innerHTML = '<svg aria-hidden="true"><use href="#' + (it.dir ? "i-folder" : "i-doc") + '"/></svg>';
+        const nm = document.createElement("span"); nm.textContent = it.n; n.append(nm);
+        const d = document.createElement("span"); d.className = "d"; d.textContent = it.d;
+        const s = document.createElement("span"); s.className = "s"; s.textContent = it.dir ? "--" : fmt(it.b);
+        li.append(n, d, s);
+        li.addEventListener("click", () => { st.side = side; st.cur[side] = i; render(); });
+        ul.append(li);
+      });
+      const sel = st[side][st.cur[side]];
+      let text = st[side].length + (st[side].length === 1 ? " item" : " items");
+      if (sel) text += " · selected: 1" + (sel.dir ? " (folders not counted)" : " · " + fmt(sel.b));
+      p.querySelector(".cnt").textContent = text;
+    }
+    fresh = null;
+  }
+
+  function act(k) {
+    const side = st.side, other = side === "L" ? "R" : "L";
+    const list = st[side];
+    const item = list[st.cur[side]];
+    switch (k) {
+      case "ArrowUp": if (list.length) st.cur[side] = Math.max(0, st.cur[side] - 1); break;
+      case "ArrowDown": if (list.length) st.cur[side] = Math.min(list.length - 1, st.cur[side] + 1); break;
+      case "Tab":
+        st.side = other;
+        if (st.cur[other] < 0 && st[other].length) st.cur[other] = 0;
+        logKey("log." + other);
+        break;
+      case "F5":
+      case "F6": {
+        if (!item || item.dir) { logKey("log.pick"); break; }
+        let name = item.n;
+        const dest = PATHS[other];
+        if (st[other].some(x => x.n === name)) {
+          const dot = name.lastIndexOf(".");
+          name = dot > 0 ? name.slice(0, dot) + " 2" + name.slice(dot) : name + " 2";
+          logKey("log.kept", { n: item.n, m: name });
+        } else {
+          logKey(k === "F5" ? "log.copied" : "log.moved", { n: item.n, p: dest });
+        }
+        st[other].push({ ...item, n: name });
+        st[other].sort((a, b) => (b.dir ? 1 : 0) - (a.dir ? 1 : 0) || sortByName(a, b));
+        fresh = { side: other, name };
+        if (k === "F6") {
+          list.splice(st.cur[side], 1);
+          st.cur[side] = Math.min(st.cur[side], list.length - 1);
+        }
+        break;
+      }
+      case "reset": st = initial(); logKey("log.ready"); break;
+      default: return;
+    }
+    render();
+  }
+
+  const keyIds = { ArrowUp: "kUp", ArrowDown: "kDown", Tab: "kTab", F5: "kF5", F6: "kF6" };
+  function flash(k) {
+    const b = document.getElementById(keyIds[k]);
+    if (!b) return;
+    b.classList.add("pressed");
+    setTimeout(() => b.classList.remove("pressed"), 160);
+  }
+
+  box.addEventListener("keydown", (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "Tab" && e.shiftKey) return;
+    if (keyIds[e.key]) {
+      e.preventDefault();
+      flash(e.key);
+      act(e.key);
+    }
+  });
+  document.querySelectorAll(".key").forEach(b => {
+    b.addEventListener("click", () => { flash(b.dataset.k); act(b.dataset.k); });
+  });
+  for (const side of ["L", "R"]) {
+    panes[side].addEventListener("mousedown", () => {
+      if (st.side !== side) { st.side = side; render(); }
+      setTimeout(() => box.focus({ preventScroll: true }));
+    });
+  }
+
+  /* ---------- language ---------- */
+  /* Every language has its own URL (/, /ru/, /zh/ …) so search engines can index each one.
+     Picking a language in the menu goes there and remembers the choice; the root page
+     redirects a first-time visitor whose browser prefers another language (see build.py). */
+  function langURL(code) {
+    const up = PAGE_LANG === "en" ? "" : "../";
+    return (up + (code === "en" ? "" : code + "/")) || "./";
+  }
+  document.getElementById("langSelect").addEventListener("change", (e) => {
+    const code = e.target.value;
+    try { localStorage.setItem("marlia.lang", code); } catch (err) {}
+    if (SITE_LANGS.includes(code) && code !== PAGE_LANG) location.href = langURL(code) + location.hash;
+  });
+  document.querySelectorAll("[data-lang-link]").forEach(a => a.addEventListener("click", () => {
+    try { localStorage.setItem("marlia.lang", a.dataset.langLink); } catch (err) {}
+  }));
+
+  render();
+  applyLang(PAGE_LANG);
+
+  /* Tour video: two variants (light/dark), only the one the theme shows is loaded and played,
+     and only while it is on screen. With reduced motion it stays on its poster, with controls. */
+  const videos = Array.from(document.querySelectorAll("video[data-tour]"));
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let onScreen = false;
+  function syncVideos() {
+    for (const v of videos) {
+      const shown = getComputedStyle(v).display !== "none";
+      v.controls = reduce.matches;
+      if (shown && onScreen && !reduce.matches) {
+        if (v.preload !== "auto") v.preload = "auto";
+        const p = v.play(); if (p && p.catch) p.catch(() => {});
+      } else if (!v.paused) {
+        v.pause();
+      }
+    }
+  }
+  if ("IntersectionObserver" in window && videos.length) {
+    new IntersectionObserver((entries) => {
+      onScreen = entries.some(e => e.isIntersecting);
+      syncVideos();
+    }, { threshold: 0.25 }).observe(videos[0].parentElement);
+  } else { onScreen = true; syncVideos(); }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", syncVideos);
+  reduce.addEventListener("change", syncVideos);
+  new MutationObserver(syncVideos).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  /* Latest release from GitHub (CORS-enabled, 60 unauthenticated requests per hour per visitor IP).
+     Any failure just leaves the fallback values above in place. */
+  fetch("https://api.github.com/repos/lex1142/marlia/releases/latest", { headers: { Accept: "application/vnd.github+json" } })
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(rel => {
+      const dmg = (rel.assets || []).find(a => /\.dmg$/i.test(a.name));
+      if (!dmg) return;
+      RELEASE.version = String(rel.tag_name || "").replace(/^v/, "") || RELEASE.version;
+      RELEASE.bytes = dmg.size || RELEASE.bytes;
+      RELEASE.url = dmg.browser_download_url || RELEASE.url;
+      applyLang(lang);
+    })
+    .catch(() => {});
+})();
+</script>
+</body>
+</html>

@@ -101,10 +101,24 @@ and `otool -l … | grep -A3 LC_BUILD_VERSION` → `minos 13.5`.
 
 ### Landing page
 
-`docs/index.html` is the project site at **https://marlia.app**, served by GitHub Pages from `main` →
-`/docs` (with `docs/.nojekyll`, so it's published as-is; `docs/CNAME` binds the custom domain, DNS is
-at Namecheap, and `lex1142.github.io/marlia/` redirects there). It's one self-contained file: no build step, and the
-**only** request to another host is one call to the GitHub API. Fonts are served from `docs/fonts/`
+The project site is **https://marlia.app**, served by GitHub Pages from `main` → `/docs` (with
+`docs/.nojekyll`, so it's published as-is; `docs/CNAME` binds the custom domain, DNS is at Namecheap,
+and `lex1142.github.io/marlia/` redirects there).
+
+**Edit `site/template.html`, never the pages in `docs/`, then run `python3 site/build.py`** and commit
+both. The generator (standard library only) writes one page per language (`docs/index.html` for
+English, `docs/ru/`, `docs/zh/`, `docs/es/`, `docs/ja/`) with all text already in the HTML, plus
+`sitemap.xml`, `robots.txt` and `404.html`. It exists for search engines: the page used to be filled
+in by JavaScript under a single URL, so only an English skeleton was indexable. Each page has its own
+`<title>`/description (`meta.title`/`meta.desc`), `canonical`, `hreflang` links to the others and
+`SoftwareApplication` JSON-LD. CI runs `python3 site/build.py --check` and fails if `docs/` is stale.
+The page script still runs on top and re-renders the same strings (it also drives the demo and the
+live release info), so `glue()`/size formatting exist twice, in the template script and in
+`build.py`; keep them in step (checked on 2026-11-27: every prerendered element matched the
+JS-rendered one on /ru/ and /es/). The root page sends a first-time visitor whose browser prefers
+another site language to that language once; a pick from the menu is stored and always wins.
+
+The **only** request to another host is one call to the GitHub API. Fonts are served from `docs/fonts/`
 (`fonts.css` + woff2 split by `unicode-range`, OFL license files next to them), deliberately not from
 Google Fonts: loading them from Google sends every visitor's IP there, which German courts have held
 to be a GDPR violation. The page's **Privacy** section lists everything the site and the app send
@@ -123,9 +137,11 @@ the account name in it, and ScreenCaptureKit window capture replaces the traffic
 The download button needs **no edit on release**: on load the page fetches
 `api.github.com/repos/lex1142/marlia/releases/latest` and takes the version, DMG size and URL from
 the first `.dmg` asset. The `RELEASE` constant at the top of its script is only the fallback for when
-that call fails (rate limit: 60/h per visitor IP), so bump it with each release anyway. The page text
-is in five languages (en/ru/zh/es/ja) in one `T` table in the same script; a new string needs a key
-in every language. German was removed on 2026-11-27 as a precaution, after discussing whether a
+that call fails (rate limit: 60/h per visitor IP), so bump it with each release anyway (in the
+template, then rebuild: the JSON-LD `softwareVersion` comes from it too). The page text is in five
+languages (en/ru/zh/es/ja) in the `<script type="application/json" id="i18n">` block of the
+template; a new string needs a key in every language (the generator refuses to build otherwise),
+and a generated page carries only its own language. German was removed on 2026-11-27 as a precaution, after discussing whether a
 German-language site would need a German *Impressum* (the operator's name and address); settle that
 question before re-adding it.
 

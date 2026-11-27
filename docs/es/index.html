@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="es" data-lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- seo:start (generated per language by site/build.py) -->
+<title>Marlia: gestor de archivos gratuito de dos paneles para Mac, al estilo de Total Commander</title>
+<meta name="description" content="Gestor de archivos de dos paneles para macOS, gratuito y de código abierto. F5 copia, F6 mueve, Tab cambia de panel. AppKit nativo, pestañas, archivos comprimidos, espacios de trabajo y temas. Apple Silicon, macOS 13.5+.">
+<link rel="canonical" href="https://marlia.app/es/">
+<link rel="alternate" hreflang="en" href="https://marlia.app/">
+<link rel="alternate" hreflang="ru" href="https://marlia.app/ru/">
+<link rel="alternate" hreflang="zh-Hans" href="https://marlia.app/zh/">
+<link rel="alternate" hreflang="es" href="https://marlia.app/es/">
+<link rel="alternate" hreflang="ja" href="https://marlia.app/ja/">
+<link rel="alternate" hreflang="x-default" href="https://marlia.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Marlia">
+<meta property="og:locale" content="es_ES">
+<meta property="og:title" content="Marlia: gestor de archivos gratuito de dos paneles para Mac, al estilo de Total Commander">
+<meta property="og:description" content="Gestor de archivos de dos paneles para macOS, gratuito y de código abierto. F5 copia, F6 mueve, Tab cambia de panel. AppKit nativo, pestañas, archivos comprimidos, espacios de trabajo y temas. Apple Silicon, macOS 13.5+.">
+<meta property="og:url" content="https://marlia.app/es/">
+<meta property="og:image" content="https://marlia.app/media/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="717">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Marlia: gestor de archivos gratuito de dos paneles para Mac, al estilo de Total Commander">
+<meta name="twitter:description" content="Gestor de archivos de dos paneles para macOS, gratuito y de código abierto. F5 copia, F6 mueve, Tab cambia de panel. AppKit nativo, pestañas, archivos comprimidos, espacios de trabajo y temas. Apple Silicon, macOS 13.5+.">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Marlia", "url": "https://marlia.app/es/", "description": "Gestor de archivos de dos paneles para macOS, gratuito y de código abierto. F5 copia, F6 mueve, Tab cambia de panel. AppKit nativo, pestañas, archivos comprimidos, espacios de trabajo y temas. Apple Silicon, macOS 13.5+.", "inLanguage": "es", "applicationCategory": "UtilitiesApplication", "applicationSubCategory": "File manager", "operatingSystem": "macOS 13.5 or later", "processorRequirements": "Apple Silicon (arm64)", "softwareVersion": "1.2", "downloadUrl": "https://github.com/lex1142/marlia/releases/download/v1.2/Marlia-1.2.dmg", "fileSize": "3.4 MB", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "license": "https://www.gnu.org/licenses/gpl-3.0.html", "image": "https://marlia.app/media/og.jpg", "screenshot": "https://marlia.app/media/hero-light.webp", "sameAs": ["https://github.com/lex1142/marlia"]}</script>
+<!-- seo:end -->
+<meta name="theme-color" content="#f3f5fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" href="../marlia-icon.png">
+<link rel="apple-touch-icon" href="../marlia-icon.png">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<style>
+/* Layout: text column + full-width app shot, then a live replica of a Marlia window
+   (default System look), then a quiet two-column feature list. Fonts all cover Cyrillic;
+   CJK falls through to the system faces picked per language. */
+:root {
+  --paper: #f3f5fa;
+  --surface: #ffffff;
+  --ink: #0f1630;
+  --muted: #56607a;
+  --line: #d9deea;
+  --accent: #2342c8;
+  --accent-ink: #ffffff;
+  --mark: #f5c518;
+  --code-bg: #e8ecf6;
+
+  /* replica of Marlia's System theme (follows the page's light/dark, like the app follows macOS) */
+  --m-pane: #ffffff;
+  --m-chrome: #f5f5f7;
+  --m-title: #e9e9ec;
+  --m-text: #1d1d1f;
+  --m-sec: #86868b;
+  --m-sep: #dedee2;
+  --m-sel: #0a64d8;
+  --m-sel-text: #ffffff;
+  --m-sel-off: #dcdce0;
+  --m-folder: #4aa8f0;
+  --m-folder-tab: #3a95dc;
+  --m-doc: #ffffff;
+  --m-doc-line: #b9b9c0;
+  --m-seg: #e3e3e7;
+  --m-seg-on: #ffffff;
+  --only-light: block;
+  --only-dark: none;
+
+  --cjk: "Hiragino Sans", "PingFang SC", "Noto Sans JP", "Noto Sans SC";
+  --f-display: "Manrope", "Avenir Next", "Helvetica Neue", var(--cjk), Arial, sans-serif;
+  --f-body: "Onest", -apple-system, BlinkMacSystemFont, "Helvetica Neue", var(--cjk), Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, var(--cjk), monospace;
+  --f-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+
+  --step-0: 1rem;
+  --step-1: 1.2rem;
+  --step-2: 1.75rem;
+  --step-3: clamp(2.2rem, 5.2vw, 4rem);
+  --radius: 10px;
+}
+:root:lang(zh) { --cjk: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei"; }
+:root:lang(ja) { --cjk: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic"; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #0b1020;
+    --surface: #121a33;
+    --ink: #e8ecf7;
+    --muted: #9aa4bf;
+    --line: #243052;
+    --accent: #8197ff;
+    --accent-ink: #0b1020;
+    --code-bg: #18213f;
+    --m-pane: #1e1e1f;
+    --m-chrome: #2a2a2c;
+    --m-title: #333336;
+    --m-text: #ececee;
+    --m-sec: #98989d;
+    --m-sep: #3c3c3f;
+    --m-sel: #0a5ed7;
+    --m-sel-text: #ffffff;
+    --m-sel-off: #46464a;
+    --m-folder: #5ab4f2;
+    --m-folder-tab: #3f9ade;
+    --m-doc: #f2f2f4;
+    --m-doc-line: #9a9aa2;
+    --m-seg: #3a3a3d;
+    --m-seg-on: #636367;
+    --only-light: none;
+    --only-dark: block;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0b1020;
+  --surface: #121a33;
+  --ink: #e8ecf7;
+  --muted: #9aa4bf;
+  --line: #243052;
+  --accent: #8197ff;
+  --accent-ink: #0b1020;
+  --code-bg: #18213f;
+  --m-pane: #1e1e1f;
+  --m-chrome: #2a2a2c;
+  --m-title: #333336;
+  --m-text: #ececee;
+  --m-sec: #98989d;
+  --m-sep: #3c3c3f;
+  --m-sel: #0a5ed7;
+  --m-sel-text: #ffffff;
+  --m-sel-off: #46464a;
+  --m-folder: #5ab4f2;
+  --m-folder-tab: #3f9ade;
+  --m-doc: #f2f2f4;
+  --m-doc-line: #9a9aa2;
+  --m-seg: #3a3a3d;
+  --m-seg-on: #636367;
+  --only-light: none;
+  --only-dark: block;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, select:focus-visible, .demo:focus-visible {
+  outline: 3px solid var(--mark);
+  outline-offset: 3px;
+}
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.12; }
+h2 { font-size: var(--step-2); font-weight: 800; letter-spacing: -0.01em; }
+:lang(zh) h1, :lang(zh) h2, :lang(ja) h1, :lang(ja) h2 { letter-spacing: 0; line-height: 1.3; }
+:lang(ja) h1, :lang(ja) h2, :lang(ja) h3 { word-break: auto-phrase; }
+p { margin: 0; }
+.eyebrow {
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+kbd {
+  font-family: var(--f-mono);
+  font-size: 0.8em;
+  font-weight: 600;
+  display: inline-block;
+  min-width: 1.9em;
+  text-align: center;
+  padding: 0.1em 0.45em;
+  border: 1px solid var(--line);
+  border-bottom-width: 3px;
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
+
+/* ---------- header ---------- */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 16px 24px;
+  padding-block: 20px;
+}
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--f-display); font-weight: 800; font-size: 1.3rem;
+  color: var(--ink); text-decoration: none;
+  margin-right: auto;
+}
+.brand { gap: 8px; }
+.brand-icon { width: 40px; height: 40px; display: block; flex: none; margin-left: -4px; }
+.top nav { display: flex; gap: 22px; flex-wrap: wrap; }
+.top nav a { color: var(--muted); text-decoration: none; font-weight: 500; }
+.top nav a:hover { color: var(--ink); }
+
+.lang { position: relative; display: inline-flex; align-items: center; }
+.lang svg { position: absolute; pointer-events: none; color: var(--muted); }
+.lang .globe { left: 10px; width: 16px; height: 16px; }
+.lang .chev { right: 10px; width: 12px; height: 12px; }
+.lang select {
+  appearance: none; -webkit-appearance: none;
+  font: inherit; font-weight: 500; font-size: 0.92rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 30px 7px 32px;
+  cursor: pointer;
+}
+.lang select:hover { border-color: var(--muted); }
+
+/* ---------- hero ---------- */
+.hero { padding-block: 36px 28px; display: grid; gap: 26px; }
+.hero h1 { font-size: var(--step-3); font-weight: 800; letter-spacing: -0.025em; max-width: 17ch; }
+:lang(zh) .hero h1, :lang(ja) .hero h1 { max-width: 15em; }
+.lede { font-size: var(--step-1); color: var(--muted); max-width: 60ch; line-height: 1.55; }
+.lede strong { color: var(--ink); font-weight: 600; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch; }
+.btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 12px 22px;
+  border-radius: var(--radius);
+  font-weight: 600; font-size: 1rem;
+  text-decoration: none;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.btn-text { display: grid; gap: 1px; text-align: left; }
+.btn-label { white-space: nowrap; line-height: 1.3; }
+.btn small { font-family: var(--f-mono); font-weight: 400; font-size: 0.76rem; opacity: 0.85; white-space: nowrap; line-height: 1.3; }
+.btn-primary {
+  background: var(--accent); color: var(--accent-ink);
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--accent) 60%, #000);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 0 color-mix(in srgb, var(--accent) 60%, #000); }
+.btn-primary:active { transform: translateY(2px); box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 60%, #000); }
+.btn-ghost { color: var(--ink); border: 1px solid var(--line); background: var(--surface); }
+.btn-ghost:hover { border-color: var(--muted); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.meta { font-family: var(--f-mono); font-size: 0.8rem; color: var(--muted); }
+
+.only-light { display: var(--only-light); }
+.only-dark { display: var(--only-dark); }
+
+.shot {
+  margin: 8px 0 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 60px -30px rgba(15, 22, 48, 0.45);
+  background: var(--surface);
+}
+.shot img { width: 100%; height: auto; max-width: 100%; aspect-ratio: 2880 / 1720; }
+.shot-cap { margin-top: -12px; font-size: 0.85rem; color: var(--muted); }
+
+/* ---------- facts strip ---------- */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-block: 1px solid var(--line);
+  margin-block: 48px;
+}
+.fact { padding: 22px 20px 22px 0; display: grid; gap: 4px; align-content: start; }
+.fact + .fact { padding-left: 20px; border-left: 1px solid var(--line); }
+.fact b { font-family: var(--f-display); font-size: 1.35rem; font-weight: 800; white-space: nowrap; }
+.fact span { color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+
+/* ---------- sections ---------- */
+.section { padding-block: 24px 56px; display: grid; gap: 24px; }
+.section-head { display: grid; gap: 10px; max-width: 64ch; }
+.section-head p { color: var(--muted); }
+
+/* ---------- demo: a Marlia window, System theme ---------- */
+.demo {
+  font-family: var(--f-ui);
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--m-text);
+  background: var(--m-chrome);
+  border: 1px solid var(--m-sep);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 50px -28px rgba(15, 22, 48, 0.5);
+  outline: none;
+}
+.m-titlebar {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 14px;
+  background: var(--m-title);
+  border-bottom: 1px solid var(--m-sep);
+}
+.m-lights { display: flex; gap: 8px; flex: none; }
+.m-lights i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+.m-lights i:nth-child(1) { background: #ff5f57; }
+.m-lights i:nth-child(2) { background: #febc2e; }
+.m-lights i:nth-child(3) { background: #28c840; }
+.m-title { font-weight: 600; font-size: 14px; }
+.m-panes { display: grid; grid-template-columns: 1fr 1fr; }
+.m-pane { position: relative; min-width: 0; display: grid; grid-template-rows: auto auto 1fr auto; background: var(--m-pane); cursor: default; }
+.m-pane + .m-pane { border-left: 1px solid var(--m-sep); }
+.m-pane::before { content: ""; position: absolute; inset: 0 0 auto; height: 2px; background: transparent; }
+.m-pane.active::before { background: var(--m-sel); }
+.m-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  background: var(--m-chrome);
+  border-bottom: 1px solid var(--m-sep);
+  min-width: 0;
+}
+.m-nav { display: flex; gap: 6px; color: var(--m-sec); flex: none; }
+.m-nav svg { width: 14px; height: 14px; }
+.m-path { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--f-mono); font-size: 12.5px; }
+.m-path b { color: var(--m-sec); font-weight: 400; margin-inline: 3px; }
+.m-seg { display: flex; gap: 2px; background: var(--m-seg); border-radius: 6px; padding: 2px; flex: none; }
+.m-seg span { width: 26px; height: 20px; display: grid; place-items: center; border-radius: 4px; color: var(--m-sec); }
+.m-seg span.on { background: var(--m-seg-on); color: var(--m-text); box-shadow: 0 1px 1px rgba(0,0,0,.12); }
+.m-seg svg { width: 13px; height: 13px; }
+.m-head, .m-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 118px 64px;
+  gap: 10px;
+  padding: 0 12px;
+  align-items: center;
+}
+.m-head {
+  height: 26px;
+  color: var(--m-sec);
+  font-size: 12px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--m-sep);
+  background: var(--m-pane);
+}
+.m-head .sorted::after { content: " ⌃"; font-size: 10px; }
+.m-list { list-style: none; margin: 0; padding: 4px 6px; min-height: 216px; }
+.m-row { height: 26px; border-radius: 5px; padding: 0 6px; }
+.m-row .n { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.m-row .n span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-row .n svg { width: 16px; height: 16px; flex: none; }
+.m-row .d, .m-row .s { color: var(--m-sec); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.m-row.sel { background: var(--m-sel-off); }
+.m-pane.active .m-row.sel { background: var(--m-sel); color: var(--m-sel-text); }
+.m-pane.active .m-row.sel .d, .m-pane.active .m-row.sel .s { color: var(--m-sel-text); opacity: .85; }
+.m-row.fresh { animation: fresh 1s ease-out; }
+@keyframes fresh { from { background: color-mix(in srgb, var(--m-sel) 30%, transparent); } }
+.ic-folder .body { fill: var(--m-folder); }
+.ic-folder .tab { fill: var(--m-folder-tab); }
+.ic-doc .page { fill: var(--m-doc); stroke: var(--m-doc-line); }
+.ic-doc .lines { stroke: var(--m-doc-line); }
+.m-status {
+  display: flex; justify-content: space-between; gap: 8px;
+  padding: 5px 12px;
+  font-size: 11.5px;
+  border-top: 1px solid var(--m-sep);
+  background: var(--m-chrome);
+  white-space: nowrap;
+}
+.m-status span { overflow: hidden; text-overflow: ellipsis; }
+.m-status .free { color: var(--m-sec); flex: none; }
+
+.keys { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.key {
+  font: inherit; font-size: 0.92rem;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 5px 12px 5px 5px;
+  cursor: pointer;
+}
+.key:hover { border-color: var(--muted); }
+.key kbd { transition: background .12s ease, color .12s ease; }
+.key.pressed kbd { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.demo-log { margin-left: auto; color: var(--muted); font-size: 0.9rem; min-height: 1.4em; }
+.demo-hint { font-size: 0.9rem; color: var(--muted); max-width: 80ch; }
+
+/* ---------- features ---------- */
+.features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
+.feature {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 16px;
+  padding-block: 22px;
+  border-top: 1px solid var(--line);
+  align-items: baseline;
+}
+.feature h3 { font-size: 1.12rem; font-weight: 800; }
+.feature .tag { font-family: var(--f-mono); font-size: 0.78rem; color: var(--accent); white-space: nowrap; }
+.feature p { grid-column: 1 / -1; color: var(--muted); max-width: 54ch; }
+
+/* ---------- tour: video + feature shots ---------- */
+.tour-video {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 60px -30px rgba(15, 22, 48, 0.45);
+  background: var(--surface);
+}
+.tour-video video { width: 100%; height: auto; max-width: 100%; aspect-ratio: 1920 / 1146; }
+.gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 24px; }
+.gallery figure { margin: 0; display: grid; gap: 12px; align-content: start; }
+.gallery .frame {
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--code-bg);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 10px;
+}
+.gallery .frame img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 6px; }
+.gallery figcaption { display: grid; gap: 4px; }
+.gallery figcaption b { font-family: var(--f-display); font-weight: 800; font-size: 1.02rem; }
+.gallery figcaption span { color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+
+/* ---------- themes ---------- */
+.themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.theme {
+  border-radius: 10px;
+  padding: 12px;
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--line);
+}
+.theme .row { padding: 2px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.theme .label { margin-top: 6px; font-family: var(--f-body); font-weight: 600; font-size: 0.9rem; }
+.theme-system { background: var(--m-pane); color: var(--m-text); }
+.theme-system .sel { background: var(--m-sel); color: var(--m-sel-text); }
+
+/* ---------- install ---------- */
+.install { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 16px; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 2.2em 1fr; gap: 12px; }
+.steps li::before {
+  content: counter(s);
+  font-family: var(--f-display); font-weight: 800; font-size: 1.05rem;
+  width: 2em; height: 2em; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--accent); color: var(--accent-ink);
+}
+.note {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  display: grid;
+  gap: 12px;
+  font-size: 0.95rem;
+}
+.note h3 { font-size: 1.1rem; font-weight: 800; }
+.note p { color: var(--muted); }
+pre {
+  margin: 0;
+  background: var(--code-bg);
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  font-family: var(--f-mono);
+  font-size: 0.85rem;
+}
+
+/* ---------- privacy ---------- */
+.privacy { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; max-width: 72ch; color: var(--muted); }
+.privacy li::marker { color: var(--accent); }
+.privacy strong { color: var(--ink); font-weight: 600; }
+
+/* ---------- footer ---------- */
+.foot {
+  border-top: 1px solid var(--line);
+  padding-block: 28px 40px;
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px;
+  color: var(--muted); font-size: 0.9rem;
+}
+.foot nav { display: flex; gap: 20px; flex-wrap: wrap; }
+.foot .langs { gap: 14px; flex-basis: 100%; }
+.foot .langs a[aria-current] { color: var(--ink); text-decoration: none; font-weight: 600; }
+.foot a { color: var(--muted); }
+
+@media (max-width: 900px) {
+  .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fact:nth-child(3) { padding-left: 0; border-left: 0; }
+  .fact:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .features { grid-template-columns: 1fr; }
+  .install { grid-template-columns: 1fr; }
+  .top nav { display: none; }
+}
+@media (max-width: 760px) {
+  .m-panes { grid-template-columns: 1fr; }
+  .m-pane + .m-pane { border-left: 0; border-top: 1px solid var(--m-sep); }
+  .m-list { min-height: 0; }
+  .m-head, .m-row { grid-template-columns: minmax(0, 1fr) 64px; }
+  .m-head .d, .m-row .d { display: none; }
+  .demo-log { margin-left: 0; width: 100%; }
+}
+@media (max-width: 560px) {
+  .gallery { grid-template-columns: 1fr; }
+  .facts { grid-template-columns: 1fr; }
+  .fact, .fact + .fact, .fact:nth-child(3) { padding-left: 0; border-left: 0; }
+  .fact + .fact { border-top: 1px solid var(--line); }
+  .cta .btn { width: 100%; }
+  .m-seg { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-folder" viewBox="0 0 16 16"><g class="ic-folder"><path class="tab" d="M1.5 3.5a1 1 0 0 1 1-1h3.6l1.4 1.5h6a1 1 0 0 1 1 1V6h-13z"/><rect class="body" x="1.5" y="5" width="13" height="8.5" rx="1.2"/></g></symbol>
+  <symbol id="i-doc" viewBox="0 0 16 16"><g class="ic-doc"><path class="page" d="M3.5 1.5h6l3 3v10h-9z" stroke-width="1"/><path class="lines" d="M5.5 8h5M5.5 10h5M5.5 12h3" stroke-width="1"/></g></symbol>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#top" aria-label="Marlia">
+      <img class="brand-icon" src="../marlia-icon.png" alt="" width="40" height="40">
+      Marlia
+    </a>
+    <nav aria-label="Sections">
+      <a href="#tour" data-t="nav.tour">En acción</a>
+      <a href="#demo" data-t="nav.demo">Pruébalo</a>
+      <a href="#features" data-t="nav.features">Funciones</a>
+      <a href="#install" data-t="nav.install">Instalación</a>
+      <a href="https://github.com/lex1142/marlia" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <label class="lang">
+      <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>
+      <select id="langSelect" aria-label="Language">
+        <option value="en">English</option>
+        <option value="ru">Русский</option>
+        <option value="zh">简体中文</option>
+        <option value="es" selected>Español</option>
+        <option value="ja">日本語</option>
+      </select>
+      <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+    </label>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <p class="eyebrow" data-t="hero.eyebrow">Gratis y de código abierto · macOS 13.5+ · Apple Silicon</p>
+      <h1 data-h="hero.h1">Un gestor de archivos de dos paneles para quien vive en el teclado</h1>
+      <p class="lede" data-h="hero.lede">Marlia lleva al Mac la forma de trabajar de Total Commander. Copia al otro panel con <kbd>F5</kbd>, mueve con <kbd>F6</kbd> y cambia de panel con <kbd>Tab</kbd>. Está hecho con <strong>vistas nativas de AppKit</strong>, así que va rápido incluso en carpetas con miles de archivos.</p>
+      <div class="cta">
+        <a class="btn btn-primary" data-dl href="https://github.com/lex1142/marlia/releases/download/v1.2/Marlia-1.2.dmg" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6 10 6 6 6-6"/><path d="M4 20h16"/></svg>
+          <span class="btn-text"><span class="btn-label" data-t="hero.dl">Descargar para macOS</span><small data-t="hero.dlmeta">v1.2 · DMG · 3,4 MB</small></span>
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/lex1142/marlia" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+          <span class="btn-label" data-t="hero.gh">Ver en GitHub</span>
+        </a>
+      </div>
+      <p class="meta"><span data-h="hero.meta">GPL-3.0 · firma ad hoc, consulta <a href="#install">el primer arranque</a></span><span data-t="hero.uiEn"> · la interfaz de la app está en inglés</span></p>
+
+      <figure class="shot" style="margin-inline:0">
+        <img class="only-light" src="../media/hero-light.webp" fetchpriority="high" data-alt="hero.alt" alt="Marlia con el tema Sistema: fotos de Lisboa en lista a la izquierda, con cuatro seleccionadas, y fotos de Kioto en miniatura a la derecha." width="2880" height="1720">
+        <img class="only-dark" src="../media/hero-dark.webp" data-alt="hero.alt" alt="Marlia con el tema Sistema: fotos de Lisboa en lista a la izquierda, con cuatro seleccionadas, y fotos de Kioto en miniatura a la derecha." width="2880" height="1720" loading="lazy">
+      </figure>
+      <p class="shot-cap" data-t="hero.cap">Lista a la izquierda, iconos a la derecha y una barra lateral con favoritos, discos y espacios de trabajo.</p>
+    </section>
+
+    <section class="facts" aria-label="At a glance">
+      <div class="fact"><b data-t="f1b">Nativo</b><span data-t="f1s">Tablas y cuadrículas de AppKit. Ni Electron ni una página web.</span></div>
+      <div class="fact"><b data-t="f2b">3,4 MB</b><span data-t="f2s">Toda la descarga. Sin entornos de ejecución que instalar.</span></div>
+      <div class="fact"><b data-t="f3b">50 pasos</b><span data-t="f3s">Deshacer y rehacer al copiar, mover, renombrar y enviar a la papelera.</span></div>
+      <div class="fact"><b data-t="f4b">Gratis</b><span data-t="f4s">GPL-3.0. Sin cuenta, sin telemetría, sin periodo de prueba.</span></div>
+    </section>
+
+    <section class="section" id="tour">
+      <div class="section-head">
+        <p class="eyebrow" data-t="tour.eyebrow">En acción</p>
+        <h2 data-t="tour.h2">Cinco fotos, una tecla</h2>
+        <p data-t="tour.p">Selecciona archivos a la izquierda, pulsa F5 y ya están en el disco de copia. Tab y ⌘2 pasan al otro panel y los muestran en miniatura.</p>
+      </div>
+      <div class="tour-video">
+        <video class="only-light" data-tour muted loop playsinline preload="none" poster="../media/tour-light-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="Vídeo: se seleccionan cinco fotos, se copian con F5 a un disco de copia y se muestran en miniatura.">
+          <source src="../media/tour-light.mp4" type="video/mp4">
+        </video>
+        <video class="only-dark" data-tour muted loop playsinline preload="none" poster="../media/tour-dark-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="Vídeo: se seleccionan cinco fotos, se copian con F5 a un disco de copia y se muestran en miniatura.">
+          <source src="../media/tour-dark.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="gallery">
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="../media/columns-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="../media/columns-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c1t">Columnas con vista previa</b><span data-t="c1p">Columnas al estilo de Finder. La carpeta seleccionada se abre a la derecha.</span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="../media/rename-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="../media/rename-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c2t">Renombrado por lotes</b><span data-t="c2p">Un patrón como «Lisbon 2026 – ##» con vista previa en vivo de cada nombre nuevo.</span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="../media/conflict-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="../media/conflict-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c3t">Conflictos de nombre</b><span data-t="c3p">Omitir, reemplazar o conservar ambos, para un archivo o para todos.</span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="../media/progress-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="../media/progress-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c4t">Copia en segundo plano</b><span data-t="c4p">Las copias grandes van en segundo plano. Pausa o cancela cuando quieras.</span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="../media/workspace-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="../media/workspace-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c5t">Espacios de trabajo</b><span data-t="c5p">Una carpeta de enlaces a archivos de cualquier lugar. No se mueve nada.</span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="../media/search-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="../media/search-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c6t">Búsqueda recursiva</b><span data-t="c6p">Busca en todo un árbol de carpetas por nombre, subcadena o regex.</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="demo">
+      <div class="section-head">
+        <p class="eyebrow" data-t="demo.eyebrow">Pruébalo aquí</p>
+        <h2 data-t="demo.h2">Dos paneles, una tecla por acción</h2>
+        <p data-t="demo.p">Haz clic en un panel y usa el teclado, o pulsa las teclas de abajo. Elige un archivo, pulsa una tecla y aparecerá en el otro panel. Este es el aspecto Sistema, el predeterminado de Marlia.</p>
+      </div>
+
+      <div class="demo" id="demoBox" tabindex="0" data-aria="demo.aria" aria-label="Demo interactiva. Las flechas seleccionan, Tab cambia de panel, F5 copia, F6 mueve.">
+        <div class="m-titlebar">
+          <div class="m-lights" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="m-title" id="mTitle">Trip</span>
+        </div>
+        <div class="m-panes">
+          <div class="m-pane" id="paneL" data-side="L">
+            <div class="m-bar">
+              <div class="m-nav" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 3 5 8l5 5"/></svg>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 3 5 5-5 5"/></svg>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg>
+              </div>
+              <div class="m-path"><b>/</b>Users<b>/</b>demo<b>/</b>Pictures<b>/</b>Trip</div>
+              <div class="m-seg" aria-hidden="true">
+                <span class="on"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 4h9M5 8h9M5 12h9"/><circle cx="2" cy="4" r=".6" fill="currentColor"/><circle cx="2" cy="8" r=".6" fill="currentColor"/><circle cx="2" cy="12" r=".6" fill="currentColor"/></svg></span>
+                <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></span>
+                <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M6 2.5v11M10 2.5v11"/></svg></span>
+              </div>
+            </div>
+            <div class="m-head"><span class="sorted">Name</span><span class="d">Date Modified</span><span>Size</span></div>
+            <ul class="m-list"></ul>
+            <div class="m-status"><span class="cnt"></span><span class="free">98.9 GB free</span></div>
+          </div>
+          <div class="m-pane" id="paneR" data-side="R">
+            <div class="m-bar">
+              <div class="m-nav" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 3 5 8l5 5"/></svg>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 3 5 5-5 5"/></svg>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg>
+              </div>
+              <div class="m-path"><b>/</b>Users<b>/</b>demo<b>/</b>Desktop<b>/</b>Album</div>
+              <div class="m-seg" aria-hidden="true">
+                <span class="on"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 4h9M5 8h9M5 12h9"/><circle cx="2" cy="4" r=".6" fill="currentColor"/><circle cx="2" cy="8" r=".6" fill="currentColor"/><circle cx="2" cy="12" r=".6" fill="currentColor"/></svg></span>
+                <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></span>
+                <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M6 2.5v11M10 2.5v11"/></svg></span>
+              </div>
+            </div>
+            <div class="m-head"><span class="sorted">Name</span><span class="d">Date Modified</span><span>Size</span></div>
+            <ul class="m-list"></ul>
+            <div class="m-status"><span class="cnt"></span><span class="free">98.9 GB free</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="keys">
+        <button class="key" type="button" data-k="ArrowUp" id="kUp"><kbd>↑</kbd><span data-t="k.up">Arriba</span></button>
+        <button class="key" type="button" data-k="ArrowDown" id="kDown"><kbd>↓</kbd><span data-t="k.down">Abajo</span></button>
+        <button class="key" type="button" data-k="Tab" id="kTab"><kbd>Tab</kbd><span data-t="k.switch">Cambiar</span></button>
+        <button class="key" type="button" data-k="F5" id="kF5"><kbd>F5</kbd><span data-t="k.copy">Copiar</span></button>
+        <button class="key" type="button" data-k="F6" id="kF6"><kbd>F6</kbd><span data-t="k.move">Mover</span></button>
+        <button class="key" type="button" data-k="reset" id="kReset"><kbd>↺</kbd><span data-t="k.reset">Reiniciar</span></button>
+        <span class="demo-log" id="demoLog" aria-live="polite"></span>
+      </div>
+      <p class="demo-hint" data-t="demo.hint">En la app, F5 y F6 se ejecutan en segundo plano con un panel de progreso que puedes pausar o cancelar, y si un nombre ya existe puedes reemplazar, omitir o conservar ambos.</p>
+    </section>
+
+    <section class="section" id="features">
+      <div class="section-head">
+        <p class="eyebrow" data-t="feat.eyebrow">Funciones</p>
+        <h2 data-t="feat.h2">Todo lo que debe hacer un gestor de archivos, sin soltar el teclado</h2>
+      </div>
+      <div class="features">
+        <div class="feature"><h3 data-t="ft1h">Dos paneles, pestañas, tres vistas</h3><span class="tag">Tab · ⌘1 ⌘2 ⌘3</span><p data-h="ft1p">Lista, iconos y columnas al estilo de Finder con columna de vista previa. Cada panel tiene su propio historial y cada carpeta recuerda cómo la ordenaste.</p></div>
+        <div class="feature"><h3 data-t="ft2h">El flujo de Total Commander</h3><span class="tag">F5 · F6</span><p data-h="ft2p">Copia y mueve al otro panel, escribe para seleccionar, selecciona por patrón como <code>*.jpg</code> e invierte la selección.</p></div>
+        <div class="feature"><h3 data-t="ft3h">Operaciones en segundo plano</h3><span class="tag">⌘Z · ⇧⌘Z</span><p data-h="ft3p">Copiar, mover, duplicar, enviar a la papelera y renombrar se ejecutan en segundo plano, con pausa y cancelación. El renombrado por lotes muestra al momento cada nombre nuevo.</p></div>
+        <div class="feature"><h3 data-t="ft4h">Archivos comprimidos</h3><span class="tag">zip · tar.gz/bz2/xz</span><p data-h="ft4p">Crea, extrae y explora archivos comprimidos con las herramientas del sistema, incluidos ZIP con contraseña. La extracción está protegida contra rutas zip-slip.</p></div>
+        <div class="feature"><h3 data-t="ft5h">Espacios de trabajo</h3><span class="tag">symlinks</span><p data-h="ft5p">Reúne archivos de todo el disco en una carpeta de enlaces. No se copia ni se mueve nada, y quitar un elemento solo elimina el enlace.</p></div>
+        <div class="feature"><h3 data-t="ft6h">Buscar, filtrar, previsualizar</h3><span class="tag">⌘F · ⌥⌘F · Space</span><p data-h="ft6p">Búsqueda recursiva por subcadena o regex, barra de filtro instantánea, Vista rápida con la barra espaciadora, Obtener información y un panel de información en vivo.</p></div>
+        <div class="feature"><h3 data-t="ft7h">Como en casa en macOS</h3><span class="tag">Finder · AirDrop · SMB</span><p data-h="ft7p">Arrastrar y soltar con Finder, etiquetas de color, AirDrop, abrir en Terminal, conexión a recursos SMB, expulsar discos e instalar apps directamente desde un .dmg.</p></div>
+        <div class="feature"><h3 data-t="ft8h">Tus atajos</h3><span class="tag">⌘, · ⌘?</span><p data-h="ft8p">Todos los atajos se pueden cambiar en Ajustes. Los favoritos del 1 al 9 están en <kbd>⌥⌘1</kbd> a <kbd>⌥⌘9</kbd>, y la lista completa está en la Ayuda.</p></div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="themes-h">
+      <div class="section-head">
+        <p class="eyebrow" data-t="th.eyebrow">Temas</p>
+        <h2 id="themes-h" data-t="th.h2">Siete temas con el contraste comprobado</h2>
+        <p data-t="th.p">Cada paleta mantiene los nombres legibles con un contraste de 4,5:1 o más, sobre el panel y sobre la selección.</p>
+      </div>
+      <div class="themes">
+        <div class="theme theme-system"><div class="row">Documents</div><div class="row sel">report.pdf</div><div class="row">notes.md</div><div class="label" data-t="th.system">Sistema</div></div>
+        <div class="theme" style="background:#282a36;color:#f8f8f2;border-color:#282a36"><div class="row">Documents</div><div class="row" style="background:#44475a">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#bd93f9">Dracula</div></div>
+        <div class="theme" style="background:#282828;color:#ebdbb2;border-color:#282828"><div class="row">Documents</div><div class="row" style="background:#504945">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#fe8019">Gruvbox Dark</div></div>
+        <div class="theme" style="background:#2e3440;color:#d8dee9;border-color:#2e3440"><div class="row">Documents</div><div class="row" style="background:#434c5e">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#88c0d0">Nord</div></div>
+        <div class="theme" style="background:#002b36;color:#eee8d5;border-color:#002b36"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.4)">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#268bd2">Solarized Dark</div></div>
+        <div class="theme" style="background:#fdf6e3;color:#073642;border-color:#eee8d5"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.35)">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#1f6fa8">Solarized Light</div></div>
+        <div class="theme" style="background:linear-gradient(135deg,#fdf6e3 50%,#002b36 50%);color:#586e75;border-color:#eee8d5"><div class="row" style="background:rgba(253,246,227,.85)" data-t="th.auto1">sigue al sistema</div><div class="row" style="background:rgba(38,139,210,.4);color:#073642">report.pdf</div><div class="row" style="background:rgba(0,43,54,.85);color:#eee8d5" data-t="th.auto2">claro ↔ oscuro</div><div class="label" style="color:#268bd2;background:rgba(0,43,54,.85);padding:2px 6px;border-radius:4px;justify-self:start">Solarized (Auto)</div></div>
+      </div>
+    </section>
+
+    <section class="section" id="install">
+      <div class="section-head">
+        <p class="eyebrow" data-t="in.eyebrow">Instalación</p>
+        <h2 data-t="in.h2">Funcionando en un minuto</h2>
+      </div>
+      <div class="install">
+        <ol class="steps">
+          <li><div><b data-t="s1b">Descarga la imagen.</b><br><span data-h="s1t"><a href="https://github.com/lex1142/marlia/releases/download/v1.2/Marlia-1.2.dmg" target="_blank" rel="noopener">Marlia-1.2.dmg</a> o cualquier versión desde <a href="https://github.com/lex1142/marlia/releases" target="_blank" rel="noopener">Releases</a>.</span></div></li>
+          <li><div><b data-t="s2b">Arrastra Marlia a Aplicaciones.</b><br><span data-t="s2t">La imagen trae la app y un acceso a Aplicaciones, uno al lado del otro.</span></div></li>
+          <li><div><b data-t="s3b">Ábrela una vez a mano.</b><br><span data-t="s3t">Haz clic derecho en Marlia.app y elige Abrir. En macOS 15 y posteriores, ve a Ajustes del Sistema → Privacidad y seguridad y pulsa Abrir igualmente.</span></div></li>
+          <li><div><b data-t="s4b">Opcional: concede Acceso total al disco.</b><br><span data-t="s4t">Así Escritorio, Documentos y Descargas se abren sin avisos repetidos.</span></div></li>
+        </ol>
+        <aside class="note">
+          <h3 data-t="note.h">Por qué macOS pregunta primero</h3>
+          <p data-t="note.p1">Marlia tiene una firma ad hoc, sin Apple Developer ID, así que Gatekeeper la detiene en el primer arranque. Si macOS dice que la app «está dañada y no se puede abrir», algo habitual tras descargarla con el navegador o por AirDrop, quita la marca de cuarentena:</p>
+          <pre><code>xattr -cr /Applications/Marlia.app</code></pre>
+          <p data-h="note.p2">¿Prefieres compilarla tú? No hay proyecto de Xcode, solo un script: <code>./build.sh --run</code>.</p>
+        </aside>
+      </div>
+    </section>
+    <section class="section" id="privacy" aria-labelledby="privacy-h">
+      <div class="section-head">
+        <h2 id="privacy-h" data-t="priv.h2">Privacidad</h2>
+      </div>
+      <ul class="privacy">
+        <li data-h="priv.1"><strong>La app Marlia no envía nada a ninguna parte:</strong> ni analíticas, ni informes de errores, ni comprobación de actualizaciones. Solo se conecta a la red cuando tú se lo pides, por ejemplo a un servidor SMB.</li>
+        <li data-h="priv.2">Este sitio no usa cookies, analíticas ni seguimiento. Las fuentes y las imágenes se sirven desde el propio sitio.</li>
+        <li data-h="priv.3">El idioma que eliges se guarda en tu navegador (almacenamiento local) y no se envía a ninguna parte.</li>
+        <li data-h="priv.4">Para mostrar la última versión, la página consulta una vez por visita la API de GitHub sobre las versiones de Marlia. GitHub recibe tu dirección IP con esa petición.</li>
+        <li data-h="priv.5">El sitio está alojado en GitHub Pages. Como cualquier alojamiento web, GitHub registra las peticiones, incluidas las direcciones IP. Consulta la <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Declaración de privacidad de GitHub</a>.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span data-t="foot.lic">Marlia es software libre bajo la GNU GPL v3.0.</span>
+    <nav aria-label="Links">
+      <a href="https://github.com/lex1142/marlia" target="_blank" rel="noopener" data-t="foot.src">Código fuente</a>
+      <a href="https://github.com/lex1142/marlia/releases" target="_blank" rel="noopener" data-t="foot.rel">Versiones</a>
+      <a href="https://github.com/lex1142/marlia/issues" target="_blank" rel="noopener" data-t="foot.bug">Informar de un error</a>
+      <a href="mailto:hello@marlia.app">hello@marlia.app</a>
+    </nav>
+    <nav class="langs" data-aria="langs" aria-label="Idiomas"><a href="../" hreflang="en" lang="en" data-lang-link="en">English</a><a href="../ru/" hreflang="ru" lang="ru" data-lang-link="ru">Русский</a><a href="../zh/" hreflang="zh-Hans" lang="zh-Hans" data-lang-link="zh">简体中文</a><a href="../es/" hreflang="es" lang="es" data-lang-link="es" aria-current="page">Español</a><a href="../ja/" hreflang="ja" lang="ja" data-lang-link="ja">日本語</a></nav>
+  </footer>
+</div>
+
+<script type="application/json" id="i18n">
+{"es":{"nav.demo":"Pruébalo","nav.features":"Funciones","nav.install":"Instalación","lang":"Idioma","hero.eyebrow":"Gratis y de código abierto · macOS 13.5+ · Apple Silicon","hero.h1":"Un gestor de archivos de dos paneles para quien vive en el teclado","hero.lede":"Marlia lleva al Mac la forma de trabajar de Total Commander. Copia al otro panel con <kbd>F5<\/kbd>, mueve con <kbd>F6<\/kbd> y cambia de panel con <kbd>Tab<\/kbd>. Está hecho con <strong>vistas nativas de AppKit<\/strong>, así que va rápido incluso en carpetas con miles de archivos.","hero.dl":"Descargar para macOS","hero.dlmeta":"v{ver} · DMG · {size}","hero.gh":"Ver en GitHub","hero.meta":"GPL-3.0 · firma ad hoc, consulta <a href=\"#install\">el primer arranque<\/a>","hero.uiEn":" · la interfaz de la app está en inglés","f1b":"Nativo","f1s":"Tablas y cuadrículas de AppKit. Ni Electron ni una página web.","f2b":"{size}","f2s":"Toda la descarga. Sin entornos de ejecución que instalar.","f3b":"50 pasos","f3s":"Deshacer y rehacer al copiar, mover, renombrar y enviar a la papelera.","f4b":"Gratis","f4s":"GPL-3.0. Sin cuenta, sin telemetría, sin periodo de prueba.","demo.eyebrow":"Pruébalo aquí","demo.h2":"Dos paneles, una tecla por acción","demo.p":"Haz clic en un panel y usa el teclado, o pulsa las teclas de abajo. Elige un archivo, pulsa una tecla y aparecerá en el otro panel. Este es el aspecto Sistema, el predeterminado de Marlia.","demo.aria":"Demo interactiva. Las flechas seleccionan, Tab cambia de panel, F5 copia, F6 mueve.","k.up":"Arriba","k.down":"Abajo","k.switch":"Cambiar","k.copy":"Copiar","k.move":"Mover","k.reset":"Reiniciar","demo.hint":"En la app, F5 y F6 se ejecutan en segundo plano con un panel de progreso que puedes pausar o cancelar, y si un nombre ya existe puedes reemplazar, omitir o conservar ambos.","log.ready":"Listo.","log.L":"Panel activo: izquierdo.","log.R":"Panel activo: derecho.","log.copied":"Se copió {n} a {p}.","log.moved":"Se movió {n} a {p}.","log.kept":"{n} ya existe allí; se conservaron ambos como {m}.","log.pick":"Primero elige un archivo. En esta demo las carpetas no se mueven.","feat.eyebrow":"Funciones","feat.h2":"Todo lo que debe hacer un gestor de archivos, sin soltar el teclado","ft1h":"Dos paneles, pestañas, tres vistas","ft1p":"Lista, iconos y columnas al estilo de Finder con columna de vista previa. Cada panel tiene su propio historial y cada carpeta recuerda cómo la ordenaste.","ft2h":"El flujo de Total Commander","ft2p":"Copia y mueve al otro panel, escribe para seleccionar, selecciona por patrón como <code>*.jpg<\/code> e invierte la selección.","ft3h":"Operaciones en segundo plano","ft3p":"Copiar, mover, duplicar, enviar a la papelera y renombrar se ejecutan en segundo plano, con pausa y cancelación. El renombrado por lotes muestra al momento cada nombre nuevo.","ft4h":"Archivos comprimidos","ft4p":"Crea, extrae y explora archivos comprimidos con las herramientas del sistema, incluidos ZIP con contraseña. La extracción está protegida contra rutas zip-slip.","ft5h":"Espacios de trabajo","ft5p":"Reúne archivos de todo el disco en una carpeta de enlaces. No se copia ni se mueve nada, y quitar un elemento solo elimina el enlace.","ft6h":"Buscar, filtrar, previsualizar","ft6p":"Búsqueda recursiva por subcadena o regex, barra de filtro instantánea, Vista rápida con la barra espaciadora, Obtener información y un panel de información en vivo.","ft7h":"Como en casa en macOS","ft7p":"Arrastrar y soltar con Finder, etiquetas de color, AirDrop, abrir en Terminal, conexión a recursos SMB, expulsar discos e instalar apps directamente desde un .dmg.","ft8h":"Tus atajos","ft8p":"Todos los atajos se pueden cambiar en Ajustes. Los favoritos del 1 al 9 están en <kbd>⌥⌘1<\/kbd> a <kbd>⌥⌘9<\/kbd>, y la lista completa está en la Ayuda.","th.eyebrow":"Temas","th.h2":"Siete temas con el contraste comprobado","th.p":"Cada paleta mantiene los nombres legibles con un contraste de 4,5:1 o más, sobre el panel y sobre la selección.","th.system":"Sistema","th.auto1":"sigue al sistema","th.auto2":"claro ↔ oscuro","in.eyebrow":"Instalación","in.h2":"Funcionando en un minuto","s1b":"Descarga la imagen.","s1t":"{DMG} o cualquier versión desde {REL}.","s2b":"Arrastra Marlia a Aplicaciones.","s2t":"La imagen trae la app y un acceso a Aplicaciones, uno al lado del otro.","s3b":"Ábrela una vez a mano.","s3t":"Haz clic derecho en Marlia.app y elige Abrir. En macOS 15 y posteriores, ve a Ajustes del Sistema → Privacidad y seguridad y pulsa Abrir igualmente.","s4b":"Opcional: concede Acceso total al disco.","s4t":"Así Escritorio, Documentos y Descargas se abren sin avisos repetidos.","note.h":"Por qué macOS pregunta primero","note.p1":"Marlia tiene una firma ad hoc, sin Apple Developer ID, así que Gatekeeper la detiene en el primer arranque. Si macOS dice que la app «está dañada y no se puede abrir», algo habitual tras descargarla con el navegador o por AirDrop, quita la marca de cuarentena:","note.p2":"¿Prefieres compilarla tú? No hay proyecto de Xcode, solo un script: <code>./build.sh --run<\/code>.","foot.lic":"Marlia es software libre bajo la GNU GPL v3.0.","foot.src":"Código fuente","foot.rel":"Versiones","foot.bug":"Informar de un error","nav.tour":"En acción","hero.alt":"Marlia con el tema Sistema: fotos de Lisboa en lista a la izquierda, con cuatro seleccionadas, y fotos de Kioto en miniatura a la derecha.","hero.cap":"Lista a la izquierda, iconos a la derecha y una barra lateral con favoritos, discos y espacios de trabajo.","tour.eyebrow":"En acción","tour.h2":"Cinco fotos, una tecla","tour.p":"Selecciona archivos a la izquierda, pulsa F5 y ya están en el disco de copia. Tab y ⌘2 pasan al otro panel y los muestran en miniatura.","tour.aria":"Vídeo: se seleccionan cinco fotos, se copian con F5 a un disco de copia y se muestran en miniatura.","c1t":"Columnas con vista previa","c1p":"Columnas al estilo de Finder. La carpeta seleccionada se abre a la derecha.","c2t":"Renombrado por lotes","c2p":"Un patrón como «Lisbon 2026 – ##» con vista previa en vivo de cada nombre nuevo.","c3t":"Conflictos de nombre","c3p":"Omitir, reemplazar o conservar ambos, para un archivo o para todos.","c4t":"Copia en segundo plano","c4p":"Las copias grandes van en segundo plano. Pausa o cancela cuando quieras.","c5t":"Espacios de trabajo","c5p":"Una carpeta de enlaces a archivos de cualquier lugar. No se mueve nada.","c6t":"Búsqueda recursiva","c6p":"Busca en todo un árbol de carpetas por nombre, subcadena o regex.","priv.h2":"Privacidad","priv.1":"<strong>La app Marlia no envía nada a ninguna parte:<\/strong> ni analíticas, ni informes de errores, ni comprobación de actualizaciones. Solo se conecta a la red cuando tú se lo pides, por ejemplo a un servidor SMB.","priv.2":"Este sitio no usa cookies, analíticas ni seguimiento. Las fuentes y las imágenes se sirven desde el propio sitio.","priv.3":"El idioma que eliges se guarda en tu navegador (almacenamiento local) y no se envía a ninguna parte.","priv.4":"Para mostrar la última versión, la página consulta una vez por visita la API de GitHub sobre las versiones de Marlia. GitHub recibe tu dirección IP con esa petición.","priv.5":"El sitio está alojado en GitHub Pages. Como cualquier alojamiento web, GitHub registra las peticiones, incluidas las direcciones IP. Consulta la <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">Declaración de privacidad de GitHub<\/a>.","meta.title":"Marlia: gestor de archivos gratuito de dos paneles para Mac, al estilo de Total Commander","meta.desc":"Gestor de archivos de dos paneles para macOS, gratuito y de código abierto. F5 copia, F6 mueve, Tab cambia de panel. AppKit nativo, pestañas, archivos comprimidos, espacios de trabajo y temas. Apple Silicon, macOS 13.5+.","langs":"Idiomas"}}
+</script>
+
+<script>
+(() => {
+  /* Release shown on the page. These values are only the fallback: on load the page asks the
+     GitHub API for the latest release and replaces them, so a new release shows up without
+     editing this file. Bump them anyway when releasing, for visitors whose API call fails. */
+  const RELEASE = {
+    version: "1.2",
+    bytes: 3383947,
+    url: "https://github.com/lex1142/marlia/releases/download/v1.2/Marlia-1.2.dmg"
+  };
+  const REL_URL = "https://github.com/lex1142/marlia/releases";
+  const NB = "\u00a0";
+
+  /* Strings for this page. In site/template.html the block holds every language; each generated
+     page carries only its own (merged over English), see site/build.py. */
+  const T = JSON.parse(document.getElementById("i18n").textContent);
+
+  /* Non-breaking spaces where a line break would split a unit from its number or a product name. */
+  const glue = (s) => s
+    .replace(/(\d) (MB|МБ|KB|КБ|GB|ГБ)/g, "$1" + NB + "$2")
+    .replace(/macOS (\d)/g, "macOS" + NB + "$1")
+    .replace(/Apple (Silicon|シリコン|芯片)/g, "Apple" + NB + "$1")
+    .replace(/(\d) (steps|шагов|pasos|Schritte|ステップ|步)/g, "$1" + NB + "$2")
+    .replace(/Total Commander/g, "Total" + NB + "Commander")
+    .replace(/ (·|—)/g, NB + "$1")
+    .replace(/ (→)/g, NB + "$1");
+
+  const SITE_LANGS = ["en", "ru", "zh", "es", "ja"];
+  const PAGE_LANG = document.documentElement.dataset.lang || "en";
+  let lang = PAGE_LANG;
+
+  function tr(key) {
+    if (T[lang] && T[lang][key] != null) return T[lang][key];
+    return T.en && T.en[key] != null ? T.en[key] : "";
+  }
+
+  /* Decimal megabytes, like Finder; decimal comma and unit follow the language. */
+  function sizeText() {
+    const loc = lang === "zh" ? "zh-Hans" : lang;
+    const num = new Intl.NumberFormat(loc, { maximumFractionDigits: 1 }).format(RELEASE.bytes / 1e6);
+    return num + " " + (lang === "ru" ? "МБ" : "MB");
+  }
+  function fill(s) {
+    return s.replace(/\{ver\}/g, RELEASE.version).replace(/\{size\}/g, sizeText());
+  }
+
+  function applyLang(next) {
+    lang = T[next] ? next : PAGE_LANG;
+    document.documentElement.lang = lang === "zh" ? "zh-Hans" : lang;
+    document.querySelectorAll("[data-t]").forEach(el => { el.textContent = glue(fill(tr(el.dataset.t))); });
+    document.querySelectorAll("[data-h]").forEach(el => {
+      let html = glue(fill(tr(el.dataset.h)));
+      html = html.replace("{DMG}", '<a href="' + RELEASE.url + '" target="_blank" rel="noopener">Marlia-' + RELEASE.version + '.dmg</a>')
+                 .replace("{REL}", '<a href="' + REL_URL + '" target="_blank" rel="noopener">Releases</a>');
+      el.innerHTML = html;
+    });
+    document.querySelectorAll("[data-dl]").forEach(el => { el.href = RELEASE.url; });
+    document.querySelectorAll("[data-alt]").forEach(el => { el.alt = tr(el.dataset.alt); });
+    document.querySelectorAll("[data-aria]").forEach(el => { el.setAttribute("aria-label", tr(el.dataset.aria)); });
+    const sel = document.getElementById("langSelect");
+    sel.value = lang;
+    sel.setAttribute("aria-label", tr("lang"));
+    logKey(lastLog.key, lastLog.vars);
+  }
+
+  /* ---------- demo ---------- */
+  const PATHS = { L: "~/Pictures/Trip", R: "~/Desktop/Album" };
+  const TITLES = { L: "Trip", R: "Album" };
+  const initial = () => ({
+    L: [
+      { n: "Raw", dir: true, d: "11/20/26, 18:42" },
+      { n: "IMG_0412.heic", b: 2.8, d: "11/14/26, 09:31" },
+      { n: "IMG_0413.heic", b: 3.1, d: "11/14/26, 09:32" },
+      { n: "IMG_0420.jpg", b: 1.6, d: "11/14/26, 11:05" },
+      { n: "route.gpx", b: 0.092, d: "11/15/26, 20:17" },
+      { n: "sunset.mov", b: 48, d: "11/15/26, 17:54" },
+      { n: "notes.txt", b: 0.004, d: "11/16/26, 08:03" }
+    ],
+    R: [
+      { n: "cover.jpg", b: 0.74, d: "11/18/26, 13:20" },
+      { n: "README.md", b: 0.002, d: "11/18/26, 13:22" }
+    ],
+    cur: { L: 1, R: 0 },
+    side: "L"
+  });
+  let st = initial();
+  let fresh = null;
+  let lastLog = { key: "log.ready", vars: {} };
+
+  const box = document.getElementById("demoBox");
+  const logEl = document.getElementById("demoLog");
+  const title = document.getElementById("mTitle");
+  const panes = { L: document.getElementById("paneL"), R: document.getElementById("paneR") };
+
+  const fmt = (mb) => mb >= 1 ? (Math.round(mb * 10) / 10) + " MB" : Math.max(1, Math.round(mb * 1000)) + " KB";
+  const sortByName = (a, b) => a.n.localeCompare(b.n, "en", { sensitivity: "base", numeric: true });
+
+  function logKey(key, vars) {
+    lastLog = { key, vars: vars || {} };
+    let s = tr(key);
+    for (const k in lastLog.vars) s = s.replace("{" + k + "}", lastLog.vars[k]);
+    logEl.textContent = s;
+  }
+
+  function render() {
+    title.textContent = TITLES[st.side];
+    for (const side of ["L", "R"]) {
+      const p = panes[side];
+      p.classList.toggle("active", st.side === side);
+      const ul = p.querySelector(".m-list");
+      ul.innerHTML = "";
+      st[side].forEach((it, i) => {
+        const li = document.createElement("li");
+        li.className = "m-row" + (i === st.cur[side] ? " sel" : "") + (fresh && fresh.side === side && fresh.name === it.n ? " fresh" : "");
+        const n = document.createElement("span"); n.className = "n";
+        n.innerHTML = '<svg aria-hidden="true"><use href="#' + (it.dir ? "i-folder" : "i-doc") + '"/></svg>';
+        const nm = document.createElement("span"); nm.textContent = it.n; n.append(nm);
+        const d = document.createElement("span"); d.className = "d"; d.textContent = it.d;
+        const s = document.createElement("span"); s.className = "s"; s.textContent = it.dir ? "--" : fmt(it.b);
+        li.append(n, d, s);
+        li.addEventListener("click", () => { st.side = side; st.cur[side] = i; render(); });
+        ul.append(li);
+      });
+      const sel = st[side][st.cur[side]];
+      let text = st[side].length + (st[side].length === 1 ? " item" : " items");
+      if (sel) text += " · selected: 1" + (sel.dir ? " (folders not counted)" : " · " + fmt(sel.b));
+      p.querySelector(".cnt").textContent = text;
+    }
+    fresh = null;
+  }
+
+  function act(k) {
+    const side = st.side, other = side === "L" ? "R" : "L";
+    const list = st[side];
+    const item = list[st.cur[side]];
+    switch (k) {
+      case "ArrowUp": if (list.length) st.cur[side] = Math.max(0, st.cur[side] - 1); break;
+      case "ArrowDown": if (list.length) st.cur[side] = Math.min(list.length - 1, st.cur[side] + 1); break;
+      case "Tab":
+        st.side = other;
+        if (st.cur[other] < 0 && st[other].length) st.cur[other] = 0;
+        logKey("log." + other);
+        break;
+      case "F5":
+      case "F6": {
+        if (!item || item.dir) { logKey("log.pick"); break; }
+        let name = item.n;
+        const dest = PATHS[other];
+        if (st[other].some(x => x.n === name)) {
+          const dot = name.lastIndexOf(".");
+          name = dot > 0 ? name.slice(0, dot) + " 2" + name.slice(dot) : name + " 2";
+          logKey("log.kept", { n: item.n, m: name });
+        } else {
+          logKey(k === "F5" ? "log.copied" : "log.moved", { n: item.n, p: dest });
+        }
+        st[other].push({ ...item, n: name });
+        st[other].sort((a, b) => (b.dir ? 1 : 0) - (a.dir ? 1 : 0) || sortByName(a, b));
+        fresh = { side: other, name };
+        if (k === "F6") {
+          list.splice(st.cur[side], 1);
+          st.cur[side] = Math.min(st.cur[side], list.length - 1);
+        }
+        break;
+      }
+      case "reset": st = initial(); logKey("log.ready"); break;
+      default: return;
+    }
+    render();
+  }
+
+  const keyIds = { ArrowUp: "kUp", ArrowDown: "kDown", Tab: "kTab", F5: "kF5", F6: "kF6" };
+  function flash(k) {
+    const b = document.getElementById(keyIds[k]);
+    if (!b) return;
+    b.classList.add("pressed");
+    setTimeout(() => b.classList.remove("pressed"), 160);
+  }
+
+  box.addEventListener("keydown", (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "Tab" && e.shiftKey) return;
+    if (keyIds[e.key]) {
+      e.preventDefault();
+      flash(e.key);
+      act(e.key);
+    }
+  });
+  document.querySelectorAll(".key").forEach(b => {
+    b.addEventListener("click", () => { flash(b.dataset.k); act(b.dataset.k); });
+  });
+  for (const side of ["L", "R"]) {
+    panes[side].addEventListener("mousedown", () => {
+      if (st.side !== side) { st.side = side; render(); }
+      setTimeout(() => box.focus({ preventScroll: true }));
+    });
+  }
+
+  /* ---------- language ---------- */
+  /* Every language has its own URL (/, /ru/, /zh/ …) so search engines can index each one.
+     Picking a language in the menu goes there and remembers the choice; the root page
+     redirects a first-time visitor whose browser prefers another language (see build.py). */
+  function langURL(code) {
+    const up = PAGE_LANG === "en" ? "" : "../";
+    return (up + (code === "en" ? "" : code + "/")) || "./";
+  }
+  document.getElementById("langSelect").addEventListener("change", (e) => {
+    const code = e.target.value;
+    try { localStorage.setItem("marlia.lang", code); } catch (err) {}
+    if (SITE_LANGS.includes(code) && code !== PAGE_LANG) location.href = langURL(code) + location.hash;
+  });
+  document.querySelectorAll("[data-lang-link]").forEach(a => a.addEventListener("click", () => {
+    try { localStorage.setItem("marlia.lang", a.dataset.langLink); } catch (err) {}
+  }));
+
+  render();
+  applyLang(PAGE_LANG);
+
+  /* Tour video: two variants (light/dark), only the one the theme shows is loaded and played,
+     and only while it is on screen. With reduced motion it stays on its poster, with controls. */
+  const videos = Array.from(document.querySelectorAll("video[data-tour]"));
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let onScreen = false;
+  function syncVideos() {
+    for (const v of videos) {
+      const shown = getComputedStyle(v).display !== "none";
+      v.controls = reduce.matches;
+      if (shown && onScreen && !reduce.matches) {
+        if (v.preload !== "auto") v.preload = "auto";
+        const p = v.play(); if (p && p.catch) p.catch(() => {});
+      } else if (!v.paused) {
+        v.pause();
+      }
+    }
+  }
+  if ("IntersectionObserver" in window && videos.length) {
+    new IntersectionObserver((entries) => {
+      onScreen = entries.some(e => e.isIntersecting);
+      syncVideos();
+    }, { threshold: 0.25 }).observe(videos[0].parentElement);
+  } else { onScreen = true; syncVideos(); }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", syncVideos);
+  reduce.addEventListener("change", syncVideos);
+  new MutationObserver(syncVideos).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  /* Latest release from GitHub (CORS-enabled, 60 unauthenticated requests per hour per visitor IP).
+     Any failure just leaves the fallback values above in place. */
+  fetch("https://api.github.com/repos/lex1142/marlia/releases/latest", { headers: { Accept: "application/vnd.github+json" } })
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(rel => {
+      const dmg = (rel.assets || []).find(a => /\.dmg$/i.test(a.name));
+      if (!dmg) return;
+      RELEASE.version = String(rel.tag_name || "").replace(/^v/, "") || RELEASE.version;
+      RELEASE.bytes = dmg.size || RELEASE.bytes;
+      RELEASE.url = dmg.browser_download_url || RELEASE.url;
+      applyLang(lang);
+    })
+    .catch(() => {});
+})();
+</script>
+</body>
+</html>
