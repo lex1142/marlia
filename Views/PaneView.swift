@@ -1088,7 +1088,7 @@ struct PaneView: View {
             if let error = model.errorMessage {
                 Text(error).foregroundStyle(Color(nsColor: theme.palette.error))
             } else {
-                Text("\(model.items.count) items")
+                Text(model.items.count == 1 ? "1 item" : "\(model.items.count) items")
                 if !model.selection.isEmpty {
                     // Folder sizes aren't included in the total — that needs a
                     // subtree walk. With files and folders mixed this is stated

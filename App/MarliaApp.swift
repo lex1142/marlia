@@ -647,7 +647,14 @@ final class AppState: ObservableObject {
             folder = source.currentURL
         }
         if side == .right, !showSecondPane { showSecondPane = true }
-        (side == .left ? leftPane : rightPane).navigate(to: folder)
+        let target = side == .left ? leftPane : rightPane
+        target.navigate(to: folder)
+        // Files: the other pane shows the same folder with the same files selected, so
+        // the file you were on is where you land.
+        if folder == source.currentURL, target !== source, !selected.isEmpty {
+            let names = Set(selected.map(\.name))
+            target.selection = Set(target.items.filter { names.contains($0.name) }.map(\.id))
+        }
     }
 
     // MARK: User commands (Commands menu, see Models/UserCommands.swift)

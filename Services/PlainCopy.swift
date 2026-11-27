@@ -48,6 +48,29 @@ enum PlainCopy {
         return ida.isEqual(idb)
     }
 
+    /// `FileManager.copyItem`, but twin-free when the destination's volume needs it. For
+    /// callers outside the queued transfer (undo/redo), which work with bare paths.
+    static func copyItem(_ source: URL, to destination: URL) throws {
+        if volumeStoresExtendedAttributes(destination.deletingLastPathComponent()) {
+            try FileManager.default.copyItem(at: source, to: destination)
+        } else {
+            try copy(source, to: destination)
+        }
+    }
+
+    /// `FileManager.moveItem`, but a move onto a FAT/exFAT volume from another volume is done
+    /// as a twin-free copy plus a delete (the original goes only once the copy succeeded).
+    /// Within one volume it stays a rename, which writes no file data.
+    static func moveItem(_ source: URL, to destination: URL) throws {
+        let folder = destination.deletingLastPathComponent()
+        if !volumeStoresExtendedAttributes(folder), !sameVolume(source, folder) {
+            try copy(source, to: destination)
+            try FileManager.default.removeItem(at: source)
+        } else {
+            try FileManager.default.moveItem(at: source, to: destination)
+        }
+    }
+
     /// Copies `source` (file, folder or package) to `destination`, which must not exist yet —
     /// if it does, nothing is touched and EEXIST is thrown. On failure whatever was partly
     /// written at `destination` is removed (it didn't exist before, so it's ours).

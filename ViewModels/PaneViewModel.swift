@@ -370,9 +370,12 @@ final class PaneViewModel: ObservableObject, Identifiable {
     /// volumeAvailableCapacityForImportantUsage is the same number Finder shows: it
     /// accounts for purgeable storage, whereas the "raw" free space is usually
     /// noticeably smaller and disagrees with what the user sees in the system.
+    /// It is APFS-only in practice, though: on exFAT/FAT (a USB stick) it reports 0 while
+    /// the volume is nearly empty (measured), so 0 falls back to the plain capacity.
     private func updateFreeSpace() {
-        let values = try? currentURL.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
-        let capacity = values?.volumeAvailableCapacityForImportantUsage
+        let values = try? currentURL.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey, .volumeAvailableCapacityKey])
+        var capacity = values?.volumeAvailableCapacityForImportantUsage
+        if capacity ?? 0 == 0, let plain = values?.volumeAvailableCapacity { capacity = Int64(plain) }
         if capacity != freeSpace { freeSpace = capacity }
     }
 

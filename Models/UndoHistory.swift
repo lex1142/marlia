@@ -159,7 +159,7 @@ struct UndoHistory: Codable {
         case .transfer(let mode, let pairs):
             for pair in pairs {
                 switch mode {
-                case .move: try? manager.moveItem(at: pair.dst, to: pair.src)
+                case .move: try? PlainCopy.moveItem(pair.dst, to: pair.src)
                 case .copy: trashOrRemove(pair.dst)
                 }
             }
@@ -200,8 +200,8 @@ struct UndoHistory: Codable {
         case .transfer(let mode, let pairs):
             for pair in pairs {
                 switch mode {
-                case .move: try? manager.moveItem(at: pair.src, to: pair.dst)
-                case .copy: try? manager.copyItem(at: pair.src, to: pair.dst)
+                case .move: try? PlainCopy.moveItem(pair.src, to: pair.dst)
+                case .copy: try? PlainCopy.copyItem(pair.src, to: pair.dst)
                 }
             }
         case .trash(var pairs):

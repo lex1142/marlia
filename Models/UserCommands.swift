@@ -111,7 +111,18 @@ enum UserCommandRunner {
         var attributes: posix_spawnattr_t?
         posix_spawnattr_init(&attributes)
         defer { posix_spawnattr_destroy(&attributes) }
-        posix_spawnattr_setflags(&attributes, Int16(POSIX_SPAWN_SETPGROUP))
+        // A clean signal state, not the caller's: run() is called on a GCD worker thread,
+        // and those threads block signals — a spawned child inherits that mask. zsh resets
+        // its own, but a job it starts in the background (`rsync … &`) kept SIGTERM blocked,
+        // survived the cancel, and held the output pipe open so run() never returned
+        // (measured in a harness that spawns from DispatchQueue.global, like the app).
+        var emptyMask = sigset_t()
+        sigemptyset(&emptyMask)
+        posix_spawnattr_setsigmask(&attributes, &emptyMask)
+        var allSignals = sigset_t()
+        sigfillset(&allSignals)
+        posix_spawnattr_setsigdefault(&attributes, &allSignals)
+        posix_spawnattr_setflags(&attributes, Int16(POSIX_SPAWN_SETPGROUP | POSIX_SPAWN_SETSIGMASK | POSIX_SPAWN_SETSIGDEF))
         posix_spawnattr_setpgroup(&attributes, 0)
 
         let arguments = ["/bin/zsh", "-l", "-c", script, "marlia"] + context.selection.map(\.path)

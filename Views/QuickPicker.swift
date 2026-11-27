@@ -188,7 +188,12 @@ final class QuickPickerController: NSObject, NSTableViewDataSource, NSTableViewD
         field.drawsBackground = false
         field.focusRingType = .none
         field.delegate = self
+        // Single line that scrolls sideways: without wraps/isScrollable a long path wraps
+        // onto a second line and the first one is pushed out of the field's frame.
         field.cell?.usesSingleLineMode = true
+        field.cell?.wraps = false
+        field.cell?.isScrollable = true
+        field.maximumNumberOfLines = 1
         field.translatesAutoresizingMaskIntoConstraints = false
 
         let separator = NSBox()

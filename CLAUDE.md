@@ -665,6 +665,12 @@ would let a downloaded app skip Gatekeeper. Volumes are detected by the `VOL_CAP
 capability, **not** `pathconf(_PC_XATTR_SIZE_BITS)`, which reports FAT/exFAT as supporting xattrs (it
 means the emulation). `PlainCopy.copy` refuses an existing destination without touching it — an early
 version's "clean up on failure" deleted the existing item, caught by the harness.
+Undo/redo go through `PlainCopy.copyItem`/`moveItem` too (redo of a copy re-copies from the source;
+undo of a move off a stick moves it back), or they'd bring the twins back.
+
+Free space: `volumeAvailableCapacityForImportantUsage` (what Finder shows on APFS) is **0** on exFAT/FAT,
+so the status bar said "Zero KB free" for an empty stick; `PaneViewModel.updateFreeSpace` falls back to
+`volumeAvailableCapacity` when it gets 0.
 
 **The undo history is app-wide and on disk** (`UndoHistoryStore`, `~/Library/Application
 Support/Marlia/UndoHistory.json`). `AppState.history` is a computed property over the store, so every
@@ -684,6 +690,12 @@ whatever the script started, not just the shell — with `Process`, cancelling `
 it running. Cancel sends SIGCONT before SIGTERM for the same reason as with archives. Scripts run via
 `zsh -l -c` so the user's ~/.zprofile PATH applies regardless of their interactive shell. A user command
 shortcut without ⌘ (other than a function key) would be swallowed by the panes, so Settings warns about it.
+The spawn also resets the signal mask and dispositions (`POSIX_SPAWN_SETSIGMASK | POSIX_SPAWN_SETSIGDEF`):
+`run` is called on a GCD worker thread, those threads block signals, and a child inherits the spawning
+thread's mask. zsh resets its own, but a job it backgrounds (`sleep 300 & wait`) kept SIGTERM blocked —
+it survived the cancel, held the output pipe open, and the operation never left the HUD. Found in the
+live app; the earlier harness had missed it because it called `run` from the main thread. Anything that
+spawns from a background queue needs the same reset.
 
 **Batch rename metadata** (`Services/FileMetadataReader.swift`): EXIF DateTimeOriginal via ImageIO (local
 wall-clock time, no zone), movie creation date and iTunes `trkn` / ID3 `TRCK` track numbers via
