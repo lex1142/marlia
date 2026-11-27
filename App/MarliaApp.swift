@@ -650,6 +650,69 @@ final class AppState: ObservableObject {
         (side == .left ? leftPane : rightPane).navigate(to: folder)
     }
 
+    // MARK: User commands (Commands menu, see Models/UserCommands.swift)
+
+    /// Runs a user command against the active pane: selected paths as arguments, the
+    /// folders in MARLIA_* variables. It shows in the operations HUD; pause and cancel go
+    /// to the script's whole process group, so whatever it started stops too.
+    func runUserCommand(_ command: UserCommand) {
+        let pane = activePane
+        let context = UserCommandRunner.Context(
+            directory: pane.currentURL,
+            otherDirectory: showSecondPane ? passivePane.currentURL : nil,
+            selection: pane.selectedItems.map(\.url))
+        let op = beginOperation("Running “\(command.name)”")
+        let control = op.control
+        let script = command.script
+        DispatchQueue.global(qos: .userInitiated).async {
+            let result = UserCommandRunner.run(script, context: context) { pid in
+                control.setPauseHandlers(pause: { UserCommandRunner.signal(pid, SIGSTOP) },
+                                         resume: { UserCommandRunner.signal(pid, SIGCONT) })
+                control.setCancelHandler {
+                    // A stopped process can't act on SIGTERM, so resume it first (the same
+                    // trap as with paused archive processes, see CLAUDE.md).
+                    UserCommandRunner.signal(pid, SIGCONT)
+                    UserCommandRunner.signal(pid, SIGTERM)
+                }
+            }
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.endOperation(op)
+                if command.refreshAfter {
+                    self.leftPane.reload()
+                    self.rightPane.reload()
+                }
+                self.presentUserCommandResult(command, result)
+            }
+        }
+    }
+
+    /// Output in a sheet: on failure always (with the exit code), on success only when the
+    /// command asks for it. Nothing after a cancel — the user stopped it on purpose.
+    private func presentUserCommandResult(_ command: UserCommand, _ result: UserCommandRunner.Result) {
+        guard !result.wasCancelled, let window else { return }
+        let failed = result.status != 0
+        guard failed || command.output == .always else { return }
+        let alert = NSAlert()
+        alert.alertStyle = failed ? .warning : .informational
+        alert.messageText = failed ? "“\(command.name)” failed (exit code \(result.status))" : command.name
+        let text = result.output.trimmingCharacters(in: .whitespacesAndNewlines)
+        if text.isEmpty {
+            alert.informativeText = "The script printed nothing."
+        } else {
+            let scroll = NSTextView.scrollableTextView()
+            scroll.frame = NSRect(x: 0, y: 0, width: 560, height: 260)
+            if let view = scroll.documentView as? NSTextView {
+                view.isEditable = false
+                view.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
+                view.string = text
+                view.scrollToEndOfDocument(nil)
+            }
+            alert.accessoryView = scroll
+        }
+        alert.beginSheetModal(for: window)
+    }
+
     /// Compare Folders (⇧F2): selects in each pane what the other one lacks or holds an
     /// older copy of (the rules are in FolderComparison). It compares what the panes show,
     /// so hidden files count only while they're shown and an active filter narrows it.

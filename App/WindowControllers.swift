@@ -342,8 +342,8 @@ final class AppWindowManager {
 
     func openSettings() {
         if let w = settingsController?.window { w.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true); return }
-        let c = AuxWindowController(title: "Settings", content: ShortcutSettingsView(),
-                                    contentSize: NSSize(width: 520, height: 480), resizable: false,
+        let c = AuxWindowController(title: "Settings", content: SettingsView(),
+                                    contentSize: NSSize(width: 680, height: 540), resizable: true,
                                     miniaturizable: false)
         c.onClose = { [weak self] in self?.settingsController = nil }
         settingsController = c

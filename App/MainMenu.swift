@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 
 /// The app's main menu, built by hand in AppKit.
 ///
@@ -47,6 +48,9 @@ final class MainMenuController: NSObject, NSMenuDelegate {
     private var goBackItem: NSMenuItem?
     private var goForwardItem: NSMenuItem?
     private var goUpItem: NSMenuItem?
+    /// The Commands menu, rebuilt whenever the user commands change.
+    private var userCommandsMenu: NSMenu?
+    private var userCommandsSubscription: AnyCancellable?
 
     private var appState: AppState? { AppStateRegistry.activeState }
 
@@ -103,6 +107,7 @@ final class MainMenuController: NSObject, NSMenuDelegate {
         main.addItem(submenu(viewMenu(), title: "View"))
         main.addItem(submenu(goMenu(), title: "Go"))
         main.addItem(submenu(actionsMenu(), title: "Actions"))
+        main.addItem(submenu(commandsMenu(), title: "Commands"))
 
         let window = windowMenu()
         main.addItem(submenu(window, title: "Window"))
@@ -421,6 +426,43 @@ final class MainMenuController: NSObject, NSMenuDelegate {
             WorkspaceStore.shared.addToDefaultWorkspace(items)
         })
         return menu
+    }
+
+    /// User commands (Settings ▸ Commands). Rebuilt on every change of the list, so a new
+    /// command or shortcut works at once; being menu items, they're in the palette too.
+    private func commandsMenu() -> NSMenu {
+        let menu = NSMenu()
+        userCommandsMenu = menu
+        fillUserCommands(menu, UserCommandStore.shared.commands)
+        if userCommandsSubscription == nil {
+            userCommandsSubscription = UserCommandStore.shared.$commands
+                .dropFirst()
+                .receive(on: RunLoop.main)
+                .sink { [weak self] commands in
+                    guard let self, let menu = self.userCommandsMenu else { return }
+                    self.fillUserCommands(menu, commands)
+                }
+        }
+        return menu
+    }
+
+    private func fillUserCommands(_ menu: NSMenu, _ commands: [UserCommand]) {
+        menu.removeAllItems()
+        for command in commands {
+            let item = ClosureMenuItem(title: command.name.isEmpty ? "Untitled" : command.name) { [weak self] in
+                self?.appState?.runUserCommand(command)
+            }
+            if let shortcut = command.shortcut, !shortcut.character.isEmpty {
+                item.keyEquivalent = shortcut.character
+                item.keyEquivalentModifierMask = shortcut.modifierFlags
+            }
+            menu.addItem(item)
+        }
+        if !commands.isEmpty { menu.addItem(.separator()) }
+        menu.addItem(ClosureMenuItem(title: "Edit Commands…") {
+            UserDefaults.standard.set("commands", forKey: SettingsView.tabKey)
+            Self.openSettingsWindow?()
+        })
     }
 
     private func windowMenu() -> NSMenu {
