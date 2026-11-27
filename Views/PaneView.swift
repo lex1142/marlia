@@ -411,24 +411,25 @@ struct PaneView: View {
     /// Breadcrumbs: clicking a segment goes to that folder (including the root),
     /// while clicking the remaining empty space in the bar — as before — enables
     /// manual path editing (see .onTapGesture below and isEditingPath).
+    ///
+    /// When the bar is too narrow, middle folders collapse into "…" (a menu of them), the
+    /// way Finder's path bar does it: the first crumb and as many of the last ones as fit
+    /// stay whole. Previously every crumb was squeezed at once, each down to a glyph or
+    /// two, and a narrow pane showed garbage like "/ \/ E". ViewThatFits picks the first
+    /// variant whose natural width fits; a lone "…" holding the whole path is the fallback
+    /// when nothing does.
     private var breadcrumbPath: some View {
-        HStack(spacing: 2) {
-            let segments = pathSegments
-            ForEach(Array(segments.enumerated()), id: \.element.url) { index, segment in
-                // No separator right after the root "/" (it is one itself), but one after a
-                // trimmed first crumb — a workspace or iCloud Drive.
-                if index > 0 && segments[index - 1].name != "/" {
-                    Text("/").foregroundStyle(.secondary)
-                }
-                Button {
-                    appState.activate(side)
-                    isEditingPath = false
-                    model.navigate(to: segment.url)
-                } label: {
-                    Text(segment.name)
-                }
-                .buttonStyle(.plain)
-                .help(segment.url.path)
+        let segments = pathSegments
+        return HStack(spacing: 0) {
+            ViewThatFits(in: .horizontal) {
+                crumbRow(segments, keepingLast: segments.count)
+                crumbRow(segments, keepingLast: 4)
+                crumbRow(segments, keepingLast: 3)
+                crumbRow(segments, keepingLast: 2)
+                crumbRow(segments, keepingLast: 1)
+                lastCrumbOnly(segments)
+                truncatedLastCrumb(segments)
+                collapsedPath(segments)
             }
             Spacer(minLength: 8)
         }
@@ -442,6 +443,108 @@ struct PaneView: View {
             isEditingPath = true
         }
         .help("Click a folder to navigate there, or click empty space to type a path")
+    }
+
+    /// The first crumb, "…" for the hidden middle, then the last `keep`. With nothing to
+    /// hide it's the full path. Crumbs keep their natural width (fixedSize), so
+    /// ViewThatFits measures the real text rather than a squeezed version of it.
+    private func crumbRow(_ segments: [(name: String, url: URL)], keepingLast keep: Int) -> some View {
+        let hiddenCount = segments.count - 1 - keep
+        let hidden = hiddenCount > 0 ? Array(segments[1...hiddenCount]) : []
+        let shown = hiddenCount > 0 ? [segments[0]] + Array(segments.suffix(keep)) : segments
+        return HStack(spacing: 2) {
+            ForEach(Array(shown.enumerated()), id: \.element.url) { index, segment in
+                if index > 0 {
+                    // The collapsed middle sits right after the first crumb.
+                    if index == 1 && !hidden.isEmpty {
+                        crumbSeparator(after: shown[0])
+                        hiddenCrumbsMenu(hidden)
+                        Text("/").foregroundStyle(.secondary)
+                    } else {
+                        crumbSeparator(after: shown[index - 1])
+                    }
+                }
+                crumbButton(segment)
+                    .fixedSize()
+            }
+        }
+    }
+
+    /// Narrow: "…" with every ancestor, then the current folder's name, whole.
+    private func lastCrumbOnly(_ segments: [(name: String, url: URL)]) -> some View {
+        HStack(spacing: 2) {
+            if segments.count > 1 {
+                hiddenCrumbsMenu(Array(segments.dropLast()))
+                Text("/").foregroundStyle(.secondary)
+            }
+            if let last = segments.last {
+                crumbButton(last)
+                    .fixedSize()
+            }
+        }
+    }
+
+    /// Narrower still: the current folder's name truncated in the middle, but only while at
+    /// least 60 points are left for it. idealWidth tells ViewThatFits that 60 is enough;
+    /// the text then takes whatever width the bar actually has.
+    private func truncatedLastCrumb(_ segments: [(name: String, url: URL)]) -> some View {
+        HStack(spacing: 2) {
+            if segments.count > 1 {
+                hiddenCrumbsMenu(Array(segments.dropLast()))
+                Text("/").foregroundStyle(.secondary)
+            }
+            if let last = segments.last {
+                crumbButton(last)
+                    .truncationMode(.middle)
+                    .frame(minWidth: 60, idealWidth: 60, maxWidth: .infinity, alignment: .leading)
+            }
+        }
+    }
+
+    /// Narrowest, the fallback when even one name doesn't fit: just "…", whose menu holds
+    /// the whole path. A name truncated to a few points drew a stray glyph instead
+    /// (measured in an 800-point window with two panes).
+    private func collapsedPath(_ segments: [(name: String, url: URL)]) -> some View {
+        hiddenCrumbsMenu(segments)
+    }
+
+    /// No separator right after the root "/" (it is one itself), but one after a trimmed
+    /// first crumb — a workspace or iCloud Drive.
+    @ViewBuilder
+    private func crumbSeparator(after previous: (name: String, url: URL)) -> some View {
+        if previous.name != "/" {
+            Text("/").foregroundStyle(.secondary)
+        }
+    }
+
+    private func crumbButton(_ segment: (name: String, url: URL)) -> some View {
+        Button {
+            goToCrumb(segment.url)
+        } label: {
+            Text(segment.name)
+        }
+        .buttonStyle(.plain)
+        .help(segment.url.path)
+    }
+
+    private func hiddenCrumbsMenu(_ hidden: [(name: String, url: URL)]) -> some View {
+        Menu {
+            ForEach(hidden, id: \.url) { segment in
+                Button(segment.name) { goToCrumb(segment.url) }
+            }
+        } label: {
+            Text("…")
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        .help(hidden.map(\.name).joined(separator: " / "))
+    }
+
+    private func goToCrumb(_ url: URL) {
+        appState.activate(side)
+        isEditingPath = false
+        model.navigate(to: url)
     }
 
     // MARK: Search
