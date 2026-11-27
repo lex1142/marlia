@@ -8,7 +8,10 @@ A two-pane, keyboard-driven file manager for macOS in the spirit of Total Comman
 
 **Website: [lex1142.github.io/marlia](https://lex1142.github.io/marlia/)** (a feature tour, a live demo you can try in the browser, and the download)
 
-![Marlia: two panes, List and Icons view, Dracula theme](docs/screenshot.jpg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/hero-dark.webp">
+  <img alt="Marlia: two panes, photos in List view on the left and thumbnails in Icons view on the right" src="docs/media/hero-light.webp">
+</picture>
 
 **Requirements:** macOS 13.5 (Ventura) or later, Apple Silicon.
 

@@ -103,8 +103,16 @@ and `otool -l … | grep -A3 LC_BUILD_VERSION` → `minos 13.5`.
 
 `docs/index.html` is the project site, served by GitHub Pages from `main` → `/docs` (with
 `docs/.nojekyll`, so it's published as-is). It's one self-contained file: no build step, the only
-external loads are Google Fonts and one call to the GitHub API. It reuses `docs/screenshot.jpg` (also
-the README image) and `docs/marlia-icon.png` (128 px, from `App/Marlia.icns` via `sips`).
+external loads are Google Fonts and one call to the GitHub API. Images and the tour video live in
+`docs/media/` (WebP stills and H.264 video, each in a `-light` and a `-dark` variant; the page shows
+the one matching its theme through the `--only-light`/`--only-dark` tokens, and the README's
+`<picture>` uses the same hero pair). `docs/marlia-icon.png` is 128 px, from `App/Marlia.icns` via `sips`.
+
+The media were shot on 2026-11-27 from a demo folder (`/Users/Shared/Demo`, generated content) in an
+isolated copy of the app with its own bundle id, so the real app's favorites, recents and session
+never appear. Two things to know if you reshoot: a Columns view starts at `/` and shows `/Users` with
+the account name in it, and ScreenCaptureKit window capture replaces the traffic lights with a
+"window is being recorded" badge on macOS 26 (the video patches that corner from a still).
 
 The download button needs **no edit on release**: on load the page fetches
 `api.github.com/repos/lex1142/marlia/releases/latest` and takes the version, DMG size and URL from

@@ -13,7 +13,7 @@
 <meta property="og:title" content="Marlia: a two-pane file manager for macOS">
 <meta property="og:description" content="Free, open-source, keyboard-driven. F5 copies, F6 moves, Tab switches panes. Native AppKit, 3 MB download.">
 <meta property="og:url" content="https://lex1142.github.io/marlia/">
-<meta property="og:image" content="https://lex1142.github.io/marlia/screenshot.jpg">
+<meta property="og:image" content="https://lex1142.github.io/marlia/media/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,6 +49,8 @@
   --m-doc-line: #b9b9c0;
   --m-seg: #e3e3e7;
   --m-seg-on: #ffffff;
+  --only-light: block;
+  --only-dark: none;
 
   --cjk: "Hiragino Sans", "PingFang SC", "Noto Sans JP", "Noto Sans SC";
   --f-display: "Manrope", "Avenir Next", "Helvetica Neue", var(--cjk), Arial, sans-serif;
@@ -91,6 +93,8 @@
     --m-doc-line: #9a9aa2;
     --m-seg: #3a3a3d;
     --m-seg-on: #636367;
+    --only-light: none;
+    --only-dark: block;
   }
 }
 :root[data-theme="dark"] {
@@ -118,6 +122,8 @@
   --m-doc-line: #9a9aa2;
   --m-seg: #3a3a3d;
   --m-seg-on: #636367;
+  --only-light: none;
+  --only-dark: block;
 }
 
 * { box-sizing: border-box; }
@@ -238,15 +244,18 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
 .btn svg { width: 20px; height: 20px; flex: none; }
 .meta { font-family: var(--f-mono); font-size: 0.8rem; color: var(--muted); }
 
+.only-light { display: var(--only-light); }
+.only-dark { display: var(--only-dark); }
+
 .shot {
   margin: 8px 0 0;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid var(--line);
   box-shadow: 0 30px 60px -30px rgba(15, 22, 48, 0.45);
-  background: #282a36;
+  background: var(--surface);
 }
-.shot img { display: block; width: 100%; height: auto; max-width: 100%; aspect-ratio: 2000 / 1179; }
+.shot img { width: 100%; height: auto; max-width: 100%; aspect-ratio: 2880 / 1720; }
 .shot-cap { margin-top: -12px; font-size: 0.85rem; color: var(--muted); }
 
 /* ---------- facts strip ---------- */
@@ -384,6 +393,32 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
 .feature .tag { font-family: var(--f-mono); font-size: 0.78rem; color: var(--accent); white-space: nowrap; }
 .feature p { grid-column: 1 / -1; color: var(--muted); max-width: 54ch; }
 
+/* ---------- tour: video + feature shots ---------- */
+.tour-video {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 60px -30px rgba(15, 22, 48, 0.45);
+  background: var(--surface);
+}
+.tour-video video { width: 100%; height: auto; max-width: 100%; aspect-ratio: 1920 / 1146; }
+.gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 24px; }
+.gallery figure { margin: 0; display: grid; gap: 12px; align-content: start; }
+.gallery .frame {
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--code-bg);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 10px;
+}
+.gallery .frame img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 6px; }
+.gallery figcaption { display: grid; gap: 4px; }
+.gallery figcaption b { font-family: var(--f-display); font-weight: 800; font-size: 1.02rem; }
+.gallery figcaption span { color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+
 /* ---------- themes ---------- */
 .themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
 .theme {
@@ -443,6 +478,7 @@ pre {
 .foot a { color: var(--muted); }
 
 @media (max-width: 900px) {
+  .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .fact:nth-child(3) { padding-left: 0; border-left: 0; }
   .fact:nth-child(n+3) { border-top: 1px solid var(--line); }
@@ -459,6 +495,7 @@ pre {
   .demo-log { margin-left: 0; width: 100%; }
 }
 @media (max-width: 560px) {
+  .gallery { grid-template-columns: 1fr; }
   .facts { grid-template-columns: 1fr; }
   .fact, .fact + .fact, .fact:nth-child(3) { padding-left: 0; border-left: 0; }
   .fact + .fact { border-top: 1px solid var(--line); }
@@ -484,6 +521,7 @@ pre {
       Marlia
     </a>
     <nav aria-label="Sections">
+      <a href="#tour" data-t="nav.tour">In action</a>
       <a href="#demo" data-t="nav.demo">Try it</a>
       <a href="#features" data-t="nav.features">Features</a>
       <a href="#install" data-t="nav.install">Install</a>
@@ -521,7 +559,8 @@ pre {
       <p class="meta"><span data-h="hero.meta">GPL-3.0 · ad-hoc signed</span><span data-t="hero.uiEn"></span></p>
 
       <figure class="shot" style="margin-inline:0">
-        <img src="screenshot.jpg" data-alt="hero.alt" alt="Marlia window with the Dracula theme." width="2000" height="1179">
+        <img class="only-light" src="media/hero-light.webp" data-alt="hero.alt" alt="Marlia in the System theme." width="2880" height="1720">
+        <img class="only-dark" src="media/hero-dark.webp" data-alt="hero.alt" alt="Marlia in the System theme." width="2880" height="1720" loading="lazy">
       </figure>
       <p class="shot-cap" data-t="hero.cap">Two panes, each with its own view mode.</p>
     </section>
@@ -531,6 +570,66 @@ pre {
       <div class="fact"><b data-t="f2b">3&nbsp;MB</b><span data-t="f2s"></span></div>
       <div class="fact"><b data-t="f3b">50 steps</b><span data-t="f3s"></span></div>
       <div class="fact"><b data-t="f4b">Free</b><span data-t="f4s"></span></div>
+    </section>
+
+    <section class="section" id="tour">
+      <div class="section-head">
+        <p class="eyebrow" data-t="tour.eyebrow">In action</p>
+        <h2 data-t="tour.h2">Five photos, one key</h2>
+        <p data-t="tour.p"></p>
+      </div>
+      <div class="tour-video">
+        <video class="only-light" data-tour muted loop playsinline preload="none" poster="media/tour-light-poster.webp" width="1920" height="1146" data-aria="tour.aria">
+          <source src="media/tour-light.mp4" type="video/mp4">
+        </video>
+        <video class="only-dark" data-tour muted loop playsinline preload="none" poster="media/tour-dark-poster.webp" width="1920" height="1146" data-aria="tour.aria">
+          <source src="media/tour-dark.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="gallery">
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="media/columns-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="media/columns-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c1t"></b><span data-t="c1p"></span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="media/rename-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="media/rename-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c2t"></b><span data-t="c2p"></span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="media/conflict-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="media/conflict-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c3t"></b><span data-t="c3p"></span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="media/progress-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="media/progress-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c4t"></b><span data-t="c4p"></span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="media/workspace-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="media/workspace-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c5t"></b><span data-t="c5p"></span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame">
+            <img class="only-light" src="media/search-light.webp" alt="" loading="lazy">
+            <img class="only-dark" src="media/search-dark.webp" alt="" loading="lazy">
+          </div>
+          <figcaption><b data-t="c6t"></b><span data-t="c6p"></span></figcaption>
+        </figure>
+      </div>
     </section>
 
     <section class="section" id="demo">
@@ -684,8 +783,6 @@ pre {
       "hero.lede": "Marlia brings the Total Commander workflow to the Mac. Copy to the other pane with <kbd>F5</kbd>, move with <kbd>F6</kbd>, switch panes with <kbd>Tab</kbd>. It is built on <strong>native AppKit views</strong>, so it stays fast in folders with thousands of files.",
       "hero.dl": "Download for macOS", "hero.dlmeta": "v{ver} · DMG · {size}", "hero.gh": "View on GitHub",
       "hero.meta": "GPL-3.0 · ad-hoc signed, see <a href=\"#install\">first launch</a>", "hero.uiEn": "",
-      "hero.alt": "Marlia window with the Dracula theme: photos in List view on the left, a project folder in Icons view on the right, and a sidebar with favorites, drives and workspaces.",
-      "hero.cap": "Two panes, each with its own view mode: List on the left, Icons on the right. Dracula theme.",
       f1b: "Native", f1s: "AppKit tables and grids. Not Electron, not a web view.",
       f2b: "{size}", f2s: "The whole download. No runtime to install.",
       f3b: "50 steps", f3s: "Undo and redo for copy, move, rename and trash.",
@@ -718,7 +815,26 @@ pre {
       "note.h": "Why macOS asks first",
       "note.p1": "Marlia is signed ad hoc, without an Apple Developer ID, so Gatekeeper stops it on first launch. If macOS says the app “is damaged and can’t be opened”, which often happens after a browser download or AirDrop, clear the quarantine flag:",
       "note.p2": "Prefer to build it yourself? There is no Xcode project, just one script: <code>./build.sh --run</code>.",
-      "foot.lic": "Marlia is free software under the GNU GPL v3.0.", "foot.src": "Source", "foot.rel": "Releases", "foot.bug": "Report a bug"
+      "foot.lic": "Marlia is free software under the GNU GPL v3.0.", "foot.src": "Source", "foot.rel": "Releases", "foot.bug": "Report a bug",
+      "nav.tour": "In action",
+      "hero.alt": "Marlia in the System theme: photos from Lisbon in List view on the left with four selected, photos from Kyoto as thumbnails in Icons view on the right.",
+      "hero.cap": "List on the left, Icons on the right, and one sidebar for favorites, drives and workspaces.",
+      "tour.eyebrow": "In action",
+      "tour.h2": "Five photos, one key",
+      "tour.p": "Select files on the left, press F5, and they are on the backup drive. Tab and ⌘2 switch to the other pane and show them as thumbnails.",
+      "tour.aria": "Video: five photos are selected and copied to a backup drive with F5, then shown as thumbnails.",
+      "c1t": "Columns with preview",
+      "c1p": "Finder-style columns. The folder you select opens on the right.",
+      "c2t": "Batch rename",
+      "c2p": "A pattern like “Lisbon 2026 – ##” with a live preview of every new name.",
+      "c3t": "Name conflicts",
+      "c3p": "Skip, Replace or Keep Both, for one file or for all of them.",
+      "c4t": "Background copying",
+      "c4p": "Big copies run in the background. Pause or cancel at any time.",
+      "c5t": "Workspaces",
+      "c5p": "A folder of links to files from anywhere. Nothing is moved.",
+      "c6t": "Recursive search",
+      "c6p": "Search a whole folder tree by name, substring or regex."
     },
     ru: {
       "nav.demo": "Демо", "nav.features": "Возможности", "nav.install": "Установка", "lang": "Язык",
@@ -727,8 +843,6 @@ pre {
       "hero.lede": "Marlia переносит на Mac привычную работу в стиле Total Commander. <kbd>F5</kbd> копирует в соседнюю панель, <kbd>F6</kbd> перемещает, <kbd>Tab</kbd> переключает панели. Приложение построено на <strong>нативных представлениях AppKit</strong>, поэтому не тормозит даже в папках с тысячами файлов.",
       "hero.dl": "Скачать для macOS", "hero.dlmeta": "v{ver} · DMG · {size}", "hero.gh": "Открыть на GitHub",
       "hero.meta": "GPL-3.0 · подпись ad-hoc, см. <a href=\"#install\">первый запуск</a>", "hero.uiEn": " · интерфейс приложения на английском",
-      "hero.alt": "Окно Marlia в теме Dracula: слева фотографии в виде списка, справа папка проекта в виде значков, сбоку избранное, диски и рабочие пространства.",
-      "hero.cap": "Две панели, у каждой свой режим: слева список, справа значки. Тема Dracula.",
       f1b: "Нативный", f1s: "Таблицы и сетки AppKit. Не Electron и не веб-страница.",
       f2b: "{size}", f2s: "Весь установочный образ. Никаких сред выполнения.",
       f3b: "50 шагов", f3s: "Отмена и повтор копирования, перемещения, переименования и удаления в корзину.",
@@ -761,7 +875,26 @@ pre {
       "note.h": "Почему macOS переспрашивает",
       "note.p1": "Marlia подписана ad-hoc, без Apple Developer ID, поэтому Gatekeeper останавливает её при первом запуске. Если macOS пишет, что приложение «повреждено и не может быть открыто» (так часто бывает после скачивания в браузере или по AirDrop), снимите атрибут карантина:",
       "note.p2": "Хотите собрать сами? Xcode-проекта нет, только один скрипт: <code>./build.sh --run</code>.",
-      "foot.lic": "Marlia — свободное ПО под лицензией GNU GPL v3.0.", "foot.src": "Исходный код", "foot.rel": "Релизы", "foot.bug": "Сообщить об ошибке"
+      "foot.lic": "Marlia — свободное ПО под лицензией GNU GPL v3.0.", "foot.src": "Исходный код", "foot.rel": "Релизы", "foot.bug": "Сообщить об ошибке",
+      "nav.tour": "В деле",
+      "hero.alt": "Marlia в теме System: слева фотографии из Лиссабона списком, четыре выделены; справа фотографии из Киото миниатюрами.",
+      "hero.cap": "Слева список, справа значки, сбоку избранное, диски и рабочие пространства.",
+      "tour.eyebrow": "В деле",
+      "tour.h2": "Пять фото, одна клавиша",
+      "tour.p": "Выделите файлы слева, нажмите F5, и они уже на резервном диске. Tab и ⌘2 переключают на другую панель и показывают их миниатюрами.",
+      "tour.aria": "Видео: пять фотографий выделяются и копируются на резервный диск по F5, затем показываются миниатюрами.",
+      "c1t": "Колонки с предпросмотром",
+      "c1p": "Колонки как в Finder. Выбранная папка раскрывается справа.",
+      "c2t": "Пакетное переименование",
+      "c2p": "Шаблон вроде «Lisbon 2026 – ##» и живой предпросмотр каждого нового имени.",
+      "c3t": "Конфликты имён",
+      "c3p": "Пропустить, заменить или оставить оба, для одного файла или для всех сразу.",
+      "c4t": "Копирование в фоне",
+      "c4p": "Большие копии идут в фоне, их можно приостановить или отменить.",
+      "c5t": "Рабочие пространства",
+      "c5p": "Папка ссылок на файлы откуда угодно. Ничего не перемещается.",
+      "c6t": "Рекурсивный поиск",
+      "c6p": "Поиск по всему дереву папок: по имени, подстроке или регулярному выражению."
     },
     zh: {
       "nav.demo": "试用", "nav.features": "功能", "nav.install": "安装", "lang": "语言",
@@ -770,8 +903,6 @@ pre {
       "hero.lede": "Marlia 把 Total Commander 的工作方式带到了 Mac 上。按 <kbd>F5</kbd> 复制到另一栏，按 <kbd>F6</kbd> 移动，按 <kbd>Tab</kbd> 切换栏。它基于<strong>原生 AppKit 视图</strong>构建，即使文件夹里有成千上万个文件也依然流畅。",
       "hero.dl": "下载 macOS 版", "hero.dlmeta": "v{ver} · DMG · {size}", "hero.gh": "在 GitHub 上查看",
       "hero.meta": "GPL-3.0 · 仅 ad-hoc 签名，参见<a href=\"#install\">首次启动</a>", "hero.uiEn": " · 应用界面为英文",
-      "hero.alt": "Dracula 主题下的 Marlia 窗口：左栏以列表显示照片，右栏以图标显示项目文件夹，侧边栏有收藏、磁盘和工作区。",
-      "hero.cap": "两栏各有自己的视图模式：左侧为列表，右侧为图标。Dracula 主题。",
       f1b: "原生", f1s: "使用 AppKit 表格与网格，不是 Electron，也不是网页。",
       f2b: "{size}", f2s: "这就是完整下载，无需安装任何运行时。",
       f3b: "50 步", f3s: "复制、移动、重命名和移到废纸篓都可撤销和重做。",
@@ -804,7 +935,26 @@ pre {
       "note.h": "为什么 macOS 会先拦一下",
       "note.p1": "Marlia 仅做了 ad-hoc 签名，没有 Apple Developer ID，所以首次启动时会被 Gatekeeper 拦下。如果 macOS 提示应用“已损坏，无法打开”（通过浏览器下载或 AirDrop 后常见），请清除隔离标记：",
       "note.p2": "想自己编译？没有 Xcode 工程，只需一个脚本：<code>./build.sh --run</code>。",
-      "foot.lic": "Marlia 是基于 GNU GPL v3.0 的自由软件。", "foot.src": "源代码", "foot.rel": "版本发布", "foot.bug": "报告问题"
+      "foot.lic": "Marlia 是基于 GNU GPL v3.0 的自由软件。", "foot.src": "源代码", "foot.rel": "版本发布", "foot.bug": "报告问题",
+      "nav.tour": "实际操作",
+      "hero.alt": "系统主题下的 Marlia：左栏以列表显示里斯本的照片，选中了四张；右栏以缩略图显示京都的照片。",
+      "hero.cap": "左侧列表，右侧图标，侧边栏汇集收藏、磁盘和工作区。",
+      "tour.eyebrow": "实际操作",
+      "tour.h2": "五张照片，一个按键",
+      "tour.p": "在左侧选中文件，按 F5，它们就到了备份盘上。按 Tab 和 ⌘2 切换到另一栏，以缩略图查看。",
+      "tour.aria": "视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。",
+      "c1t": "带预览的分栏",
+      "c1p": "Finder 式分栏，选中的文件夹会在右侧展开。",
+      "c2t": "批量重命名",
+      "c2p": "使用“Lisbon 2026 – ##”这样的模式，实时预览每个新名称。",
+      "c3t": "同名冲突",
+      "c3p": "跳过、替换或保留两者，可只针对当前文件，也可应用到全部。",
+      "c4t": "后台复制",
+      "c4p": "大文件复制在后台进行，随时可以暂停或取消。",
+      "c5t": "工作区",
+      "c5p": "一个链接文件夹，收纳来自任何位置的文件，不移动任何东西。",
+      "c6t": "递归搜索",
+      "c6p": "按名称、子串或正则表达式搜索整个文件夹树。"
     },
     es: {
       "nav.demo": "Pruébalo", "nav.features": "Funciones", "nav.install": "Instalación", "lang": "Idioma",
@@ -813,8 +963,6 @@ pre {
       "hero.lede": "Marlia lleva al Mac la forma de trabajar de Total Commander. Copia al otro panel con <kbd>F5</kbd>, mueve con <kbd>F6</kbd> y cambia de panel con <kbd>Tab</kbd>. Está hecho con <strong>vistas nativas de AppKit</strong>, así que va rápido incluso en carpetas con miles de archivos.",
       "hero.dl": "Descargar para macOS", "hero.dlmeta": "v{ver} · DMG · {size}", "hero.gh": "Ver en GitHub",
       "hero.meta": "GPL-3.0 · firma ad hoc, consulta <a href=\"#install\">el primer arranque</a>", "hero.uiEn": " · la interfaz de la app está en inglés",
-      "hero.alt": "Ventana de Marlia con el tema Dracula: fotos en vista de lista a la izquierda, una carpeta de proyecto en vista de iconos a la derecha y una barra lateral con favoritos, discos y espacios de trabajo.",
-      "hero.cap": "Dos paneles, cada uno con su propia vista: lista a la izquierda, iconos a la derecha. Tema Dracula.",
       f1b: "Nativo", f1s: "Tablas y cuadrículas de AppKit. Ni Electron ni una página web.",
       f2b: "{size}", f2s: "Toda la descarga. Sin entornos de ejecución que instalar.",
       f3b: "50 pasos", f3s: "Deshacer y rehacer al copiar, mover, renombrar y enviar a la papelera.",
@@ -847,7 +995,26 @@ pre {
       "note.h": "Por qué macOS pregunta primero",
       "note.p1": "Marlia tiene una firma ad hoc, sin Apple Developer ID, así que Gatekeeper la detiene en el primer arranque. Si macOS dice que la app «está dañada y no se puede abrir», algo habitual tras descargarla con el navegador o por AirDrop, quita la marca de cuarentena:",
       "note.p2": "¿Prefieres compilarla tú? No hay proyecto de Xcode, solo un script: <code>./build.sh --run</code>.",
-      "foot.lic": "Marlia es software libre bajo la GNU GPL v3.0.", "foot.src": "Código fuente", "foot.rel": "Versiones", "foot.bug": "Informar de un error"
+      "foot.lic": "Marlia es software libre bajo la GNU GPL v3.0.", "foot.src": "Código fuente", "foot.rel": "Versiones", "foot.bug": "Informar de un error",
+      "nav.tour": "En acción",
+      "hero.alt": "Marlia con el tema Sistema: fotos de Lisboa en lista a la izquierda, con cuatro seleccionadas, y fotos de Kioto en miniatura a la derecha.",
+      "hero.cap": "Lista a la izquierda, iconos a la derecha y una barra lateral con favoritos, discos y espacios de trabajo.",
+      "tour.eyebrow": "En acción",
+      "tour.h2": "Cinco fotos, una tecla",
+      "tour.p": "Selecciona archivos a la izquierda, pulsa F5 y ya están en el disco de copia. Tab y ⌘2 pasan al otro panel y los muestran en miniatura.",
+      "tour.aria": "Vídeo: se seleccionan cinco fotos, se copian con F5 a un disco de copia y se muestran en miniatura.",
+      "c1t": "Columnas con vista previa",
+      "c1p": "Columnas al estilo de Finder. La carpeta seleccionada se abre a la derecha.",
+      "c2t": "Renombrado por lotes",
+      "c2p": "Un patrón como «Lisbon 2026 – ##» con vista previa en vivo de cada nombre nuevo.",
+      "c3t": "Conflictos de nombre",
+      "c3p": "Omitir, reemplazar o conservar ambos, para un archivo o para todos.",
+      "c4t": "Copia en segundo plano",
+      "c4p": "Las copias grandes van en segundo plano. Pausa o cancela cuando quieras.",
+      "c5t": "Espacios de trabajo",
+      "c5p": "Una carpeta de enlaces a archivos de cualquier lugar. No se mueve nada.",
+      "c6t": "Búsqueda recursiva",
+      "c6p": "Busca en todo un árbol de carpetas por nombre, subcadena o regex."
     },
     ja: {
       "nav.demo": "試す", "nav.features": "機能", "nav.install": "インストール", "lang": "言語",
@@ -856,8 +1023,6 @@ pre {
       "hero.lede": "Marlia は Total Commander の操作感を Mac に持ち込みます。<kbd>F5</kbd> で反対側のペインへコピー、<kbd>F6</kbd> で移動、<kbd>Tab</kbd> でペインを切り替え。<strong>ネイティブの AppKit ビュー</strong>で作られているので、数千ファイルのフォルダでも軽快です。",
       "hero.dl": "macOS 版をダウンロード", "hero.dlmeta": "v{ver} · DMG · {size}", "hero.gh": "GitHub で見る",
       "hero.meta": "GPL-3.0 · アドホック署名。<a href=\"#install\">初回起動</a>を参照", "hero.uiEn": " · アプリの表示は英語です",
-      "hero.alt": "Dracula テーマの Marlia ウィンドウ。左ペインは写真のリスト表示、右ペインはプロジェクトフォルダのアイコン表示、サイドバーにはよく使う項目、ドライブ、ワークスペース。",
-      "hero.cap": "ペインごとに表示モードを選べます。左はリスト、右はアイコン。Dracula テーマ。",
       f1b: "ネイティブ", f1s: "AppKit のテーブルとグリッド。Electron でも Web ページでもありません。",
       f2b: "{size}", f2s: "ダウンロードはこれだけ。ランタイムは不要です。",
       f3b: "50 ステップ", f3s: "コピー、移動、名前変更、ゴミ箱への移動を取り消し・やり直しできます。",
@@ -890,7 +1055,26 @@ pre {
       "note.h": "macOS が最初に確認する理由",
       "note.p1": "Marlia は Apple Developer ID なしのアドホック署名なので、初回起動時に Gatekeeper に止められます。「壊れているため開けません」と表示された場合（ブラウザでのダウンロードや AirDrop の後によくあります）は、隔離フラグを外してください：",
       "note.p2": "自分でビルドしたい場合も簡単です。Xcode プロジェクトはなく、スクリプト1つだけ：<code>./build.sh --run</code>",
-      "foot.lic": "Marlia は GNU GPL v3.0 のフリーソフトウェアです。", "foot.src": "ソースコード", "foot.rel": "リリース", "foot.bug": "不具合を報告"
+      "foot.lic": "Marlia は GNU GPL v3.0 のフリーソフトウェアです。", "foot.src": "ソースコード", "foot.rel": "リリース", "foot.bug": "不具合を報告",
+      "nav.tour": "実際の動き",
+      "hero.alt": "システムテーマの Marlia。左はリスボンの写真のリスト表示で4枚を選択、右は京都の写真のサムネイル表示。",
+      "hero.cap": "左はリスト、右はアイコン。サイドバーにはよく使う項目、ドライブ、ワークスペース。",
+      "tour.eyebrow": "実際の動き",
+      "tour.h2": "5枚の写真を、キー1つで",
+      "tour.p": "左でファイルを選び F5 を押せば、もうバックアップディスクの中。Tab と ⌘2 で反対側のペインに移り、サムネイルで確認できます。",
+      "tour.aria": "動画：5枚の写真を選び、F5 でバックアップディスクにコピーし、サムネイルで表示します。",
+      "c1t": "プレビュー付きカラム",
+      "c1p": "Finder 風のカラム表示。選んだフォルダが右側に開きます。",
+      "c2t": "一括名前変更",
+      "c2p": "「Lisbon 2026 – ##」のようなパターンで、新しい名前をその場でプレビュー。",
+      "c3t": "名前の衝突",
+      "c3p": "スキップ、置き換え、両方残すを、1件ずつでもまとめてでも選べます。",
+      "c4t": "バックグラウンドでコピー",
+      "c4p": "大きなコピーはバックグラウンドで実行。いつでも一時停止・キャンセルできます。",
+      "c5t": "ワークスペース",
+      "c5p": "どこにあるファイルでも、リンクで1つのフォルダに。何も移動しません。",
+      "c6t": "再帰検索",
+      "c6p": "フォルダツリー全体を名前、部分一致、正規表現で検索。"
     },
     de: {
       "nav.demo": "Ausprobieren", "nav.features": "Funktionen", "nav.install": "Installation", "lang": "Sprache",
@@ -899,8 +1083,6 @@ pre {
       "hero.lede": "Marlia bringt die Arbeitsweise des Total Commander auf den Mac. <kbd>F5</kbd> kopiert ins andere Fenster, <kbd>F6</kbd> verschiebt, <kbd>Tab</kbd> wechselt das Fenster. Gebaut mit <strong>nativen AppKit-Ansichten</strong>, bleibt Marlia auch in Ordnern mit Tausenden Dateien schnell.",
       "hero.dl": "Für macOS herunterladen", "hero.dlmeta": "v{ver} · DMG · {size}", "hero.gh": "Auf GitHub ansehen",
       "hero.meta": "GPL-3.0 · nur ad hoc signiert, siehe <a href=\"#install\">erster Start</a>", "hero.uiEn": " · App-Oberfläche auf Englisch",
-      "hero.alt": "Marlia-Fenster im Dracula-Theme: links Fotos in der Listenansicht, rechts ein Projektordner in der Symbolansicht, daneben eine Seitenleiste mit Favoriten, Laufwerken und Workspaces.",
-      "hero.cap": "Zwei Fenster mit eigener Ansicht: links Liste, rechts Symbole. Dracula-Theme.",
       f1b: "Nativ", f1s: "AppKit-Tabellen und -Raster. Kein Electron, keine Webseite.",
       f2b: "{size}", f2s: "Der komplette Download. Keine Laufzeitumgebung nötig.",
       f3b: "50 Schritte", f3s: "Rückgängig und Wiederholen für Kopieren, Verschieben, Umbenennen und Papierkorb.",
@@ -933,7 +1115,26 @@ pre {
       "note.h": "Warum macOS zuerst nachfragt",
       "note.p1": "Marlia ist nur ad hoc signiert, ohne Apple Developer ID, deshalb hält Gatekeeper die App beim ersten Start an. Meldet macOS, die App sei „beschädigt und kann nicht geöffnet werden“, was nach einem Browser-Download oder AirDrop häufig vorkommt, entfernen Sie die Quarantäne-Markierung:",
       "note.p2": "Lieber selbst bauen? Es gibt kein Xcode-Projekt, nur ein Skript: <code>./build.sh --run</code>.",
-      "foot.lic": "Marlia ist freie Software unter der GNU GPL v3.0.", "foot.src": "Quellcode", "foot.rel": "Releases", "foot.bug": "Fehler melden"
+      "foot.lic": "Marlia ist freie Software unter der GNU GPL v3.0.", "foot.src": "Quellcode", "foot.rel": "Releases", "foot.bug": "Fehler melden",
+      "nav.tour": "In Aktion",
+      "hero.alt": "Marlia im Theme System: links Fotos aus Lissabon in der Listenansicht, vier davon ausgewählt, rechts Fotos aus Kyoto als Miniaturen.",
+      "hero.cap": "Links Liste, rechts Symbole, daneben eine Seitenleiste mit Favoriten, Laufwerken und Workspaces.",
+      "tour.eyebrow": "In Aktion",
+      "tour.h2": "Fünf Fotos, eine Taste",
+      "tour.p": "Dateien links auswählen, F5 drücken, und sie liegen auf dem Backup-Laufwerk. Tab und ⌘2 wechseln ins andere Fenster und zeigen sie als Miniaturen.",
+      "tour.aria": "Video: Fünf Fotos werden ausgewählt, mit F5 auf ein Backup-Laufwerk kopiert und dann als Miniaturen angezeigt.",
+      "c1t": "Spalten mit Vorschau",
+      "c1p": "Spalten wie im Finder. Der gewählte Ordner öffnet sich rechts.",
+      "c2t": "Stapelumbenennung",
+      "c2p": "Ein Muster wie „Lisbon 2026 – ##“ mit Live-Vorschau jedes neuen Namens.",
+      "c3t": "Namenskonflikte",
+      "c3p": "Überspringen, Ersetzen oder Beide behalten, für eine Datei oder für alle.",
+      "c4t": "Kopieren im Hintergrund",
+      "c4p": "Große Kopien laufen im Hintergrund und lassen sich jederzeit pausieren oder abbrechen.",
+      "c5t": "Workspaces",
+      "c5p": "Ein Ordner mit Verknüpfungen zu Dateien von überall. Nichts wird verschoben.",
+      "c6t": "Rekursive Suche",
+      "c6p": "Einen ganzen Ordnerbaum nach Name, Teilstring oder Regex durchsuchen."
     }
   };
 
@@ -1133,6 +1334,33 @@ pre {
 
   render();
   applyLang(initialLang());
+
+  /* Tour video: two variants (light/dark), only the one the theme shows is loaded and played,
+     and only while it is on screen. With reduced motion it stays on its poster, with controls. */
+  const videos = Array.from(document.querySelectorAll("video[data-tour]"));
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let onScreen = false;
+  function syncVideos() {
+    for (const v of videos) {
+      const shown = getComputedStyle(v).display !== "none";
+      v.controls = reduce.matches;
+      if (shown && onScreen && !reduce.matches) {
+        if (v.preload !== "auto") v.preload = "auto";
+        const p = v.play(); if (p && p.catch) p.catch(() => {});
+      } else if (!v.paused) {
+        v.pause();
+      }
+    }
+  }
+  if ("IntersectionObserver" in window && videos.length) {
+    new IntersectionObserver((entries) => {
+      onScreen = entries.some(e => e.isIntersecting);
+      syncVideos();
+    }, { threshold: 0.25 }).observe(videos[0].parentElement);
+  } else { onScreen = true; syncVideos(); }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", syncVideos);
+  reduce.addEventListener("change", syncVideos);
+  new MutationObserver(syncVideos).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
   /* Latest release from GitHub (CORS-enabled, 60 unauthenticated requests per hour per visitor IP).
      Any failure just leaves the fallback values above in place. */
