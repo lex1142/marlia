@@ -1,3 +1,4 @@
+import Quartz
 import SwiftUI
 
 /// The info panel: shows details of what is selected in the active pane and updates
@@ -55,7 +56,17 @@ private struct InspectorContent: View {
                     ItemDetailsView(url: url, thumbnailSize: 96, showsPath: false)
                 }
             case .item(let url):
-                ItemDetailsView(url: url, thumbnailSize: 96, showsPath: false)
+                if let previewURL = QuickLookPreview.previewableURL(url) {
+                    // Path Finder's preview module: the file itself — text, code, PDF,
+                    // images, audio, video — not just its icon.
+                    QuickLookPreview(url: previewURL)
+                        .frame(height: 260)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .padding([.horizontal, .top], 10)
+                    ItemDetailsView(url: url, thumbnailSize: 0, showsPath: false)
+                } else {
+                    ItemDetailsView(url: url, thumbnailSize: 96, showsPath: false)
+                }
             case .multiple(let items):
                 multipleSummary(items)
             case nil:
@@ -153,5 +164,38 @@ private struct InspectorContent: View {
             .padding(.top, 4)
         }
         .padding(20)
+    }
+}
+
+/// A live Quick Look preview (the same engine as Space), embedded in the info panel.
+struct QuickLookPreview: NSViewRepresentable {
+    let url: URL
+
+    /// The URL to preview, or nil for things a preview adds nothing to: folders, packages
+    /// (.app — Quick Look shows just the icon), missing files. A symlink is resolved first:
+    /// Quick Look fails on a link as the final component (see CLAUDE.md).
+    static func previewableURL(_ url: URL) -> URL? {
+        let resolved = url.resolvingSymlinksInPath()
+        guard let values = try? resolved.resourceValues(forKeys: [.isRegularFileKey]),
+              values.isRegularFile == true else { return nil }
+        return resolved
+    }
+
+    func makeNSView(context: Context) -> QLPreviewView {
+        let view = QLPreviewView(frame: .zero, style: .normal) ?? QLPreviewView()
+        view.shouldCloseWithWindow = false
+        view.autostarts = false      // a video in the panel shouldn't start playing by itself
+        view.previewItem = url as NSURL
+        return view
+    }
+
+    func updateNSView(_ view: QLPreviewView, context: Context) {
+        if (view.previewItem as? NSURL) as URL? != url {
+            view.previewItem = url as NSURL
+        }
+    }
+
+    static func dismantleNSView(_ view: QLPreviewView, coordinator: ()) {
+        view.close()
     }
 }

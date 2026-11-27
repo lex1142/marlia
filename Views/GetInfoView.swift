@@ -46,7 +46,10 @@ struct ItemDetailsView: View {
     @ViewBuilder
     private func content(for item: FileItem) -> some View {
         VStack(spacing: 14) {
-            ThumbnailImage(item: item, displaySize: thumbnailSize)
+            // 0 — no thumbnail: the info panel shows a live preview above instead.
+            if thumbnailSize > 0 {
+                ThumbnailImage(item: item, displaySize: thumbnailSize)
+            }
 
             Text(item.name)
                 .font(.title3.bold())
