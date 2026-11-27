@@ -6,6 +6,8 @@
 
 A two-pane, keyboard-driven file manager for macOS in the spirit of Total Commander, with native AppKit views.
 
+**Website: [lex1142.github.io/marlia](https://lex1142.github.io/marlia/)** (a feature tour, a live demo you can try in the browser, and the download)
+
 ![Marlia: two panes, List and Icons view, Dracula theme](docs/screenshot.jpg)
 
 **Requirements:** macOS 13.5 (Ventura) or later, Apple Silicon.
