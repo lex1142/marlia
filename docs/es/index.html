@@ -49,6 +49,8 @@
   --accent-ink: #ffffff;
   --sel-tint: color-mix(in srgb, var(--accent) 9%, var(--paper));
   --win-shadow: 0 12px 32px -20px rgba(0, 0, 0, 0.35);
+  /* the screenshot keeps the window's rounded transparent corners, so its shadow follows them */
+  --shot-shadow: drop-shadow(0 0 0.5px rgba(0, 0, 0, 0.35)) drop-shadow(0 12px 22px rgba(0, 0, 0, 0.14));
   --code-bg: #f5f5f7;
 
   /* replica of Marlia's System theme (follows the page's light/dark, like the app follows macOS) */
@@ -90,6 +92,7 @@
     --accent-text: #5aa2ff;
     --sel-tint: color-mix(in srgb, var(--accent) 24%, var(--paper));
     --win-shadow: none;
+    --shot-shadow: none;
     --code-bg: #2a2a2c;
     --m-pane: #1e1e1f;
     --m-chrome: #2a2a2c;
@@ -121,6 +124,7 @@
   --accent-text: #5aa2ff;
   --sel-tint: color-mix(in srgb, var(--accent) 24%, var(--paper));
   --win-shadow: none;
+  --shot-shadow: none;
   --code-bg: #2a2a2c;
   --m-pane: #1e1e1f;
   --m-chrome: #2a2a2c;
@@ -431,29 +435,23 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
 .cmp .part::before { content: "~"; content: "~" / ""; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--muted); }
 
 /* ---------- themes ---------- */
-/* Seven equal cards, 4 + 3 (2 per row on a phone). Fixed columns rather than auto-fill, which
-   made them narrow enough to cut off the Auto card's text. These are samples of the app's
-   palettes, so they keep their own colours. */
-.themes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.theme {
-  border-radius: 10px;
-  padding: 12px;
-  font-family: var(--f-ui);
-  font-size: 0.82rem;
-  display: grid;
-  gap: 4px;
+/* One real screenshot of the app and a picker of the seven themes; a pick swaps the picture
+   (it loads on demand). System and Solarized (Auto) follow the page's light/dark, as they
+   follow macOS in the app. */
+.theme-pick { display: flex; flex-wrap: wrap; gap: 6px; }
+.theme-pick button {
+  font: inherit; font-size: 0.92rem; font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
   border: 1px solid var(--line);
-  align-content: start;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
 }
-.theme .row { padding: 2px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.theme .label { margin-top: 6px; font-family: var(--f-body); font-weight: 600; font-size: 0.9rem; }
-.theme-system { background: var(--m-pane); color: var(--m-text); }
-.theme-system .sel { background: var(--m-sel); color: var(--m-sel-text); }
-/* Solarized (Auto) switches with the system: shown as its light and dark palettes side by side. */
-.theme-split { padding: 0; overflow: hidden; grid-template-columns: 1fr 1fr; gap: 0; background: var(--surface); }
-.theme-split .half { padding: 12px 6px 10px 12px; display: grid; gap: 4px; min-width: 0; }
-.theme-split .half + .half { padding: 12px 12px 10px 6px; }
-.theme-split .label { grid-column: 1 / -1; margin: 0; padding: 8px 12px 10px; color: var(--ink); }
+.theme-pick button:hover { border-color: var(--muted); }
+.theme-pick button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.theme-shot { margin: 0; }
+.theme-shot img { width: 100%; height: auto; aspect-ratio: 2200 / 1320; vertical-align: top; filter: var(--shot-shadow); }
 
 /* ---------- install ---------- */
 .install { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
@@ -515,7 +513,6 @@ pre {
   .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 24px; }
   .pillar:nth-child(3) { padding-left: 0; border-left: 0; }
   .features { grid-template-columns: 1fr; }
-  .themes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .install { grid-template-columns: 1fr; }
   .top nav { display: none; }
 }
@@ -526,7 +523,6 @@ pre {
   .m-head, .m-row { grid-template-columns: minmax(0, 1fr) 64px; }
   .m-head .d, .m-row .d { display: none; }
   .demo-log { margin-left: 0; width: 100%; padding: 2px 6px 4px; }
-  .theme-split { grid-column: 1 / -1; }
 }
 @media (max-width: 560px) {
   .hero { padding-top: 24px; }
@@ -745,15 +741,19 @@ pre {
         <h2 id="themes-h" data-t="th.h2">Siete temas con el contraste comprobado</h2>
         <p data-t="th.p">Cada paleta mantiene los nombres legibles con un contraste de 4,5:1 o más, sobre el panel y sobre la selección.</p>
       </div>
-      <div class="themes">
-        <div class="theme theme-system"><div class="row">Documents</div><div class="row sel">report.pdf</div><div class="row">notes.md</div><div class="label" data-t="th.system">Sistema</div></div>
-        <div class="theme" style="background:#282a36;color:#f8f8f2;border-color:#282a36"><div class="row">Documents</div><div class="row" style="background:#44475a">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#bd93f9">Dracula</div></div>
-        <div class="theme" style="background:#282828;color:#ebdbb2;border-color:#282828"><div class="row">Documents</div><div class="row" style="background:#504945">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#fe8019">Gruvbox Dark</div></div>
-        <div class="theme" style="background:#2e3440;color:#d8dee9;border-color:#2e3440"><div class="row">Documents</div><div class="row" style="background:#434c5e">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#88c0d0">Nord</div></div>
-        <div class="theme" style="background:#002b36;color:#eee8d5;border-color:#002b36"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.4)">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#268bd2">Solarized Dark</div></div>
-        <div class="theme" style="background:#fdf6e3;color:#073642;border-color:#eee8d5"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.35)">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#1f6fa8">Solarized Light</div></div>
-        <div class="theme theme-split" style="border-color:#eee8d5"><div class="half" style="background:#fdf6e3;color:#073642"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.35)">report.pdf</div><div class="row">notes.md</div></div><div class="half" style="background:#002b36;color:#eee8d5"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.4)">report.pdf</div><div class="row">notes.md</div></div><div class="label">Solarized (Auto)</div></div>
+      <div class="theme-pick" role="group" aria-labelledby="themes-h">
+        <button type="button" data-shot="system" aria-pressed="true" data-t="th.system">Sistema</button>
+        <button type="button" data-shot="dracula" aria-pressed="false">Dracula</button>
+        <button type="button" data-shot="gruvbox-dark" aria-pressed="false">Gruvbox Dark</button>
+        <button type="button" data-shot="nord" aria-pressed="false">Nord</button>
+        <button type="button" data-shot="solarized-dark" aria-pressed="false">Solarized Dark</button>
+        <button type="button" data-shot="solarized-light" aria-pressed="false">Solarized Light</button>
+        <button type="button" data-shot="solarized-auto" aria-pressed="false">Solarized (Auto)</button>
       </div>
+      <figure class="theme-shot">
+        <img class="only-light" src="../media/theme-system-light.webp" width="2200" height="1320" data-alt="th.alt" alt="Una ventana de Marlia con el tema elegido: lista a la izquierda, miniaturas a la derecha, barra lateral y ambos paneles con los colores del tema." loading="lazy">
+        <img class="only-dark" src="../media/theme-system-dark.webp" width="2200" height="1320" data-alt="th.alt" alt="Una ventana de Marlia con el tema elegido: lista a la izquierda, miniaturas a la derecha, barra lateral y ambos paneles con los colores del tema." loading="lazy">
+      </figure>
     </section>
 
     <section class="section" id="install">
@@ -817,7 +817,7 @@ pre {
 </div>
 
 <script type="application/json" id="i18n">
-{"es":{"nav.compare":"Frente a Finder","nav.features":"Funciones","nav.install":"Instalación","lang":"Idioma","hero.h1":"Un gestor de archivos de dos paneles, nativo y gratis, para Mac","hero.lede":"Al estilo de Total Commander, para quien vive en el teclado: <kbd>F5<\/kbd> copia al otro panel, <kbd>F6<\/kbd> mueve, <kbd>Tab<\/kbd> cambia de panel, y cualquier atajo se puede cambiar. Está hecho con <strong>AppKit nativo<\/strong>, así que va rápido incluso en carpetas con miles de archivos.","hero.dl":"Descargar para macOS","hero.gh":"Ver en GitHub","hero.req":"Versión {ver}, {size}. Para macOS 13.5 o posterior en Apple Silicon.","hero.meta":"Código abierto bajo GPL-3.0. Tiene firma ad hoc, así que el <a href=\"#install\">primer arranque<\/a> necesita un paso más.","hero.uiEn":" La interfaz de la app está en inglés.","pill.aria":"Por qué Marlia","f1b":"Gratis y de código abierto","f1s":"GPL-3.0. Sin cuenta, sin suscripción, sin telemetría.","f2b":"Dos paneles a la vez","f2s":"Dos carpetas, una junto a la otra. F5 copia al otro panel, F6 mueve, Tab cambia.","f3b":"Tus atajos","f3s":"Reasigna cualquier comando en Ajustes, teclas de función incluidas.","f4b":"Nativo y fluido","f4s":"AppKit, ni Electron ni una página web. La descarga completa ocupa {size}.","demo.aria":"Demo interactiva. Las flechas seleccionan, Tab cambia de panel, F5 copia, F6 mueve; tras Esc, Tab sale de la demo.","k.up":"Arriba","k.down":"Abajo","k.switch":"Cambiar","k.copy":"Copiar","k.move":"Mover","k.reset":"Reiniciar","demo.hint":"En la app, F5 y F6 se ejecutan en segundo plano con un panel de progreso que puedes pausar o cancelar, y si un nombre ya existe puedes reemplazar, omitir o conservar ambos.","log.ready":"Elige un archivo y pulsa F5.","log.L":"Panel activo: izquierdo.","log.R":"Panel activo: derecho.","log.copied":"Se copió {n} a {p}.","log.moved":"Se movió {n} a {p}.","log.kept":"{n} ya existe allí; se conservaron ambos como {m}.","log.pick":"Primero elige un archivo. En esta demo las carpetas no se mueven.","cmp.h2":"Lo que Finder no hace","cmp.p":"Finder sirve para mirar archivos. Marlia es para copiarlos, moverlos y ordenarlos todo el día.","cmp.r1":"Dos carpetas lado a lado en una ventana","cmp.r1f":"No, dos ventanas","cmp.r1m":"Sí, y con pestañas","cmp.r2":"Copiar o mover a la otra carpeta con una tecla","cmp.r2f":"Arrastrar, o ⌘C y ⌥⌘V","cmp.r2m":"F5 y F6","cmp.r3":"Cambiar cualquier atajo de teclado","cmp.r3f":"Solo menús, en Ajustes del Sistema","cmp.r3m":"Cualquier comando, en Ajustes","cmp.r4":"Renombrar por fecha de la foto o etiquetas de música","cmp.r4f":"No","cmp.r4m":"EXIF, vídeo, etiquetas de audio","cmp.r5":"Sincronizar dos carpetas","cmp.r5f":"No","cmp.r5m":"Con vista previa","cmp.r6":"Deshacer tras reiniciar","cmp.r6f":"Solo en la sesión actual","cmp.r6m":"50 pasos","cmp.r7":"Ejecutar tus propios scripts sobre los archivos seleccionados","cmp.r7f":"Con Atajos o Automator","cmp.r7m":"Menú, paleta o una tecla","cmp.r8":"Sin archivos ._ en memorias USB","cmp.r8f":"Los deja","cmp.r8m":"Se borran al copiar","cmp.r9":"Código abierto","cmp.r9f":"No","cmp.r9m":"GPL-3.0","feat.h2":"Todo lo que debe hacer un gestor de archivos, sin soltar el teclado","ft1h":"Dos paneles, pestañas, tres vistas","ft1p":"Lista, iconos y columnas al estilo de Finder con columna de vista previa. Cada panel tiene su propio historial, cada carpeta recuerda cómo la ordenaste y las pestañas de una ventana se pueden guardar como un conjunto con nombre.","ft2h":"El flujo de Total Commander","ft2p":"Copia y mueve al otro panel, escribe para seleccionar, selecciona por patrón como <code>*.jpg<\/code> e invierte la selección. Reúne archivos de varias carpetas con <kbd>⇧⌘C<\/kbd> y pégalos de una vez.","ft3h":"Operaciones en segundo plano","ft3p":"Copiar, mover, duplicar, enviar a la papelera y renombrar se ejecutan en segundo plano, con pausa y cancelación. Se pueden deshacer 50 pasos, incluso después de reiniciar.","ft4h":"Archivos comprimidos","ft4p":"Crea, extrae y explora archivos comprimidos con las herramientas del sistema, incluidos ZIP con contraseña. La extracción está protegida contra rutas zip-slip.","ft5h":"Espacios de trabajo","ft5p":"Reúne archivos de todo el disco en una carpeta de enlaces. No se copia ni se mueve nada, y quitar un elemento solo elimina el enlace.","ft6h":"Buscar, filtrar, previsualizar","ft6p":"Búsqueda recursiva por subcadena o regex, barra de filtro instantánea, Vista rápida con la barra espaciadora y un panel de información que muestra el propio archivo: texto, código, PDF, imágenes, vídeo.","ft7h":"Como en casa en macOS","ft7p":"Arrastrar y soltar con Finder, etiquetas de color, AirDrop, abrir en Terminal, recursos SMB, expulsar discos e instalar apps directamente desde un .dmg. Obtener información permite cambiar los permisos. Las copias a memorias USB no dejan archivos <code>._<\/code>.","ft8h":"Favoritos desde el teclado","ft8p":"Los favoritos del 1 al 9 se abren con <kbd>⌥⌘1<\/kbd> a <kbd>⌥⌘9<\/kbd>, en el orden de la barra lateral. La lista completa de atajos está en Ajustes, donde también se cambian.","ft9h":"Paleta de comandos","ft9p":"Cualquier comando del menú está a unas pocas teclas, con búsqueda aproximada. Ir a la carpeta acepta una ruta escrita con autocompletado con <kbd>Tab<\/kbd>, y cada / de la barra de ruta muestra las carpetas vecinas.","ft10h":"Comparar carpetas","ft10p":"Una tecla selecciona lo que falta o es más reciente en cada lado. Abre una carpeta en el otro panel con <kbd>⌘←<\/kbd> y <kbd>⌘→<\/kbd>.","ft11h":"Tus propios comandos","ft11p":"Ejecuta tus scripts de shell sobre los archivos seleccionados desde el menú Commands, la paleta o un atajo, con pausa y cancelación, como los comandos de usuario de Total Commander.","ft12h":"Renombrar por metadatos","ft12p":"Renombrado por lotes con vista previa de cada nombre nuevo: fecha y hora del EXIF o del vídeo, pista, artista y título de las etiquetas de audio, y cambio de mayúsculas y minúsculas.","ft13h":"Sincronizar carpetas","ft13p":"Compara dos árboles de carpetas y revisa cada diferencia con su acción antes de que ocurra nada. En ambos sentidos o en uno; los archivos reemplazados y eliminados van a la Papelera.","ft14h":"Adónde fue el espacio","ft14p":"Tamaños de carpeta con una barra para la proporción de cada elemento, y Archivos más grandes: los archivos más pesados de todo el árbol de una carpeta, a una tecla del panel.","th.h2":"Siete temas con el contraste comprobado","th.p":"Cada paleta mantiene los nombres legibles con un contraste de 4,5:1 o más, sobre el panel y sobre la selección.","th.system":"Sistema","in.h2":"Funcionando en un minuto","s1b":"Descarga la imagen.","s1t":"{DMG} o cualquier versión desde {REL}.","s2b":"Arrastra Marlia a Aplicaciones.","s2t":"La imagen trae la app y un acceso a Aplicaciones, uno al lado del otro.","s3b":"Ábrela una vez a mano.","s3t":"Haz clic derecho en Marlia.app y elige Abrir. En macOS 15 y posteriores, ve a Ajustes del Sistema → Privacidad y seguridad y pulsa Abrir igualmente.","s4b":"Opcional: concede Acceso total al disco.","s4t":"Así Escritorio, Documentos y Descargas se abren sin avisos repetidos.","note.h":"Por qué macOS pregunta primero","note.p1":"Marlia tiene una firma ad hoc, sin Apple Developer ID, así que Gatekeeper la detiene en el primer arranque. Si macOS dice que la app «está dañada y no se puede abrir», algo habitual tras descargarla con el navegador o por AirDrop, quita la marca de cuarentena:","note.p2":"¿Prefieres compilarla tú? No hay proyecto de Xcode, solo un script: <code>./build.sh --run<\/code>.","foot.lic":"Marlia es software libre bajo la GNU GPL v3.0.","foot.src":"Código fuente","foot.rel":"Versiones","foot.bug":"Informar de un error","end.h2":"Pruébalo con tus propias carpetas","end.p":"Gratis, {size}, para macOS 13.5 o posterior en Apple Silicon. Sin cuenta ni suscripción.","tour.h2":"Cinco fotos, una tecla","tour.p":"Selecciona archivos a la izquierda, pulsa F5 y ya están en el disco de copia. Tab y ⌘2 pasan al otro panel y los muestran en miniatura.","tour.aria":"Vídeo: se seleccionan cinco fotos, se copian con F5 a un disco de copia y se muestran en miniatura.","priv.h2":"Privacidad","priv.1":"<strong>La app Marlia no envía nada a ninguna parte:<\/strong> ni analíticas, ni informes de errores, ni comprobación de actualizaciones. Solo se conecta a la red cuando tú se lo pides, por ejemplo a un servidor SMB.","priv.2":"Este sitio no usa cookies, analíticas ni seguimiento. Las fuentes y las imágenes se sirven desde el propio sitio.","priv.3":"El idioma que eliges se guarda en tu navegador (almacenamiento local) y no se envía a ninguna parte.","priv.4":"Para mostrar la última versión, la página consulta una vez por visita la API de GitHub sobre las versiones de Marlia. GitHub recibe tu dirección IP con esa petición.","priv.5":"El sitio está alojado en GitHub Pages. Como cualquier alojamiento web, GitHub registra las peticiones, incluidas las direcciones IP. Consulta la <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">Declaración de privacidad de GitHub<\/a>.","meta.title":"Marlia: gestor de archivos gratuito de dos paneles para Mac, al estilo de Total Commander","meta.desc":"Gestor de archivos de dos paneles para Mac, gratis y de código abierto. F5 copia, F6 mueve y cualquier atajo se puede reasignar. AppKit nativo y fluido.","langs":"Idiomas"}}
+{"es":{"nav.compare":"Frente a Finder","nav.features":"Funciones","nav.install":"Instalación","lang":"Idioma","hero.h1":"Un gestor de archivos de dos paneles, nativo y gratis, para Mac","hero.lede":"Al estilo de Total Commander, para quien vive en el teclado: <kbd>F5<\/kbd> copia al otro panel, <kbd>F6<\/kbd> mueve, <kbd>Tab<\/kbd> cambia de panel, y cualquier atajo se puede cambiar. Está hecho con <strong>AppKit nativo<\/strong>, así que va rápido incluso en carpetas con miles de archivos.","hero.dl":"Descargar para macOS","hero.gh":"Ver en GitHub","hero.req":"Versión {ver}, {size}. Para macOS 13.5 o posterior en Apple Silicon.","hero.meta":"Código abierto bajo GPL-3.0. Tiene firma ad hoc, así que el <a href=\"#install\">primer arranque<\/a> necesita un paso más.","hero.uiEn":" La interfaz de la app está en inglés.","pill.aria":"Por qué Marlia","f1b":"Gratis y de código abierto","f1s":"GPL-3.0. Sin cuenta, sin suscripción, sin telemetría.","f2b":"Dos paneles a la vez","f2s":"Dos carpetas, una junto a la otra. F5 copia al otro panel, F6 mueve, Tab cambia.","f3b":"Tus atajos","f3s":"Reasigna cualquier comando en Ajustes, teclas de función incluidas.","f4b":"Nativo y fluido","f4s":"AppKit, ni Electron ni una página web. La descarga completa ocupa {size}.","demo.aria":"Demo interactiva. Las flechas seleccionan, Tab cambia de panel, F5 copia, F6 mueve; tras Esc, Tab sale de la demo.","k.up":"Arriba","k.down":"Abajo","k.switch":"Cambiar","k.copy":"Copiar","k.move":"Mover","k.reset":"Reiniciar","demo.hint":"En la app, F5 y F6 se ejecutan en segundo plano con un panel de progreso que puedes pausar o cancelar, y si un nombre ya existe puedes reemplazar, omitir o conservar ambos.","log.ready":"Elige un archivo y pulsa F5.","log.L":"Panel activo: izquierdo.","log.R":"Panel activo: derecho.","log.copied":"Se copió {n} a {p}.","log.moved":"Se movió {n} a {p}.","log.kept":"{n} ya existe allí; se conservaron ambos como {m}.","log.pick":"Primero elige un archivo. En esta demo las carpetas no se mueven.","cmp.h2":"Lo que Finder no hace","cmp.p":"Finder sirve para mirar archivos. Marlia es para copiarlos, moverlos y ordenarlos todo el día.","cmp.r1":"Dos carpetas lado a lado en una ventana","cmp.r1f":"No, dos ventanas","cmp.r1m":"Sí, y con pestañas","cmp.r2":"Copiar o mover a la otra carpeta con una tecla","cmp.r2f":"Arrastrar, o ⌘C y ⌥⌘V","cmp.r2m":"F5 y F6","cmp.r3":"Cambiar cualquier atajo de teclado","cmp.r3f":"Solo menús, en Ajustes del Sistema","cmp.r3m":"Cualquier comando, en Ajustes","cmp.r4":"Renombrar por fecha de la foto o etiquetas de música","cmp.r4f":"No","cmp.r4m":"EXIF, vídeo, etiquetas de audio","cmp.r5":"Sincronizar dos carpetas","cmp.r5f":"No","cmp.r5m":"Con vista previa","cmp.r6":"Deshacer tras reiniciar","cmp.r6f":"Solo en la sesión actual","cmp.r6m":"50 pasos","cmp.r7":"Ejecutar tus propios scripts sobre los archivos seleccionados","cmp.r7f":"Con Atajos o Automator","cmp.r7m":"Menú, paleta o una tecla","cmp.r8":"Sin archivos ._ en memorias USB","cmp.r8f":"Los deja","cmp.r8m":"Se borran al copiar","cmp.r9":"Código abierto","cmp.r9f":"No","cmp.r9m":"GPL-3.0","feat.h2":"Todo lo que debe hacer un gestor de archivos, sin soltar el teclado","ft1h":"Dos paneles, pestañas, tres vistas","ft1p":"Lista, iconos y columnas al estilo de Finder con columna de vista previa. Cada panel tiene su propio historial, cada carpeta recuerda cómo la ordenaste y las pestañas de una ventana se pueden guardar como un conjunto con nombre.","ft2h":"El flujo de Total Commander","ft2p":"Copia y mueve al otro panel, escribe para seleccionar, selecciona por patrón como <code>*.jpg<\/code> e invierte la selección. Reúne archivos de varias carpetas con <kbd>⇧⌘C<\/kbd> y pégalos de una vez.","ft3h":"Operaciones en segundo plano","ft3p":"Copiar, mover, duplicar, enviar a la papelera y renombrar se ejecutan en segundo plano, con pausa y cancelación. Se pueden deshacer 50 pasos, incluso después de reiniciar.","ft4h":"Archivos comprimidos","ft4p":"Crea, extrae y explora archivos comprimidos con las herramientas del sistema, incluidos ZIP con contraseña. La extracción está protegida contra rutas zip-slip.","ft5h":"Espacios de trabajo","ft5p":"Reúne archivos de todo el disco en una carpeta de enlaces. No se copia ni se mueve nada, y quitar un elemento solo elimina el enlace.","ft6h":"Buscar, filtrar, previsualizar","ft6p":"Búsqueda recursiva por subcadena o regex, barra de filtro instantánea, Vista rápida con la barra espaciadora y un panel de información que muestra el propio archivo: texto, código, PDF, imágenes, vídeo.","ft7h":"Como en casa en macOS","ft7p":"Arrastrar y soltar con Finder, etiquetas de color, AirDrop, abrir en Terminal, recursos SMB, expulsar discos e instalar apps directamente desde un .dmg. Obtener información permite cambiar los permisos. Las copias a memorias USB no dejan archivos <code>._<\/code>.","ft8h":"Favoritos desde el teclado","ft8p":"Los favoritos del 1 al 9 se abren con <kbd>⌥⌘1<\/kbd> a <kbd>⌥⌘9<\/kbd>, en el orden de la barra lateral. La lista completa de atajos está en Ajustes, donde también se cambian.","ft9h":"Paleta de comandos","ft9p":"Cualquier comando del menú está a unas pocas teclas, con búsqueda aproximada. Ir a la carpeta acepta una ruta escrita con autocompletado con <kbd>Tab<\/kbd>, y cada / de la barra de ruta muestra las carpetas vecinas.","ft10h":"Comparar carpetas","ft10p":"Una tecla selecciona lo que falta o es más reciente en cada lado. Abre una carpeta en el otro panel con <kbd>⌘←<\/kbd> y <kbd>⌘→<\/kbd>.","ft11h":"Tus propios comandos","ft11p":"Ejecuta tus scripts de shell sobre los archivos seleccionados desde el menú Commands, la paleta o un atajo, con pausa y cancelación, como los comandos de usuario de Total Commander.","ft12h":"Renombrar por metadatos","ft12p":"Renombrado por lotes con vista previa de cada nombre nuevo: fecha y hora del EXIF o del vídeo, pista, artista y título de las etiquetas de audio, y cambio de mayúsculas y minúsculas.","ft13h":"Sincronizar carpetas","ft13p":"Compara dos árboles de carpetas y revisa cada diferencia con su acción antes de que ocurra nada. En ambos sentidos o en uno; los archivos reemplazados y eliminados van a la Papelera.","ft14h":"Adónde fue el espacio","ft14p":"Tamaños de carpeta con una barra para la proporción de cada elemento, y Archivos más grandes: los archivos más pesados de todo el árbol de una carpeta, a una tecla del panel.","th.h2":"Siete temas con el contraste comprobado","th.p":"Cada paleta mantiene los nombres legibles con un contraste de 4,5:1 o más, sobre el panel y sobre la selección.","th.system":"Sistema","th.alt":"Una ventana de Marlia con el tema elegido: lista a la izquierda, miniaturas a la derecha, barra lateral y ambos paneles con los colores del tema.","in.h2":"Funcionando en un minuto","s1b":"Descarga la imagen.","s1t":"{DMG} o cualquier versión desde {REL}.","s2b":"Arrastra Marlia a Aplicaciones.","s2t":"La imagen trae la app y un acceso a Aplicaciones, uno al lado del otro.","s3b":"Ábrela una vez a mano.","s3t":"Haz clic derecho en Marlia.app y elige Abrir. En macOS 15 y posteriores, ve a Ajustes del Sistema → Privacidad y seguridad y pulsa Abrir igualmente.","s4b":"Opcional: concede Acceso total al disco.","s4t":"Así Escritorio, Documentos y Descargas se abren sin avisos repetidos.","note.h":"Por qué macOS pregunta primero","note.p1":"Marlia tiene una firma ad hoc, sin Apple Developer ID, así que Gatekeeper la detiene en el primer arranque. Si macOS dice que la app «está dañada y no se puede abrir», algo habitual tras descargarla con el navegador o por AirDrop, quita la marca de cuarentena:","note.p2":"¿Prefieres compilarla tú? No hay proyecto de Xcode, solo un script: <code>./build.sh --run<\/code>.","foot.lic":"Marlia es software libre bajo la GNU GPL v3.0.","foot.src":"Código fuente","foot.rel":"Versiones","foot.bug":"Informar de un error","end.h2":"Pruébalo con tus propias carpetas","end.p":"Gratis, {size}, para macOS 13.5 o posterior en Apple Silicon. Sin cuenta ni suscripción.","tour.h2":"Cinco fotos, una tecla","tour.p":"Selecciona archivos a la izquierda, pulsa F5 y ya están en el disco de copia. Tab y ⌘2 pasan al otro panel y los muestran en miniatura.","tour.aria":"Vídeo: se seleccionan cinco fotos, se copian con F5 a un disco de copia y se muestran en miniatura.","priv.h2":"Privacidad","priv.1":"<strong>La app Marlia no envía nada a ninguna parte:<\/strong> ni analíticas, ni informes de errores, ni comprobación de actualizaciones. Solo se conecta a la red cuando tú se lo pides, por ejemplo a un servidor SMB.","priv.2":"Este sitio no usa cookies, analíticas ni seguimiento. Las fuentes y las imágenes se sirven desde el propio sitio.","priv.3":"El idioma que eliges se guarda en tu navegador (almacenamiento local) y no se envía a ninguna parte.","priv.4":"Para mostrar la última versión, la página consulta una vez por visita la API de GitHub sobre las versiones de Marlia. GitHub recibe tu dirección IP con esa petición.","priv.5":"El sitio está alojado en GitHub Pages. Como cualquier alojamiento web, GitHub registra las peticiones, incluidas las direcciones IP. Consulta la <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">Declaración de privacidad de GitHub<\/a>.","meta.title":"Marlia: gestor de archivos gratuito de dos paneles para Mac, al estilo de Total Commander","meta.desc":"Gestor de archivos de dos paneles para Mac, gratis y de código abierto. F5 copia, F6 mueve y cualquier atajo se puede reasignar. AppKit nativo y fluido.","langs":"Idiomas"}}
 </script>
 
 <script>
@@ -1056,6 +1056,34 @@ pre {
       if (!entries[0].isIntersecting && document.activeElement === box) box.blur();
     }).observe(box);
   }
+
+  /* Theme picker: each theme's screenshot(s); the light/dark pair follows the page theme. The
+     new picture replaces the old one only once it has loaded, so nothing flashes empty. */
+  const SHOTS = {
+    "system": ["theme-system-light", "theme-system-dark"],
+    "dracula": ["theme-dracula"], "gruvbox-dark": ["theme-gruvbox-dark"], "nord": ["theme-nord"],
+    "solarized-dark": ["theme-solarized-dark"], "solarized-light": ["theme-solarized-light"],
+    /* Auto is Solarized Light/Dark following the system: the same pictures */
+    "solarized-auto": ["theme-solarized-light", "theme-solarized-dark"]
+  };
+  const shotImgs = Array.from(document.querySelectorAll(".theme-shot img"));
+  const pickBtns = Array.from(document.querySelectorAll(".theme-pick button"));
+  pickBtns.forEach(btn => btn.addEventListener("click", () => {
+    const files = SHOTS[btn.dataset.shot];
+    if (!files) return;
+    pickBtns.forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+    shotImgs.forEach((img, i) => {
+      const src = img.getAttribute("src").replace(/[^/]*$/, "") + files[Math.min(i, files.length - 1)] + ".webp";
+      img.alt = btn.textContent.trim() + ". " + tr("th.alt");
+      /* The latest pick wins: a slower picture from an earlier click must not land on top. */
+      img.dataset.want = src;
+      if (img.getAttribute("src") === src) return;
+      if (getComputedStyle(img).display === "none") { img.setAttribute("src", src); return; }
+      const next = new Image();
+      next.onload = () => { if (img.dataset.want === src) img.setAttribute("src", src); };
+      next.src = src;
+    });
+  }));
 
   /* Tour video: two variants (light/dark), only the one the theme shows is loaded and played,
      and only while it is on screen. With reduced motion it stays on its poster, with controls. */

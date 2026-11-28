@@ -49,6 +49,8 @@
   --accent-ink: #ffffff;
   --sel-tint: color-mix(in srgb, var(--accent) 9%, var(--paper));
   --win-shadow: 0 12px 32px -20px rgba(0, 0, 0, 0.35);
+  /* the screenshot keeps the window's rounded transparent corners, so its shadow follows them */
+  --shot-shadow: drop-shadow(0 0 0.5px rgba(0, 0, 0, 0.35)) drop-shadow(0 12px 22px rgba(0, 0, 0, 0.14));
   --code-bg: #f5f5f7;
 
   /* replica of Marlia's System theme (follows the page's light/dark, like the app follows macOS) */
@@ -90,6 +92,7 @@
     --accent-text: #5aa2ff;
     --sel-tint: color-mix(in srgb, var(--accent) 24%, var(--paper));
     --win-shadow: none;
+    --shot-shadow: none;
     --code-bg: #2a2a2c;
     --m-pane: #1e1e1f;
     --m-chrome: #2a2a2c;
@@ -121,6 +124,7 @@
   --accent-text: #5aa2ff;
   --sel-tint: color-mix(in srgb, var(--accent) 24%, var(--paper));
   --win-shadow: none;
+  --shot-shadow: none;
   --code-bg: #2a2a2c;
   --m-pane: #1e1e1f;
   --m-chrome: #2a2a2c;
@@ -431,29 +435,23 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
 .cmp .part::before { content: "~"; content: "~" / ""; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--muted); }
 
 /* ---------- themes ---------- */
-/* Seven equal cards, 4 + 3 (2 per row on a phone). Fixed columns rather than auto-fill, which
-   made them narrow enough to cut off the Auto card's text. These are samples of the app's
-   palettes, so they keep their own colours. */
-.themes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.theme {
-  border-radius: 10px;
-  padding: 12px;
-  font-family: var(--f-ui);
-  font-size: 0.82rem;
-  display: grid;
-  gap: 4px;
+/* One real screenshot of the app and a picker of the seven themes; a pick swaps the picture
+   (it loads on demand). System and Solarized (Auto) follow the page's light/dark, as they
+   follow macOS in the app. */
+.theme-pick { display: flex; flex-wrap: wrap; gap: 6px; }
+.theme-pick button {
+  font: inherit; font-size: 0.92rem; font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
   border: 1px solid var(--line);
-  align-content: start;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
 }
-.theme .row { padding: 2px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.theme .label { margin-top: 6px; font-family: var(--f-body); font-weight: 600; font-size: 0.9rem; }
-.theme-system { background: var(--m-pane); color: var(--m-text); }
-.theme-system .sel { background: var(--m-sel); color: var(--m-sel-text); }
-/* Solarized (Auto) switches with the system: shown as its light and dark palettes side by side. */
-.theme-split { padding: 0; overflow: hidden; grid-template-columns: 1fr 1fr; gap: 0; background: var(--surface); }
-.theme-split .half { padding: 12px 6px 10px 12px; display: grid; gap: 4px; min-width: 0; }
-.theme-split .half + .half { padding: 12px 12px 10px 6px; }
-.theme-split .label { grid-column: 1 / -1; margin: 0; padding: 8px 12px 10px; color: var(--ink); }
+.theme-pick button:hover { border-color: var(--muted); }
+.theme-pick button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.theme-shot { margin: 0; }
+.theme-shot img { width: 100%; height: auto; aspect-ratio: 2200 / 1320; vertical-align: top; filter: var(--shot-shadow); }
 
 /* ---------- install ---------- */
 .install { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
@@ -515,7 +513,6 @@ pre {
   .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 24px; }
   .pillar:nth-child(3) { padding-left: 0; border-left: 0; }
   .features { grid-template-columns: 1fr; }
-  .themes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .install { grid-template-columns: 1fr; }
   .top nav { display: none; }
 }
@@ -526,7 +523,6 @@ pre {
   .m-head, .m-row { grid-template-columns: minmax(0, 1fr) 64px; }
   .m-head .d, .m-row .d { display: none; }
   .demo-log { margin-left: 0; width: 100%; padding: 2px 6px 4px; }
-  .theme-split { grid-column: 1 / -1; }
 }
 @media (max-width: 560px) {
   .hero { padding-top: 24px; }
@@ -745,15 +741,19 @@ pre {
         <h2 id="themes-h" data-t="th.h2">コントラストを検証した7つのテーマ</h2>
         <p data-t="th.p">どのパレットでも、ファイル名はペイン上でも選択範囲上でも 4.5:1 以上のコントラストを保ちます。</p>
       </div>
-      <div class="themes">
-        <div class="theme theme-system"><div class="row">Documents</div><div class="row sel">report.pdf</div><div class="row">notes.md</div><div class="label" data-t="th.system">システム</div></div>
-        <div class="theme" style="background:#282a36;color:#f8f8f2;border-color:#282a36"><div class="row">Documents</div><div class="row" style="background:#44475a">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#bd93f9">Dracula</div></div>
-        <div class="theme" style="background:#282828;color:#ebdbb2;border-color:#282828"><div class="row">Documents</div><div class="row" style="background:#504945">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#fe8019">Gruvbox Dark</div></div>
-        <div class="theme" style="background:#2e3440;color:#d8dee9;border-color:#2e3440"><div class="row">Documents</div><div class="row" style="background:#434c5e">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#88c0d0">Nord</div></div>
-        <div class="theme" style="background:#002b36;color:#eee8d5;border-color:#002b36"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.4)">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#268bd2">Solarized Dark</div></div>
-        <div class="theme" style="background:#fdf6e3;color:#073642;border-color:#eee8d5"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.35)">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#1f6fa8">Solarized Light</div></div>
-        <div class="theme theme-split" style="border-color:#eee8d5"><div class="half" style="background:#fdf6e3;color:#073642"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.35)">report.pdf</div><div class="row">notes.md</div></div><div class="half" style="background:#002b36;color:#eee8d5"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.4)">report.pdf</div><div class="row">notes.md</div></div><div class="label">Solarized (Auto)</div></div>
+      <div class="theme-pick" role="group" aria-labelledby="themes-h">
+        <button type="button" data-shot="system" aria-pressed="true" data-t="th.system">システム</button>
+        <button type="button" data-shot="dracula" aria-pressed="false">Dracula</button>
+        <button type="button" data-shot="gruvbox-dark" aria-pressed="false">Gruvbox Dark</button>
+        <button type="button" data-shot="nord" aria-pressed="false">Nord</button>
+        <button type="button" data-shot="solarized-dark" aria-pressed="false">Solarized Dark</button>
+        <button type="button" data-shot="solarized-light" aria-pressed="false">Solarized Light</button>
+        <button type="button" data-shot="solarized-auto" aria-pressed="false">Solarized (Auto)</button>
       </div>
+      <figure class="theme-shot">
+        <img class="only-light" src="../media/theme-system-light.webp" width="2200" height="1320" data-alt="th.alt" alt="選んだテーマの Marlia ウインドウ。左にリスト、右にサムネール、サイドバーと両方のファイルペインもテーマの色になります。" loading="lazy">
+        <img class="only-dark" src="../media/theme-system-dark.webp" width="2200" height="1320" data-alt="th.alt" alt="選んだテーマの Marlia ウインドウ。左にリスト、右にサムネール、サイドバーと両方のファイルペインもテーマの色になります。" loading="lazy">
+      </figure>
     </section>
 
     <section class="section" id="install">
@@ -817,7 +817,7 @@ pre {
 </div>
 
 <script type="application/json" id="i18n">
-{"ja":{"nav.compare":"Finder と比較","nav.features":"機能","nav.install":"インストール","lang":"言語","hero.h1":"無料でネイティブな、Mac 用2ペイン・ファイルマネージャー","hero.lede":"Total Commander 流、キーボード派のために。<kbd>F5<\/kbd> で反対側のペインへコピー、<kbd>F6<\/kbd> で移動、<kbd>Tab<\/kbd> で切り替え。ショートカットはすべて変更できます。<strong>ネイティブの AppKit<\/strong> で作られているので、数千ファイルのフォルダでも軽快です。","hero.dl":"macOS 版をダウンロード","hero.gh":"GitHub で見る","hero.req":"バージョン {ver}、{size}。Apple シリコン搭載の macOS 13.5 以降に対応。","hero.meta":"GPL-3.0 のオープンソース。アドホック署名のため、<a href=\"#install\">初回起動<\/a>時にひと手間かかります。","hero.uiEn":"アプリの表示は英語です。","pill.aria":"Marlia を選ぶ理由","f1b":"無料・オープンソース","f1s":"GPL-3.0。アカウント不要、サブスクなし、テレメトリなし。","f2b":"2つのペインを同時に","f2s":"2つのフォルダを並べて表示。F5 で向こうへコピー、F6 で移動、Tab で切り替え。","f3b":"ショートカットは自由に","f3s":"どのコマンドも設定で割り当て直せます。ファンクションキーも。","f4b":"ネイティブで軽快","f4s":"Electron でも Web ページでもなく AppKit。ダウンロードは {size} だけ。","demo.aria":"インタラクティブなデモ。矢印キーで選択、Tab でペイン切替、F5 でコピー、F6 で移動。Esc の後は Tab でデモから出られます。","k.up":"上","k.down":"下","k.switch":"切替","k.copy":"コピー","k.move":"移動","k.reset":"リセット","demo.hint":"アプリでは F5 と F6 はバックグラウンドで実行され、進行状況パネルから一時停止やキャンセルができます。同名ファイルがあれば、置き換え・スキップ・両方残すを選べます。","log.ready":"ファイルを選んで F5 を押してください。","log.L":"アクティブ：左ペイン。","log.R":"アクティブ：右ペイン。","log.copied":"{n} を {p} にコピーしました。","log.moved":"{n} を {p} に移動しました。","log.kept":"{n} は既にあるため、両方残して {m} にしました。","log.pick":"先にファイルを選んでください。このデモではフォルダは動かせません。","cmp.h2":"Finder にできないこと","cmp.p":"Finder はファイルを眺めるためのもの。Marlia は一日中ファイルをコピーし、移動し、整理するためのものです。","cmp.r1":"1つのウインドウに2つのフォルダを並べる","cmp.r1f":"不可（ウインドウを2つ使う）","cmp.r1m":"可能、タブにも対応","cmp.r2":"1キーで反対側のフォルダへコピー・移動","cmp.r2f":"ドラッグ、または ⌘C → ⌥⌘V","cmp.r2m":"F5 と F6","cmp.r3":"あらゆるショートカットを変更","cmp.r3f":"メニュー項目のみ、システム設定で","cmp.r3m":"全コマンド、設定で","cmp.r4":"撮影日や音楽タグで名前を変更","cmp.r4f":"不可","cmp.r4m":"EXIF・動画・音声タグ","cmp.r5":"2つのフォルダを同期","cmp.r5f":"不可","cmp.r5m":"プレビューしてから","cmp.r6":"再起動後も取り消し","cmp.r6f":"現在のセッションのみ","cmp.r6m":"50 ステップ","cmp.r7":"選択ファイルに自作スクリプトを実行","cmp.r7f":"ショートカットか Automator 経由","cmp.r7m":"メニュー・パレット・キー","cmp.r8":"USB メモリに ._ ファイルを残さない","cmp.r8f":"残る","cmp.r8m":"コピー後に削除","cmp.r9":"オープンソース","cmp.r9f":"いいえ","cmp.r9m":"GPL-3.0","feat.h2":"ファイルマネージャーに必要なことを、キーボードから手を離さずに","ft1h":"2ペイン、タブ、3つの表示","ft1p":"リスト、アイコン、プレビュー列付きの Finder 風カラム。ペインごとに履歴を持ち、フォルダごとに並び順を記憶し、ウインドウのタブを名前付きのセットとして保存できます。","ft2h":"Total Commander の操作感","ft2p":"反対側のペインへのコピーと移動、タイプして選択、<code>*.jpg<\/code> のようなパターンで選択、選択の反転。<kbd>⇧⌘C<\/kbd> で複数のフォルダからファイルを集め、まとめてペーストできます。","ft3h":"バックグラウンドのファイル操作","ft3p":"コピー、移動、複製、ゴミ箱、名前変更はバックグラウンドで実行され、一時停止やキャンセルもできます。取り消しは 50 段階まで戻れ、再起動後も使えます。","ft4h":"アーカイブ","ft4p":"システムのツールでアーカイブの作成・展開・閲覧ができ、パスワード付き ZIP にも対応。展開時は zip-slip パスを防ぎます。","ft5h":"ワークスペース","ft5p":"ディスクのあちこちにあるファイルを、リンクの入った1つのフォルダに集めます。コピーも移動もせず、項目を削除してもリンクが消えるだけです。","ft6h":"検索、フィルタ、プレビュー","ft6p":"部分一致や正規表現での再帰検索、即時フィルタバー、スペースキーでクイックルック。情報パネルではテキスト、コード、PDF、画像、動画などファイルそのものをプレビューできます。","ft7h":"macOS になじむ","ft7p":"Finder とのドラッグ＆ドロップ、カラータグ、AirDrop、ターミナルで開く、SMB 共有への接続、ドライブの取り出し、.dmg からのアプリインストール。情報ウインドウでアクセス権を変更できます。USB メモリにコピーしても <code>._<\/code> ファイルは残りません。","ft8h":"キーボードでよく使う項目へ","ft8p":"よく使う項目 1〜9 はサイドバーの順に <kbd>⌥⌘1<\/kbd>〜<kbd>⌥⌘9<\/kbd> で開けます。ショートカットの一覧は設定にあり、そこで変更もできます。","ft9h":"コマンドパレット","ft9p":"メニューのすべてのコマンドを、あいまい検索ですぐに呼び出せます。「フォルダへ移動」はパスを入力して <kbd>Tab<\/kbd> で補完でき、パスバーの / をクリックすると隣のフォルダが一覧できます。","ft10h":"フォルダの比較","ft10p":"ワンキーで、片側にしかない項目や新しい方の項目を両側で選択します。<kbd>⌘←<\/kbd>・<kbd>⌘→<\/kbd> でフォルダを反対側のペインに開きます。","ft11h":"ユーザーコマンド","ft11p":"Commands メニュー、コマンドパレット、ショートカットから、選択したファイルに自分のシェルスクリプトを実行できます。一時停止とキャンセルにも対応し、Total Commander のユーザーコマンドと同じ感覚で使えます。","ft12h":"メタデータで名前変更","ft12p":"新しい名前をすべてプレビューしながら一括変更。日付と時刻は EXIF や動画から、トラック番号・アーティスト・タイトルはオーディオタグから取得し、大文字・小文字の変換もできます。","ft13h":"フォルダの同期","ft13p":"2 つのフォルダツリーを比較し、実行前にすべての差分とその操作を確認できます。双方向または一方向。置き換えたファイルや削除したファイルはゴミ箱に移動します。","ft14h":"容量の行方","ft14p":"各項目の割合を示すバー付きのフォルダサイズと、「最大のファイル」：フォルダ以下のどこにあっても最も大きいファイルを一覧し、ワンキーでペインに表示します。","th.h2":"コントラストを検証した7つのテーマ","th.p":"どのパレットでも、ファイル名はペイン上でも選択範囲上でも 4.5:1 以上のコントラストを保ちます。","th.system":"システム","in.h2":"1分で使い始められます","s1b":"ディスクイメージをダウンロード。","s1t":"{DMG}、または {REL} から任意のバージョン。","s2b":"Marlia を「アプリケーション」にドラッグ。","s2t":"イメージにはアプリと「アプリケーション」へのショートカットが並んでいます。","s3b":"最初の1回は手動で開きます。","s3t":"Marlia.app を右クリックして「開く」を選びます。macOS 15 以降では「システム設定」→「プライバシーとセキュリティ」で「このまま開く」をクリックします。","s4b":"任意：フルディスクアクセスを許可。","s4t":"デスクトップ、書類、ダウンロードを開くたびに確認が出なくなります。","note.h":"macOS が最初に確認する理由","note.p1":"Marlia は Apple Developer ID なしのアドホック署名なので、初回起動時に Gatekeeper に止められます。「壊れているため開けません」と表示された場合（ブラウザでのダウンロードや AirDrop の後によくあります）は、隔離フラグを外してください：","note.p2":"自分でビルドしたい場合も簡単です。Xcode プロジェクトはなく、スクリプト1つだけ：<code>./build.sh --run<\/code>","foot.lic":"Marlia は GNU GPL v3.0 のフリーソフトウェアです。","foot.src":"ソースコード","foot.rel":"リリース","foot.bug":"不具合を報告","end.h2":"あなたのフォルダで試してみてください","end.p":"無料、{size}。Apple シリコン搭載の macOS 13.5 以降に対応。アカウントもサブスクも不要です。","tour.h2":"5枚の写真を、キー1つで","tour.p":"左でファイルを選び F5 を押せば、もうバックアップディスクの中。Tab と ⌘2 で反対側のペインに移り、サムネイルで確認できます。","tour.aria":"動画：5枚の写真を選び、F5 でバックアップディスクにコピーし、サムネイルで表示します。","priv.h2":"プライバシー","priv.1":"<strong>Marlia アプリ自体はどこにも何も送信しません。<\/strong>分析も、クラッシュレポートも、アップデートの確認もありません。ネットワークに接続するのは、SMB サーバーへの接続など、あなたが指示したときだけです。","priv.2":"このサイトは Cookie、アクセス解析、トラッキングを使用しません。フォントと画像はサイト自体から配信されます。","priv.3":"選んだ言語はブラウザ（ローカルストレージ）に保存され、どこにも送信されません。","priv.4":"最新バージョンを表示するため、ページは訪問ごとに一度 GitHub API に Marlia のリリース情報を問い合わせます。その際、GitHub はあなたの IP アドレスを受け取ります。","priv.5":"このサイトは GitHub Pages でホストされています。一般的なホスティングと同様に、GitHub は IP アドレスを含むリクエストを記録します。詳しくは<a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub プライバシーステートメント<\/a>をご覧ください。","meta.title":"Marlia：Mac 用の無料 2ペイン・ファイルマネージャー（Total Commander 風）","meta.desc":"Mac 向けの無料・オープンソースの2ペイン・ファイルマネージャー。F5 でコピー、F6 で移動、ショートカットはすべて変更できます。ネイティブ AppKit で軽快。","langs":"言語"}}
+{"ja":{"nav.compare":"Finder と比較","nav.features":"機能","nav.install":"インストール","lang":"言語","hero.h1":"無料でネイティブな、Mac 用2ペイン・ファイルマネージャー","hero.lede":"Total Commander 流、キーボード派のために。<kbd>F5<\/kbd> で反対側のペインへコピー、<kbd>F6<\/kbd> で移動、<kbd>Tab<\/kbd> で切り替え。ショートカットはすべて変更できます。<strong>ネイティブの AppKit<\/strong> で作られているので、数千ファイルのフォルダでも軽快です。","hero.dl":"macOS 版をダウンロード","hero.gh":"GitHub で見る","hero.req":"バージョン {ver}、{size}。Apple シリコン搭載の macOS 13.5 以降に対応。","hero.meta":"GPL-3.0 のオープンソース。アドホック署名のため、<a href=\"#install\">初回起動<\/a>時にひと手間かかります。","hero.uiEn":"アプリの表示は英語です。","pill.aria":"Marlia を選ぶ理由","f1b":"無料・オープンソース","f1s":"GPL-3.0。アカウント不要、サブスクなし、テレメトリなし。","f2b":"2つのペインを同時に","f2s":"2つのフォルダを並べて表示。F5 で向こうへコピー、F6 で移動、Tab で切り替え。","f3b":"ショートカットは自由に","f3s":"どのコマンドも設定で割り当て直せます。ファンクションキーも。","f4b":"ネイティブで軽快","f4s":"Electron でも Web ページでもなく AppKit。ダウンロードは {size} だけ。","demo.aria":"インタラクティブなデモ。矢印キーで選択、Tab でペイン切替、F5 でコピー、F6 で移動。Esc の後は Tab でデモから出られます。","k.up":"上","k.down":"下","k.switch":"切替","k.copy":"コピー","k.move":"移動","k.reset":"リセット","demo.hint":"アプリでは F5 と F6 はバックグラウンドで実行され、進行状況パネルから一時停止やキャンセルができます。同名ファイルがあれば、置き換え・スキップ・両方残すを選べます。","log.ready":"ファイルを選んで F5 を押してください。","log.L":"アクティブ：左ペイン。","log.R":"アクティブ：右ペイン。","log.copied":"{n} を {p} にコピーしました。","log.moved":"{n} を {p} に移動しました。","log.kept":"{n} は既にあるため、両方残して {m} にしました。","log.pick":"先にファイルを選んでください。このデモではフォルダは動かせません。","cmp.h2":"Finder にできないこと","cmp.p":"Finder はファイルを眺めるためのもの。Marlia は一日中ファイルをコピーし、移動し、整理するためのものです。","cmp.r1":"1つのウインドウに2つのフォルダを並べる","cmp.r1f":"不可（ウインドウを2つ使う）","cmp.r1m":"可能、タブにも対応","cmp.r2":"1キーで反対側のフォルダへコピー・移動","cmp.r2f":"ドラッグ、または ⌘C → ⌥⌘V","cmp.r2m":"F5 と F6","cmp.r3":"あらゆるショートカットを変更","cmp.r3f":"メニュー項目のみ、システム設定で","cmp.r3m":"全コマンド、設定で","cmp.r4":"撮影日や音楽タグで名前を変更","cmp.r4f":"不可","cmp.r4m":"EXIF・動画・音声タグ","cmp.r5":"2つのフォルダを同期","cmp.r5f":"不可","cmp.r5m":"プレビューしてから","cmp.r6":"再起動後も取り消し","cmp.r6f":"現在のセッションのみ","cmp.r6m":"50 ステップ","cmp.r7":"選択ファイルに自作スクリプトを実行","cmp.r7f":"ショートカットか Automator 経由","cmp.r7m":"メニュー・パレット・キー","cmp.r8":"USB メモリに ._ ファイルを残さない","cmp.r8f":"残る","cmp.r8m":"コピー後に削除","cmp.r9":"オープンソース","cmp.r9f":"いいえ","cmp.r9m":"GPL-3.0","feat.h2":"ファイルマネージャーに必要なことを、キーボードから手を離さずに","ft1h":"2ペイン、タブ、3つの表示","ft1p":"リスト、アイコン、プレビュー列付きの Finder 風カラム。ペインごとに履歴を持ち、フォルダごとに並び順を記憶し、ウインドウのタブを名前付きのセットとして保存できます。","ft2h":"Total Commander の操作感","ft2p":"反対側のペインへのコピーと移動、タイプして選択、<code>*.jpg<\/code> のようなパターンで選択、選択の反転。<kbd>⇧⌘C<\/kbd> で複数のフォルダからファイルを集め、まとめてペーストできます。","ft3h":"バックグラウンドのファイル操作","ft3p":"コピー、移動、複製、ゴミ箱、名前変更はバックグラウンドで実行され、一時停止やキャンセルもできます。取り消しは 50 段階まで戻れ、再起動後も使えます。","ft4h":"アーカイブ","ft4p":"システムのツールでアーカイブの作成・展開・閲覧ができ、パスワード付き ZIP にも対応。展開時は zip-slip パスを防ぎます。","ft5h":"ワークスペース","ft5p":"ディスクのあちこちにあるファイルを、リンクの入った1つのフォルダに集めます。コピーも移動もせず、項目を削除してもリンクが消えるだけです。","ft6h":"検索、フィルタ、プレビュー","ft6p":"部分一致や正規表現での再帰検索、即時フィルタバー、スペースキーでクイックルック。情報パネルではテキスト、コード、PDF、画像、動画などファイルそのものをプレビューできます。","ft7h":"macOS になじむ","ft7p":"Finder とのドラッグ＆ドロップ、カラータグ、AirDrop、ターミナルで開く、SMB 共有への接続、ドライブの取り出し、.dmg からのアプリインストール。情報ウインドウでアクセス権を変更できます。USB メモリにコピーしても <code>._<\/code> ファイルは残りません。","ft8h":"キーボードでよく使う項目へ","ft8p":"よく使う項目 1〜9 はサイドバーの順に <kbd>⌥⌘1<\/kbd>〜<kbd>⌥⌘9<\/kbd> で開けます。ショートカットの一覧は設定にあり、そこで変更もできます。","ft9h":"コマンドパレット","ft9p":"メニューのすべてのコマンドを、あいまい検索ですぐに呼び出せます。「フォルダへ移動」はパスを入力して <kbd>Tab<\/kbd> で補完でき、パスバーの / をクリックすると隣のフォルダが一覧できます。","ft10h":"フォルダの比較","ft10p":"ワンキーで、片側にしかない項目や新しい方の項目を両側で選択します。<kbd>⌘←<\/kbd>・<kbd>⌘→<\/kbd> でフォルダを反対側のペインに開きます。","ft11h":"ユーザーコマンド","ft11p":"Commands メニュー、コマンドパレット、ショートカットから、選択したファイルに自分のシェルスクリプトを実行できます。一時停止とキャンセルにも対応し、Total Commander のユーザーコマンドと同じ感覚で使えます。","ft12h":"メタデータで名前変更","ft12p":"新しい名前をすべてプレビューしながら一括変更。日付と時刻は EXIF や動画から、トラック番号・アーティスト・タイトルはオーディオタグから取得し、大文字・小文字の変換もできます。","ft13h":"フォルダの同期","ft13p":"2 つのフォルダツリーを比較し、実行前にすべての差分とその操作を確認できます。双方向または一方向。置き換えたファイルや削除したファイルはゴミ箱に移動します。","ft14h":"容量の行方","ft14p":"各項目の割合を示すバー付きのフォルダサイズと、「最大のファイル」：フォルダ以下のどこにあっても最も大きいファイルを一覧し、ワンキーでペインに表示します。","th.h2":"コントラストを検証した7つのテーマ","th.p":"どのパレットでも、ファイル名はペイン上でも選択範囲上でも 4.5:1 以上のコントラストを保ちます。","th.system":"システム","th.alt":"選んだテーマの Marlia ウインドウ。左にリスト、右にサムネール、サイドバーと両方のファイルペインもテーマの色になります。","in.h2":"1分で使い始められます","s1b":"ディスクイメージをダウンロード。","s1t":"{DMG}、または {REL} から任意のバージョン。","s2b":"Marlia を「アプリケーション」にドラッグ。","s2t":"イメージにはアプリと「アプリケーション」へのショートカットが並んでいます。","s3b":"最初の1回は手動で開きます。","s3t":"Marlia.app を右クリックして「開く」を選びます。macOS 15 以降では「システム設定」→「プライバシーとセキュリティ」で「このまま開く」をクリックします。","s4b":"任意：フルディスクアクセスを許可。","s4t":"デスクトップ、書類、ダウンロードを開くたびに確認が出なくなります。","note.h":"macOS が最初に確認する理由","note.p1":"Marlia は Apple Developer ID なしのアドホック署名なので、初回起動時に Gatekeeper に止められます。「壊れているため開けません」と表示された場合（ブラウザでのダウンロードや AirDrop の後によくあります）は、隔離フラグを外してください：","note.p2":"自分でビルドしたい場合も簡単です。Xcode プロジェクトはなく、スクリプト1つだけ：<code>./build.sh --run<\/code>","foot.lic":"Marlia は GNU GPL v3.0 のフリーソフトウェアです。","foot.src":"ソースコード","foot.rel":"リリース","foot.bug":"不具合を報告","end.h2":"あなたのフォルダで試してみてください","end.p":"無料、{size}。Apple シリコン搭載の macOS 13.5 以降に対応。アカウントもサブスクも不要です。","tour.h2":"5枚の写真を、キー1つで","tour.p":"左でファイルを選び F5 を押せば、もうバックアップディスクの中。Tab と ⌘2 で反対側のペインに移り、サムネイルで確認できます。","tour.aria":"動画：5枚の写真を選び、F5 でバックアップディスクにコピーし、サムネイルで表示します。","priv.h2":"プライバシー","priv.1":"<strong>Marlia アプリ自体はどこにも何も送信しません。<\/strong>分析も、クラッシュレポートも、アップデートの確認もありません。ネットワークに接続するのは、SMB サーバーへの接続など、あなたが指示したときだけです。","priv.2":"このサイトは Cookie、アクセス解析、トラッキングを使用しません。フォントと画像はサイト自体から配信されます。","priv.3":"選んだ言語はブラウザ（ローカルストレージ）に保存され、どこにも送信されません。","priv.4":"最新バージョンを表示するため、ページは訪問ごとに一度 GitHub API に Marlia のリリース情報を問い合わせます。その際、GitHub はあなたの IP アドレスを受け取ります。","priv.5":"このサイトは GitHub Pages でホストされています。一般的なホスティングと同様に、GitHub は IP アドレスを含むリクエストを記録します。詳しくは<a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub プライバシーステートメント<\/a>をご覧ください。","meta.title":"Marlia：Mac 用の無料 2ペイン・ファイルマネージャー（Total Commander 風）","meta.desc":"Mac 向けの無料・オープンソースの2ペイン・ファイルマネージャー。F5 でコピー、F6 で移動、ショートカットはすべて変更できます。ネイティブ AppKit で軽快。","langs":"言語"}}
 </script>
 
 <script>
@@ -1056,6 +1056,34 @@ pre {
       if (!entries[0].isIntersecting && document.activeElement === box) box.blur();
     }).observe(box);
   }
+
+  /* Theme picker: each theme's screenshot(s); the light/dark pair follows the page theme. The
+     new picture replaces the old one only once it has loaded, so nothing flashes empty. */
+  const SHOTS = {
+    "system": ["theme-system-light", "theme-system-dark"],
+    "dracula": ["theme-dracula"], "gruvbox-dark": ["theme-gruvbox-dark"], "nord": ["theme-nord"],
+    "solarized-dark": ["theme-solarized-dark"], "solarized-light": ["theme-solarized-light"],
+    /* Auto is Solarized Light/Dark following the system: the same pictures */
+    "solarized-auto": ["theme-solarized-light", "theme-solarized-dark"]
+  };
+  const shotImgs = Array.from(document.querySelectorAll(".theme-shot img"));
+  const pickBtns = Array.from(document.querySelectorAll(".theme-pick button"));
+  pickBtns.forEach(btn => btn.addEventListener("click", () => {
+    const files = SHOTS[btn.dataset.shot];
+    if (!files) return;
+    pickBtns.forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+    shotImgs.forEach((img, i) => {
+      const src = img.getAttribute("src").replace(/[^/]*$/, "") + files[Math.min(i, files.length - 1)] + ".webp";
+      img.alt = btn.textContent.trim() + ". " + tr("th.alt");
+      /* The latest pick wins: a slower picture from an earlier click must not land on top. */
+      img.dataset.want = src;
+      if (img.getAttribute("src") === src) return;
+      if (getComputedStyle(img).display === "none") { img.setAttribute("src", src); return; }
+      const next = new Image();
+      next.onload = () => { if (img.dataset.want === src) img.setAttribute("src", src); };
+      next.src = src;
+    });
+  }));
 
   /* Tour video: two variants (light/dark), only the one the theme shows is loaded and played,
      and only while it is on screen. With reduced motion it stays on its poster, with controls. */

@@ -28,6 +28,8 @@
   --accent-ink: #ffffff;
   --sel-tint: color-mix(in srgb, var(--accent) 9%, var(--paper));
   --win-shadow: 0 12px 32px -20px rgba(0, 0, 0, 0.35);
+  /* the screenshot keeps the window's rounded transparent corners, so its shadow follows them */
+  --shot-shadow: drop-shadow(0 0 0.5px rgba(0, 0, 0, 0.35)) drop-shadow(0 12px 22px rgba(0, 0, 0, 0.14));
   --code-bg: #f5f5f7;
 
   /* replica of Marlia's System theme (follows the page's light/dark, like the app follows macOS) */
@@ -69,6 +71,7 @@
     --accent-text: #5aa2ff;
     --sel-tint: color-mix(in srgb, var(--accent) 24%, var(--paper));
     --win-shadow: none;
+    --shot-shadow: none;
     --code-bg: #2a2a2c;
     --m-pane: #1e1e1f;
     --m-chrome: #2a2a2c;
@@ -100,6 +103,7 @@
   --accent-text: #5aa2ff;
   --sel-tint: color-mix(in srgb, var(--accent) 24%, var(--paper));
   --win-shadow: none;
+  --shot-shadow: none;
   --code-bg: #2a2a2c;
   --m-pane: #1e1e1f;
   --m-chrome: #2a2a2c;
@@ -410,29 +414,23 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
 .cmp .part::before { content: "~"; content: "~" / ""; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--muted); }
 
 /* ---------- themes ---------- */
-/* Seven equal cards, 4 + 3 (2 per row on a phone). Fixed columns rather than auto-fill, which
-   made them narrow enough to cut off the Auto card's text. These are samples of the app's
-   palettes, so they keep their own colours. */
-.themes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.theme {
-  border-radius: 10px;
-  padding: 12px;
-  font-family: var(--f-ui);
-  font-size: 0.82rem;
-  display: grid;
-  gap: 4px;
+/* One real screenshot of the app and a picker of the seven themes; a pick swaps the picture
+   (it loads on demand). System and Solarized (Auto) follow the page's light/dark, as they
+   follow macOS in the app. */
+.theme-pick { display: flex; flex-wrap: wrap; gap: 6px; }
+.theme-pick button {
+  font: inherit; font-size: 0.92rem; font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
   border: 1px solid var(--line);
-  align-content: start;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
 }
-.theme .row { padding: 2px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.theme .label { margin-top: 6px; font-family: var(--f-body); font-weight: 600; font-size: 0.9rem; }
-.theme-system { background: var(--m-pane); color: var(--m-text); }
-.theme-system .sel { background: var(--m-sel); color: var(--m-sel-text); }
-/* Solarized (Auto) switches with the system: shown as its light and dark palettes side by side. */
-.theme-split { padding: 0; overflow: hidden; grid-template-columns: 1fr 1fr; gap: 0; background: var(--surface); }
-.theme-split .half { padding: 12px 6px 10px 12px; display: grid; gap: 4px; min-width: 0; }
-.theme-split .half + .half { padding: 12px 12px 10px 6px; }
-.theme-split .label { grid-column: 1 / -1; margin: 0; padding: 8px 12px 10px; color: var(--ink); }
+.theme-pick button:hover { border-color: var(--muted); }
+.theme-pick button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.theme-shot { margin: 0; }
+.theme-shot img { width: 100%; height: auto; aspect-ratio: 2200 / 1320; vertical-align: top; filter: var(--shot-shadow); }
 
 /* ---------- install ---------- */
 .install { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
@@ -494,7 +492,6 @@ pre {
   .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 24px; }
   .pillar:nth-child(3) { padding-left: 0; border-left: 0; }
   .features { grid-template-columns: 1fr; }
-  .themes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .install { grid-template-columns: 1fr; }
   .top nav { display: none; }
 }
@@ -505,7 +502,6 @@ pre {
   .m-head, .m-row { grid-template-columns: minmax(0, 1fr) 64px; }
   .m-head .d, .m-row .d { display: none; }
   .demo-log { margin-left: 0; width: 100%; padding: 2px 6px 4px; }
-  .theme-split { grid-column: 1 / -1; }
 }
 @media (max-width: 560px) {
   .hero { padding-top: 24px; }
@@ -724,15 +720,19 @@ pre {
         <h2 id="themes-h" data-t="th.h2">Seven looks, checked for contrast</h2>
         <p data-t="th.p"></p>
       </div>
-      <div class="themes">
-        <div class="theme theme-system"><div class="row">Documents</div><div class="row sel">report.pdf</div><div class="row">notes.md</div><div class="label" data-t="th.system">System</div></div>
-        <div class="theme" style="background:#282a36;color:#f8f8f2;border-color:#282a36"><div class="row">Documents</div><div class="row" style="background:#44475a">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#bd93f9">Dracula</div></div>
-        <div class="theme" style="background:#282828;color:#ebdbb2;border-color:#282828"><div class="row">Documents</div><div class="row" style="background:#504945">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#fe8019">Gruvbox Dark</div></div>
-        <div class="theme" style="background:#2e3440;color:#d8dee9;border-color:#2e3440"><div class="row">Documents</div><div class="row" style="background:#434c5e">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#88c0d0">Nord</div></div>
-        <div class="theme" style="background:#002b36;color:#eee8d5;border-color:#002b36"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.4)">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#268bd2">Solarized Dark</div></div>
-        <div class="theme" style="background:#fdf6e3;color:#073642;border-color:#eee8d5"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.35)">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#1f6fa8">Solarized Light</div></div>
-        <div class="theme theme-split" style="border-color:#eee8d5"><div class="half" style="background:#fdf6e3;color:#073642"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.35)">report.pdf</div><div class="row">notes.md</div></div><div class="half" style="background:#002b36;color:#eee8d5"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.4)">report.pdf</div><div class="row">notes.md</div></div><div class="label">Solarized (Auto)</div></div>
+      <div class="theme-pick" role="group" aria-labelledby="themes-h">
+        <button type="button" data-shot="system" aria-pressed="true" data-t="th.system">System</button>
+        <button type="button" data-shot="dracula" aria-pressed="false">Dracula</button>
+        <button type="button" data-shot="gruvbox-dark" aria-pressed="false">Gruvbox Dark</button>
+        <button type="button" data-shot="nord" aria-pressed="false">Nord</button>
+        <button type="button" data-shot="solarized-dark" aria-pressed="false">Solarized Dark</button>
+        <button type="button" data-shot="solarized-light" aria-pressed="false">Solarized Light</button>
+        <button type="button" data-shot="solarized-auto" aria-pressed="false">Solarized (Auto)</button>
       </div>
+      <figure class="theme-shot">
+        <img class="only-light" src="media/theme-system-light.webp" width="2200" height="1320" data-alt="th.alt" alt="" loading="lazy">
+        <img class="only-dark" src="media/theme-system-dark.webp" width="2200" height="1320" data-alt="th.alt" alt="" loading="lazy">
+      </figure>
     </section>
 
     <section class="section" id="install">
@@ -894,6 +894,7 @@ pre {
   "th.h2": "Seven looks, checked for contrast",
   "th.p": "Every palette keeps file names readable at 4.5:1 or better, on the pane and on the selection.",
   "th.system": "System",
+  "th.alt": "A Marlia window in the chosen theme: a list on the left, thumbnails on the right, the sidebar and both panes in the theme's colours.",
   "in.h2": "Get it running in a minute",
   "s1b": "Download the image.",
   "s1t": "{DMG}, or any version from {REL}.",
@@ -1022,6 +1023,7 @@ pre {
   "th.h2": "Семь тем с проверенной контрастностью",
   "th.p": "В каждой палитре имена файлов читаются с контрастом не ниже 4,5:1, и на фоне панели, и на выделении.",
   "th.system": "Системная",
+  "th.alt": "Окно Marlia в выбранной теме: слева список, справа миниатюры, боковая панель и обе панели файлов в цветах темы.",
   "in.h2": "Запуск за минуту",
   "s1b": "Скачайте образ.",
   "s1t": "{DMG} или любую версию со страницы {REL}.",
@@ -1150,6 +1152,7 @@ pre {
   "th.h2": "七种主题，均经过对比度检查",
   "th.p": "每套配色中，文件名在面板背景和选中高亮上的对比度都不低于 4.5:1。",
   "th.system": "系统",
+  "th.alt": "所选主题下的 Marlia 窗口：左侧为列表，右侧为缩略图，侧边栏和两个文件栏都使用该主题的颜色。",
   "in.h2": "一分钟就能用起来",
   "s1b": "下载磁盘映像。",
   "s1t": "{DMG}，或从 {REL} 获取任意版本。",
@@ -1278,6 +1281,7 @@ pre {
   "th.h2": "Siete temas con el contraste comprobado",
   "th.p": "Cada paleta mantiene los nombres legibles con un contraste de 4,5:1 o más, sobre el panel y sobre la selección.",
   "th.system": "Sistema",
+  "th.alt": "Una ventana de Marlia con el tema elegido: lista a la izquierda, miniaturas a la derecha, barra lateral y ambos paneles con los colores del tema.",
   "in.h2": "Funcionando en un minuto",
   "s1b": "Descarga la imagen.",
   "s1t": "{DMG} o cualquier versión desde {REL}.",
@@ -1406,6 +1410,7 @@ pre {
   "th.h2": "コントラストを検証した7つのテーマ",
   "th.p": "どのパレットでも、ファイル名はペイン上でも選択範囲上でも 4.5:1 以上のコントラストを保ちます。",
   "th.system": "システム",
+  "th.alt": "選んだテーマの Marlia ウインドウ。左にリスト、右にサムネール、サイドバーと両方のファイルペインもテーマの色になります。",
   "in.h2": "1分で使い始められます",
   "s1b": "ディスクイメージをダウンロード。",
   "s1t": "{DMG}、または {REL} から任意のバージョン。",
@@ -1676,6 +1681,34 @@ pre {
       if (!entries[0].isIntersecting && document.activeElement === box) box.blur();
     }).observe(box);
   }
+
+  /* Theme picker: each theme's screenshot(s); the light/dark pair follows the page theme. The
+     new picture replaces the old one only once it has loaded, so nothing flashes empty. */
+  const SHOTS = {
+    "system": ["theme-system-light", "theme-system-dark"],
+    "dracula": ["theme-dracula"], "gruvbox-dark": ["theme-gruvbox-dark"], "nord": ["theme-nord"],
+    "solarized-dark": ["theme-solarized-dark"], "solarized-light": ["theme-solarized-light"],
+    /* Auto is Solarized Light/Dark following the system: the same pictures */
+    "solarized-auto": ["theme-solarized-light", "theme-solarized-dark"]
+  };
+  const shotImgs = Array.from(document.querySelectorAll(".theme-shot img"));
+  const pickBtns = Array.from(document.querySelectorAll(".theme-pick button"));
+  pickBtns.forEach(btn => btn.addEventListener("click", () => {
+    const files = SHOTS[btn.dataset.shot];
+    if (!files) return;
+    pickBtns.forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+    shotImgs.forEach((img, i) => {
+      const src = img.getAttribute("src").replace(/[^/]*$/, "") + files[Math.min(i, files.length - 1)] + ".webp";
+      img.alt = btn.textContent.trim() + ". " + tr("th.alt");
+      /* The latest pick wins: a slower picture from an earlier click must not land on top. */
+      img.dataset.want = src;
+      if (img.getAttribute("src") === src) return;
+      if (getComputedStyle(img).display === "none") { img.setAttribute("src", src); return; }
+      const next = new Image();
+      next.onload = () => { if (img.dataset.want === src) img.setAttribute("src", src); };
+      next.src = src;
+    });
+  }));
 
   /* Tour video: two variants (light/dark), only the one the theme shows is loaded and played,
      and only while it is on screen. With reduced motion it stays on its poster, with controls. */

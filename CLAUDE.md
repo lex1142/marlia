@@ -125,10 +125,16 @@ to be a GDPR violation. The page's **Privacy** section lists everything the site
 anywhere — anything that adds a request to another host (analytics, embeds, CDN scripts) must be
 added there too, in every language. Fonts are two families only: Onest (a variable font, declared
 `font-weight: 100 900`, so 700/800 headings are real weights) for all text, and JetBrains Mono only
-for keys, code and paths. Media live in `docs/media/` in `-light`/`-dark` pairs (WebP stills, H.264
-video); the page shows the one matching its theme through the `--only-light`/`--only-dark` tokens.
-The page itself now shows only the tour video (and its posters). The hero still pair is no longer on
-the page, but the README's `<picture>`, the JSON-LD `screenshot` and `og.jpg` still use it.
+for keys, code and paths. Media live in `docs/media/`, mostly in `-light`/`-dark` pairs (WebP stills,
+H.264 video); the page shows the one matching its theme through the `--only-light`/`--only-dark` tokens.
+The page shows the tour video (and its posters) and, in Themes, one screenshot per theme
+(`theme-*.webp`, 2200×1320 from a 1100×660 window, so it shows at about natural size). A picker swaps
+the shot and loads it only on demand (the latest pick wins, if pictures arrive out of order). System
+has a `-light`/`-dark` pair that follows the page theme, and Solarized (Auto) reuses the Solarized
+Light/Dark shots the same way: as captures, they were identical. The hero still pair is no longer on the page, but the README's `<picture>`, the
+JSON-LD `screenshot` and `og.jpg` still use it. The theme shots were taken without zooming the Icons
+pane (⌘+). In that narrow window, zooming left the grid scrolled, which clipped the top row of
+thumbnails, and Home didn't bring it back.
 `docs/marlia-icon.png` is 128 px, from `App/Marlia.icns` via `sips`.
 
 **Design direction (2026-11-28, made with the `frontend-design` skill):** the page is dressed as the app
@@ -142,9 +148,12 @@ Tab (switch panes) only after the visitor has used it (arrow key, F5/F6 or a cli
 after Esc, Tab moves on through the page. Without this, the autofocused window would be a keyboard
 trap. Both reviews of the redesign caught that.
 
-The media were shot on 2026-11-27 from a demo folder (`/Users/Shared/Demo`, generated content) in an
-isolated copy of the app with its own bundle id, so the real app's favorites, recents and session
-never appear. Two things to know if you reshoot: a Columns view starts at `/` and shows `/Users` with
+The media were shot on 2026-11-27 (theme shots 2026-11-28) from a demo folder (`/Users/Shared/Demo`,
+generated content) in an isolated copy of the app with its own bundle id, so the real app's favorites,
+recents and session never appear. **Workspaces are the exception:** `WorkspaceStore` uses the fixed
+path `~/Library/Application Support/Marlia/Workspaces`, so the copy lists the real app's workspaces.
+Check that list before a shoot; the theme shots show the real, empty "Workspace". Two more things to
+know if you reshoot: a Columns view starts at `/` and shows `/Users` with
 the account name in it, and ScreenCaptureKit window capture replaces the traffic lights with a
 "window is being recorded" badge on macOS 26 (the video patches that corner from a still).
 
