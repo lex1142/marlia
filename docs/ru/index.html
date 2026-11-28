@@ -382,20 +382,34 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
 .key.pressed kbd { background: var(--m-sel); color: var(--m-sel-text); border-color: var(--m-sel); }
 .demo-log { margin-left: auto; padding-inline: 8px; color: var(--m-text); min-height: 1.4em; }
 
-/* ---------- features ---------- */
-.features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
-.feature {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 6px 16px;
-  padding-block: 22px;
-  border-top: 1px solid var(--line);
-  align-items: baseline;
-  align-content: start;
-}
-.feature .tag { display: flex; flex-wrap: wrap; gap: 4px; justify-content: end; }
-.feature .tag kbd { font-size: 0.85rem; }
-.feature p { grid-column: 1 / -1; color: var(--muted); max-width: 36em; }
+/* ---------- bands ---------- */
+/* Sections alternate between the page and a full-width strip in the window-chrome grey: the
+   app's own surfaces, not decoration. The strip is drawn by a spread shadow clipped to the
+   element's height, so it reaches the edges of the window without widening the page. */
+.band { background: var(--surface); box-shadow: 0 0 0 100vmax var(--surface); clip-path: inset(0 -100vmax); }
+.band .tour-video { background: var(--paper); }
+.band + .final { border-top: 0; }
+.band .section + .section { padding-top: 8px; }
+
+/* ---------- spotlights ---------- */
+/* Five features Finder lacks, each with a real screenshot; picture and text swap sides from
+   one to the next. On a narrow screen the picture goes above its text. */
+.spots { display: grid; gap: 88px; padding-block: 72px; }
+.spot { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; align-items: center; }
+.spot:nth-child(even) { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.spot:nth-child(even) .spot-shot { order: 2; }
+.spot-text { display: grid; gap: 14px; justify-items: start; }
+.spot-text p { color: var(--muted); max-width: 30em; }
+.spot-text .tag, .feature .tag { display: flex; flex-wrap: wrap; gap: 4px; }
+.spot-text .tag kbd, .feature .tag kbd { font-size: 0.85rem; }
+.spot-shot { margin: 0; }
+.spot-shot img { width: 100%; height: auto; vertical-align: top; filter: var(--shot-shadow); }
+
+/* ---------- and also ---------- */
+/* Ten items fill three columns top to bottom (4 + 3 + 3), so none is left alone on a last row. */
+.features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(4, auto); grid-auto-flow: column; column-gap: 40px; }
+.feature { display: grid; gap: 6px; padding-block: 22px; border-top: 1px solid var(--line); align-content: start; }
+.feature p { color: var(--muted); max-width: 36em; }
 
 /* ---------- tour video ---------- */
 .tour-video {
@@ -466,7 +480,7 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
   background: var(--accent); color: var(--accent-ink);
 }
 .note {
-  background: var(--surface);
+  background: var(--paper);
   border-radius: 10px;
   padding: 20px;
   display: grid;
@@ -474,6 +488,7 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
   font-size: 0.95rem;
 }
 .note h3 { font-size: 1.05rem; }
+.note pre { background: var(--surface); }
 .note p { color: var(--muted); }
 pre {
   margin: 0;
@@ -512,7 +527,11 @@ pre {
 @media (max-width: 900px) {
   .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 24px; }
   .pillar:nth-child(3) { padding-left: 0; border-left: 0; }
-  .features { grid-template-columns: 1fr; }
+  .features { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; grid-auto-flow: row; }
+  .spots { gap: 64px; padding-block: 56px; }
+  .spot, .spot:nth-child(even) { grid-template-columns: 1fr; gap: 22px; }
+  .spot:nth-child(even) .spot-shot { order: 0; }
+  .spot-shot { max-width: 640px; }
   .install { grid-template-columns: 1fr; }
   .top nav { display: none; }
 }
@@ -533,8 +552,7 @@ pre {
   .pillar b { font-size: 1rem; }
   .pillar span { font-size: 0.86rem; }
   .cta .btn { flex: 1 1 100%; justify-content: center; }
-  .feature { grid-template-columns: 1fr; }
-  .feature .tag { justify-content: start; }
+  .features { grid-template-columns: 1fr; }
   .m-seg { display: none; }
   /* Three columns don't fit a phone: each row becomes its label over a Finder | Marlia pair. */
   .cmp, .cmp thead, .cmp tbody { display: block; }
@@ -590,7 +608,7 @@ pre {
   <main id="top">
     <section class="hero">
       <h1 data-h="hero.h1">Бесплатный нативный двухпанельный файловый менеджер для Mac</h1>
-      <p class="lede" data-h="hero.lede">Для тех, кто привык работать с клавиатуры, как в Total Commander: <span class="nw"><kbd>F5</kbd> копирует</span> в соседнюю панель, <span class="nw"><kbd>F6</kbd> перемещает,</span> <span class="nw"><kbd>Tab</kbd> переключает</span> панели, а любую горячую клавишу можно переназначить. Приложение построено на <strong>нативном AppKit</strong>, поэтому не тормозит даже в папках с тысячами файлов.</p>
+      <p class="lede" data-h="hero.lede">Для тех, кто привык работать с клавиатуры, как в Total Commander: <span class="nw"><kbd>F5</kbd> копирует</span> в соседнюю панель, <span class="nw"><kbd>F6</kbd> перемещает,</span> <span class="nw"><kbd>Tab</kbd> переключает</span> панели, а любую горячую клавишу можно переназначить.</p>
       <div class="cta">
         <a class="btn btn-primary" data-dl href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6 10 6 6 6-6"/><path d="M4 20h16"/></svg>
@@ -655,7 +673,7 @@ pre {
           <span class="demo-log" id="demoLog" aria-live="polite"></span>
         </div>
       </div>
-      <p class="demo-hint" data-t="demo.hint">В приложении F5 и F6 выполняются в фоне, с панелью прогресса, где операцию можно приостановить или отменить. При совпадении имён Marlia предлагает заменить, пропустить или оставить оба файла.</p>
+      <p class="demo-hint" data-t="demo.hint">В приложении F5 и F6 работают в фоне: прогресс виден на панели, операцию можно поставить на паузу или отменить. Если имена совпадают, Marlia предложит заменить файл, пропустить его или оставить оба.</p>
     </section>
 
     <!-- The four things the page leads with: free, two panes, your shortcuts, native. -->
@@ -687,59 +705,117 @@ pre {
           <tbody role="rowgroup">
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r1">Две папки рядом в одном окне</th><td role="cell" class="no" data-t="cmp.r1f">Нет, два окна</td><td role="cell" class="yes m" data-t="cmp.r1m">Да, и вкладки</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r2">Скопировать или перенести в другую папку одной клавишей</th><td role="cell" class="no" data-t="cmp.r2f">Перетаскивание или ⌘C, ⌥⌘V</td><td role="cell" class="yes m" data-t="cmp.r2m">F5 и F6</td></tr>
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r9">Клавиши как в Windows и Linux: ↵ открывает, ⌫ — на уровень выше, ⌘X и ⌘V переносят файлы</th><td role="cell" class="no" data-t="cmp.r9f">↵ переименовывает, открыть — ⌘↓, перенести — ⌥⌘V</td><td role="cell" class="yes m" data-t="cmp.r9m">Да, и ⌘↑ тоже работает</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r3">Переназначить любую горячую клавишу</th><td role="cell" class="part" data-t="cmp.r3f">Только пункты меню, в Системных настройках</td><td role="cell" class="yes m" data-t="cmp.r3m">Любую команду, в настройках</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r4">Переименовать по дате съёмки или тегам музыки</th><td role="cell" class="no" data-t="cmp.r4f">Нет</td><td role="cell" class="yes m" data-t="cmp.r4m">EXIF, видео, аудиотеги</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r5">Синхронизировать две папки</th><td role="cell" class="no" data-t="cmp.r5f">Нет</td><td role="cell" class="yes m" data-t="cmp.r5m">С предпросмотром</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r6">Отмена после перезапуска</th><td role="cell" class="part" data-t="cmp.r6f">Только в текущем сеансе</td><td role="cell" class="yes m" data-t="cmp.r6m">50 шагов</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r7">Запускать свои скрипты для выбранных файлов</th><td role="cell" class="part" data-t="cmp.r7f">Через Команды или Automator</td><td role="cell" class="yes m" data-t="cmp.r7m">Меню, палитра или клавиша</td></tr>
-            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r8">Никаких файлов ._ на флешках</th><td role="cell" class="no" data-t="cmp.r8f">Оставляет их</td><td role="cell" class="yes m" data-t="cmp.r8m">Убирает после копирования</td></tr>
-            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r9">Открытый исходный код</th><td role="cell" class="no" data-t="cmp.r9f">Нет</td><td role="cell" class="yes m" data-t="cmp.r9m">GPL-3.0</td></tr>
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r8">Без служебных файлов ._ на флешках</th><td role="cell" class="no" data-t="cmp.r8f">Оставляет их</td><td role="cell" class="yes m" data-t="cmp.r8m">Убирает после копирования</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <section class="section" id="tour">
-      <div class="section-head">
-        <h2 data-t="tour.h2">Пять фото, одна клавиша</h2>
-        <p data-t="tour.p">Выделите файлы слева, нажмите F5, и они уже на резервном диске. Tab и ⌘2 переключают на другую панель и показывают их миниатюрами.</p>
-      </div>
-      <div class="tour-video">
-        <video class="only-light" data-tour muted loop playsinline preload="none" poster="../media/tour-light-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="Видео: пять фотографий выделяются и копируются на резервный диск по F5, затем показываются миниатюрами.">
-          <source src="../media/tour-light.mp4" type="video/mp4">
-        </video>
-        <video class="only-dark" data-tour muted loop playsinline preload="none" poster="../media/tour-dark-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="Видео: пять фотографий выделяются и копируются на резервный диск по F5, затем показываются миниатюрами.">
-          <source src="../media/tour-dark.mp4" type="video/mp4">
-        </video>
-      </div>
+    <div class="band">
+      <section class="section" id="tour">
+        <div class="section-head">
+          <h2 data-t="tour.h2">Пять фото, одна клавиша</h2>
+          <p data-t="tour.p">F5 копирует выделенные фото на резервный диск, а Tab и ⌘2 показывают их там миниатюрами.</p>
+        </div>
+        <div class="tour-video">
+          <video class="only-light" data-tour muted loop playsinline preload="none" poster="../media/tour-light-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="Видео: пять фотографий выделяются и копируются на резервный диск по F5, затем показываются миниатюрами.">
+            <source src="../media/tour-light.mp4" type="video/mp4">
+          </video>
+          <video class="only-dark" data-tour muted loop playsinline preload="none" poster="../media/tour-dark-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="Видео: пять фотографий выделяются и копируются на резервный диск по F5, затем показываются миниатюрами.">
+            <source src="../media/tour-dark.mp4" type="video/mp4">
+          </video>
+        </div>
+      </section>
+    </div>
+
+    <section class="spots" id="features" data-aria="nav.features" aria-label="Возможности">
+      <article class="spot" aria-labelledby="sp1-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="../media/spot-sync-light.webp" width="1600" height="1101" data-alt="sp1.alt" alt="Окно «Synchronize Folders»: папка с фотографиями сравнивается с резервной копией, у каждого файла размер и дата на той стороне, где он есть, и стрелка, куда он будет скопирован; девять файлов идут вправо, два влево." loading="lazy">
+          <img class="only-dark" src="../media/spot-sync-dark.webp" width="1600" height="1101" data-alt="sp1.alt" alt="Окно «Synchronize Folders»: папка с фотографиями сравнивается с резервной копией, у каждого файла размер и дата на той стороне, где он есть, и стрелка, куда он будет скопирован; девять файлов идут вправо, два влево." loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp1-h" data-t="sp1h">Синхронизация папок</h2>
+          <p class="tag"><kbd>⌥⇧F2</kbd></p>
+          <p data-h="sp1p">Сравните две папки со всем содержимым — например, проект и его копию на флешке. Для каждого различия видно, что с ним произойдёт: файл скопируется вправо или влево, будет пропущен или удалён, и до вашего подтверждения ничего не меняется. Синхронизировать можно в обе стороны или в одну; заменённые и удалённые файлы попадают в Корзину.</p>
+        </div>
+      </article>
+      <article class="spot" aria-labelledby="sp2-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="../media/spot-rename-light.webp" width="1040" height="958" data-alt="sp2.alt" alt="Окно «Rename 25 Items» с шаблоном «Lisbon [Date] ###»: в предпросмотре IMG_3101.jpg становится Lisbon 2026-10-03 001.jpg, и так далее по списку." loading="lazy">
+          <img class="only-dark" src="../media/spot-rename-dark.webp" width="1040" height="958" data-alt="sp2.alt" alt="Окно «Rename 25 Items» с шаблоном «Lisbon [Date] ###»: в предпросмотре IMG_3101.jpg становится Lisbon 2026-10-03 001.jpg, и так далее по списку." loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp2-h" data-t="sp2h">Переименование по метаданным</h2>
+          <p class="tag"><kbd>⌥⌘R</kbd></p>
+          <p data-h="sp2p">Переименуйте все фото в папке по дате съёмки за один раз. В шаблон можно подставить дату и время из EXIF или видео, номер трека, исполнителя и название из тегов, а новые имена видны заранее. Даже если файлы меняются именами друг с другом, ничего не затрётся.</p>
+        </div>
+      </article>
+      <article class="spot" aria-labelledby="sp3-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="../media/spot-palette-light.webp" width="1152" height="766" data-alt="sp3.alt" alt="Командная палитра: набрано «syn», первой найдена команда Synchronize Folders… с сочетанием ⌥⇧F2." loading="lazy">
+          <img class="only-dark" src="../media/spot-palette-dark.webp" width="1152" height="766" data-alt="sp3.alt" alt="Командная палитра: набрано «syn», первой найдена команда Synchronize Folders… с сочетанием ⌥⇧F2." loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp3-h" data-t="sp3h">Командная палитра</h2>
+          <p class="tag"><kbd>⇧⌘P</kbd><kbd>⇧⌘G</kbd></p>
+          <p data-h="sp3p">Любую команду меню можно найти по нескольким буквам: наберите «syn», нажмите Return — и откроется синхронизация папок. «Перейти к папке» дополняет путь по <kbd>Tab</kbd>, а каждый «/» в строке пути раскрывает список соседних папок.</p>
+        </div>
+      </article>
+      <article class="spot" aria-labelledby="sp4-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="../media/spot-keys-light.webp" width="1360" height="1124" data-alt="sp4.alt" alt="Сочетания клавиш в настройках: для New Folder назначена F7, а когда F7 нажали и для Get Info, у обеих строк появился значок предупреждения и надпись «F7 is also assigned to: New Folder»." loading="lazy">
+          <img class="only-dark" src="../media/spot-keys-dark.webp" width="1360" height="1124" data-alt="sp4.alt" alt="Сочетания клавиш в настройках: для New Folder назначена F7, а когда F7 нажали и для Get Info, у обеих строк появился значок предупреждения и надпись «F7 is also assigned to: New Folder»." loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp4-h" data-t="sp4h">Переназначьте любую клавишу</h2>
+          <p class="tag"><kbd>⌘,</kbd></p>
+          <p data-h="sp4p">В настройках собраны все 75 команд, по разделам. Нажмите на сочетание и введите новое — подойдёт и F-клавиша. Если оно уже занято, Marlia подскажет, какой команде. Стандартные клавиши можно вернуть по одной или все сразу, а свои сочетания можно назначить и собственным скриптам.</p>
+        </div>
+      </article>
+      <article class="spot" aria-labelledby="sp5-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="../media/spot-space-light.webp" width="1240" height="1104" data-alt="sp5.alt" alt="Окно «Largest Files in Photos»: список открывают четыре видео от 3,25 ГБ до 922,7 МБ, у каждого полоска размера, дальше идут фотографии примерно по 8 МБ." loading="lazy">
+          <img class="only-dark" src="../media/spot-space-dark.webp" width="1240" height="1104" data-alt="sp5.alt" alt="Окно «Largest Files in Photos»: список открывают четыре видео от 3,25 ГБ до 922,7 МБ, у каждого полоска размера, дальше идут фотографии примерно по 8 МБ." loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp5-h" data-t="sp5h">Куда ушло место</h2>
+          <p class="tag"><kbd>⌥⌘S</kbd><kbd>⌥⌘L</kbd></p>
+          <p data-h="sp5p">Нажмите <kbd>⌥⌘L</kbd> — и Marlia найдёт самые большие файлы во всех вложенных папках, с полоской размера у каждого. А <kbd>⌥⌘S</kbd> показывает размеры папок прямо в панели, и по ним можно сортировать, как по любому другому столбцу.</p>
+        </div>
+      </article>
     </section>
 
-    <section class="section" id="features">
-      <div class="section-head">
-        <h2 data-t="feat.h2">Всё, что должен уметь файловый менеджер, не отрывая рук от клавиатуры</h2>
-      </div>
-      <div class="features">
-        <div class="feature"><h3 data-t="ft1h">Две панели, вкладки, три вида</h3><span class="tag"><kbd>Tab</kbd><kbd>⌘1</kbd><kbd>⌘2</kbd><kbd>⌘3</kbd></span><p data-h="ft1p">Список, значки и колонки в стиле Finder с колонкой предпросмотра. У каждой панели своя история, каждая папка помнит, как вы её отсортировали, а вкладки окна можно сохранить как именованный набор.</p></div>
-        <div class="feature"><h3 data-t="ft2h">Подход Total Commander</h3><span class="tag"><kbd>F5</kbd><kbd>F6</kbd></span><p data-h="ft2p">Копирование и перемещение в соседнюю панель, выбор набором имени, выделение по маске вроде <code>*.jpg</code>, инверсия выделения. <kbd>⇧⌘C</kbd> собирает файлы из разных папок, чтобы вставить их разом.</p></div>
-        <div class="feature"><h3 data-t="ft3h">Фоновые операции</h3><span class="tag"><kbd>⌘Z</kbd><kbd>⇧⌘Z</kbd></span><p data-h="ft3p">Копирование, перемещение, дублирование, удаление в корзину и переименование идут в фоне, их можно приостановить или отменить. Отмена помнит 50 шагов и переживает перезапуск.</p></div>
-        <div class="feature"><h3 data-t="ft4h">Архивы</h3><p data-h="ft4p">Создание, распаковка и просмотр архивов системными утилитами, включая ZIP с паролем. Распаковка защищена от путей zip-slip.</p></div>
-        <div class="feature"><h3 data-t="ft5h">Рабочие пространства</h3><p data-h="ft5p">Соберите файлы со всего диска в одну папку ссылок. Ничего не копируется и не перемещается, а удаление убирает только ссылку.</p></div>
-        <div class="feature"><h3 data-t="ft6h">Поиск, фильтр, просмотр</h3><span class="tag"><kbd>⌘F</kbd><kbd>⌥⌘F</kbd><kbd>Space</kbd></span><p data-h="ft6p">Рекурсивный поиск по подстроке или регулярному выражению, мгновенный фильтр, Quick Look по пробелу и информационная панель, которая показывает сам файл: текст, код, PDF, картинки, видео.</p></div>
-        <div class="feature"><h3 data-t="ft7h">Своя в macOS</h3><p data-h="ft7p">Перетаскивание в Finder и из него, цветные теги, AirDrop, открытие в Терминале, SMB, извлечение дисков и установка приложений прямо из .dmg. В окне свойств можно менять права доступа. Копии на флешках не обрастают файлами <code>._</code>.</p></div>
-        <div class="feature"><h3 data-t="ft8h">Избранное с клавиатуры</h3><span class="tag"><kbd>⌥⌘1…9</kbd><kbd>⌘,</kbd></span><p data-h="ft8p">Избранное 1–9 открывается по <kbd>⌥⌘1</kbd>…<kbd>⌥⌘9</kbd> в порядке боковой панели. Полный список сочетаний — в настройках, там же их можно изменить.</p></div>
-        <div class="feature"><h3 data-t="ft9h">Командная палитра</h3><span class="tag"><kbd>⇧⌘P</kbd><kbd>⇧⌘G</kbd></span><p data-h="ft9p">Любая команда меню в паре нажатий: нечёткий поиск находит её по нескольким буквам. «Перейти к папке» принимает путь с дополнением по <kbd>Tab</kbd>, а каждый / в строке пути открывает список соседних папок.</p></div>
-        <div class="feature"><h3 data-t="ft10h">Сравнение папок</h3><span class="tag"><kbd>⇧F2</kbd><kbd>⌘←</kbd><kbd>⌘→</kbd></span><p data-h="ft10p">Одно нажатие выделяет в обеих панелях то, чего нет в соседней или что новее. <kbd>⌘←</kbd> и <kbd>⌘→</kbd> открывают папку в другой панели.</p></div>
-        <div class="feature"><h3 data-t="ft11h">Свои команды</h3><p data-h="ft11p">Запускайте свои shell-скрипты для выделенных файлов из меню Commands, палитры или по сочетанию клавиш, с паузой и отменой, как пользовательские команды в Total Commander.</p></div>
-        <div class="feature"><h3 data-t="ft12h">Переименование по метаданным</h3><p data-h="ft12p">Пакетное переименование с предпросмотром всех новых имён: дата и время из EXIF или видео, номер трека, исполнитель и название из тегов, смена регистра.</p></div>
-        <div class="feature"><h3 data-t="ft13h">Синхронизация папок</h3><span class="tag"><kbd>⌥⇧F2</kbd></span><p data-h="ft13p">Сравнение двух деревьев папок: каждое различие видно вместе с действием ещё до того, как что-то произойдёт. В обе стороны или в одну; заменённые и удалённые файлы уходят в Корзину.</p></div>
-        <div class="feature"><h3 data-t="ft14h">Куда ушло место</h3><span class="tag"><kbd>⌥⌘S</kbd><kbd>⌥⌘L</kbd></span><p data-h="ft14p">Размеры папок с полоской доли у каждого элемента и «Крупнейшие файлы»: самые большие файлы во всём дереве папки, в одном нажатии от панели.</p></div>
-      </div>
-    </section>
+    <div class="band">
+      <section class="section" id="more">
+        <div class="section-head">
+          <h2 id="more-h" data-t="more.h2">А также</h2>
+        </div>
+        <div class="features">
+          <div class="feature"><h3 data-t="ft1h">Две панели, вкладки, три вида</h3><span class="tag"><kbd>Tab</kbd><kbd>⌘1</kbd><kbd>⌘2</kbd><kbd>⌘3</kbd></span><p data-h="ft1p">Список, значки и колонки в стиле Finder с колонкой предпросмотра. У каждой панели своя история переходов, каждая папка помнит свою сортировку, а набор вкладок можно сохранить под своим именем.</p></div>
+          <div class="feature"><h3 data-t="ft2h">Как в Total Commander</h3><span class="tag"><kbd>F5</kbd><kbd>F6</kbd></span><p data-h="ft2p">Копирование и перемещение в соседнюю панель, переход к файлу по первым буквам имени, выделение по маске вроде <code>*.jpg</code> и инверсия выделения. <kbd>⇧⌘C</kbd> собирает файлы из разных папок, чтобы потом вставить их все сразу.</p></div>
+          <div class="feature"><h3 data-t="ft3h">Фоновые операции</h3><span class="tag"><kbd>⌘Z</kbd><kbd>⇧⌘Z</kbd></span><p data-h="ft3p">Копирование, перемещение, дублирование, удаление в Корзину и переименование идут в фоне — их можно поставить на паузу или отменить. Отмена помнит 50 последних действий и работает даже после перезапуска.</p></div>
+          <div class="feature"><h3 data-t="ft4h">Архивы</h3><p data-h="ft4p">Создание, распаковка и просмотр архивов, в том числе ZIP с паролем, через системные утилиты. Распаковка защищена от атаки zip-slip.</p></div>
+          <div class="feature"><h3 data-t="ft5h">Рабочие пространства</h3><p data-h="ft5p">Соберите файлы со всего диска в одной папке в виде ссылок. Сами файлы никуда не копируются и не перемещаются, а удаление убирает только ссылку.</p></div>
+          <div class="feature"><h3 data-t="ft6h">Поиск, фильтр, просмотр</h3><span class="tag"><kbd>⌘F</kbd><kbd>⌥⌘F</kbd><kbd>Space</kbd></span><p data-h="ft6p">Поиск по всем вложенным папкам по части имени или регулярному выражению, мгновенный фильтр, Quick Look по пробелу и информационная панель с предпросмотром: текст, код, PDF, картинки, видео.</p></div>
+          <div class="feature"><h3 data-t="ft7h">Дружит с macOS</h3><p data-h="ft7p">Перетаскивание в Finder и обратно, цветные теги, AirDrop, открытие в Терминале, SMB, извлечение дисков и установка приложений прямо из .dmg. В окне свойств можно менять права доступа. Копии на флешках не обрастают файлами метаданных (<code>._</code>).</p></div>
+          <div class="feature"><h3 data-t="ft8h">Избранное с клавиатуры</h3><span class="tag"><kbd>⌥⌘1…9</kbd></span><p data-h="ft8p">Избранное 1–9 открывается по <kbd>⌥⌘1</kbd>…<kbd>⌥⌘9</kbd> в порядке боковой панели: перетащите папку выше, и клавиша перейдёт вместе с ней.</p></div>
+          <div class="feature"><h3 data-t="ft10h">Сравнение папок</h3><span class="tag"><kbd>⇧F2</kbd><kbd>⌘←</kbd><kbd>⌘→</kbd></span><p data-h="ft10p">Одно нажатие выделяет в обеих панелях файлы, которых нет в соседней или которые новее. <kbd>⌘←</kbd> и <kbd>⌘→</kbd> открывают папку в другой панели.</p></div>
+          <div class="feature"><h3 data-t="ft11h">Свои команды</h3><p data-h="ft11p">Запускайте свои shell-скрипты для выделенных файлов из меню Commands, палитры или по сочетанию клавиш, с паузой и отменой, как пользовательские команды в Total Commander.</p></div>
+        </div>
+      </section>
+    </div>
 
     <section class="section" aria-labelledby="themes-h">
       <div class="section-head">
-        <h2 id="themes-h" data-t="th.h2">Семь тем с проверенной контрастностью</h2>
-        <p data-t="th.p">В каждой палитре имена файлов читаются с контрастом не ниже 4,5:1, и на фоне панели, и на выделении.</p>
+        <h2 id="themes-h" data-t="th.h2">Оформление на ваш вкус</h2>
+        <p data-t="th.p">Семь тем, и в каждой имена файлов хорошо читаются и на фоне панели, и на выделении: контраст не ниже 4,5:1.</p>
       </div>
       <div class="theme-pick" role="group" aria-labelledby="themes-h">
         <button type="button" data-shot="system" aria-pressed="true" data-t="th.system">Системная</button>
@@ -756,40 +832,42 @@ pre {
       </figure>
     </section>
 
-    <section class="section" id="install">
-      <div class="section-head">
-        <h2 data-t="in.h2">Запуск за минуту</h2>
-      </div>
-      <div class="install">
-        <ol class="steps">
-          <li><div><b data-t="s1b">Скачайте образ.</b><br><span data-h="s1t"><a href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">Marlia-1.4.dmg</a> или любую версию со страницы <a href="https://github.com/lex1142/marlia/releases" target="_blank" rel="noopener">Releases</a>.</span></div></li>
-          <li><div><b data-t="s2b">Перетащите Marlia в «Программы».</b><br><span data-t="s2t">В образе рядом лежат приложение и ярлык папки «Программы».</span></div></li>
-          <li><div><b data-t="s3b">Первый раз откройте вручную.</b><br><span data-t="s3t">Щёлкните Marlia.app правой кнопкой и выберите «Открыть». В macOS 15 и новее откройте «Системные настройки» → «Конфиденциальность и безопасность» и нажмите «Всё равно открыть».</span></div></li>
-          <li><div><b data-t="s4b">По желанию: дайте полный доступ к диску.</b><br><span data-t="s4t">Тогда «Рабочий стол», «Документы» и «Загрузки» будут открываться без повторных запросов.</span></div></li>
-        </ol>
-        <aside class="note">
-          <h3 data-t="note.h">Почему macOS переспрашивает</h3>
-          <p data-t="note.p1">Marlia подписана ad-hoc, без Apple Developer ID, поэтому Gatekeeper останавливает её при первом запуске. Если macOS пишет, что приложение «повреждено и не может быть открыто» (так часто бывает после скачивания в браузере или по AirDrop), снимите атрибут карантина:</p>
-          <pre><code>xattr -cr /Applications/Marlia.app</code></pre>
-          <p data-h="note.p2">Хотите собрать сами? Xcode-проекта нет, только один скрипт: <code>./build.sh --run</code>.</p>
-        </aside>
-      </div>
-    </section>
-    <section class="section" id="privacy" aria-labelledby="privacy-h">
-      <div class="section-head">
-        <h2 id="privacy-h" data-t="priv.h2">Конфиденциальность</h2>
-      </div>
-      <ul class="privacy">
-        <li data-h="priv.1"><strong>Само приложение Marlia ничего никуда не отправляет:</strong> ни аналитики, ни отчётов о сбоях, ни проверки обновлений. В сеть оно выходит, только когда вы сами об этом просите, например при подключении к SMB-серверу.</li>
-        <li data-h="priv.2">Сайт не использует cookies, аналитику и трекинг. Шрифты и изображения загружаются с самого сайта.</li>
-        <li data-h="priv.3">Выбранный язык запоминается в вашем браузере (local storage) и никуда не передаётся.</li>
-        <li data-h="priv.4">Чтобы показать последнюю версию, страница при каждом посещении один раз запрашивает у GitHub API сведения о релизах Marlia. При этом GitHub получает ваш IP-адрес.</li>
-        <li data-h="priv.5">Сайт размещён на GitHub Pages. Как и любой хостинг, GitHub ведёт журналы запросов, включая IP-адреса. Подробнее в <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a>.</li>
-      </ul>
-    </section>
+    <div class="band">
+      <section class="section" id="install">
+        <div class="section-head">
+          <h2 data-t="in.h2">Запуск за минуту</h2>
+        </div>
+        <div class="install">
+          <ol class="steps">
+            <li><div><b data-t="s1b">Скачайте образ.</b><br><span data-h="s1t"><a href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">Marlia-1.4.dmg</a> или любую версию со страницы <a href="https://github.com/lex1142/marlia/releases" target="_blank" rel="noopener">Releases</a>.</span></div></li>
+            <li><div><b data-t="s2b">Перетащите Marlia в «Программы».</b><br><span data-t="s2t">В образе рядом лежат приложение и ярлык папки «Программы».</span></div></li>
+            <li><div><b data-t="s3b">Первый запуск — вручную.</b><br><span data-t="s3t">Щёлкните Marlia.app правой кнопкой и выберите «Открыть». В macOS 15 и новее откройте «Системные настройки» → «Конфиденциальность и безопасность» и нажмите «Всё равно открыть».</span></div></li>
+            <li><div><b data-t="s4b">По желанию: дайте полный доступ к диску.</b><br><span data-t="s4t">Тогда «Рабочий стол», «Документы» и «Загрузки» будут открываться без повторных запросов.</span></div></li>
+          </ol>
+          <aside class="note">
+            <h3 data-t="note.h">Почему требуется дополнительное подтверждение</h3>
+            <p data-t="note.p1">Marlia подписана ad-hoc, без Apple Developer ID, поэтому Gatekeeper останавливает её при первом запуске. Если macOS пишет, что приложение «повреждено и не может быть открыто» (так часто бывает после скачивания в браузере или по AirDrop), снимите атрибут карантина:</p>
+            <pre><code>xattr -cr /Applications/Marlia.app</code></pre>
+            <p data-h="note.p2">Хотите собрать сами? Xcode-проекта нет, только один скрипт: <code>./build.sh --run</code>.</p>
+          </aside>
+        </div>
+      </section>
+      <section class="section" id="privacy" aria-labelledby="privacy-h">
+        <div class="section-head">
+          <h2 id="privacy-h" data-t="priv.h2">Конфиденциальность</h2>
+        </div>
+        <ul class="privacy">
+          <li data-h="priv.1"><strong>Marlia ничего никуда не отправляет:</strong> ни аналитики, ни отчётов о сбоях, ни проверки обновлений. В сеть оно выходит, только когда вы сами об этом просите, например при подключении к SMB-серверу.</li>
+          <li data-h="priv.2">Сайт не использует cookies, аналитику и трекинг. Шрифты и изображения загружаются с самого сайта.</li>
+          <li data-h="priv.3">Выбранный язык запоминается в вашем браузере (local storage) и никуда не передаётся.</li>
+          <li data-h="priv.4">Чтобы показать последнюю версию, страница при каждом посещении один раз запрашивает у GitHub API сведения о релизах Marlia. При этом GitHub получает ваш IP-адрес.</li>
+          <li data-h="priv.5">Сайт размещён на GitHub Pages. Как и любой хостинг, GitHub ведёт журналы запросов, включая IP-адреса. Подробнее в <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a>.</li>
+        </ul>
+      </section>
+    </div>
 
     <section class="final" aria-labelledby="final-h">
-      <h2 id="final-h" data-t="end.h2">Попробуйте на своих папках</h2>
+      <h2 id="final-h" data-t="end.h2">Скачайте и попробуйте</h2>
       <p data-t="end.p">Бесплатно, 3,9 МБ, macOS 13.5 и новее на Apple Silicon. Без аккаунта и подписки.</p>
       <div class="cta">
         <a class="btn btn-primary" data-dl href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">
@@ -817,7 +895,7 @@ pre {
 </div>
 
 <script type="application/json" id="i18n">
-{"ru":{"nav.compare":"Сравнение","nav.features":"Возможности","nav.install":"Установка","lang":"Язык","hero.h1":"Бесплатный нативный двухпанельный файловый менеджер для Mac","hero.lede":"Для тех, кто привык работать с клавиатуры, как в Total Commander: <span class=\"nw\"><kbd>F5<\/kbd> копирует<\/span> в соседнюю панель, <span class=\"nw\"><kbd>F6<\/kbd> перемещает,<\/span> <span class=\"nw\"><kbd>Tab<\/kbd> переключает<\/span> панели, а любую горячую клавишу можно переназначить. Приложение построено на <strong>нативном AppKit<\/strong>, поэтому не тормозит даже в папках с тысячами файлов.","hero.dl":"Скачать для macOS","hero.gh":"Открыть на GitHub","hero.req":"Версия {ver}, {size}. Для macOS 13.5 и новее на Apple Silicon.","hero.meta":"Открытый код под GPL-3.0. Подпись ad-hoc, поэтому <a href=\"#install\">первый запуск<\/a> требует одного лишнего шага.","hero.uiEn":" Интерфейс приложения на английском.","pill.aria":"Почему Marlia","f1b":"Бесплатный, с открытым кодом","f1s":"GPL-3.0. Без аккаунта, подписки и телеметрии.","f2b":"Две панели сразу","f2s":"Две папки рядом. F5 копирует в соседнюю панель, F6 перемещает, Tab переключает.","f3b":"Свои горячие клавиши","f3s":"Любую команду можно переназначить в настройках, F‑клавиши тоже.","f4b":"Нативный, без тормозов","f4s":"AppKit, а не Electron или веб-страница. Весь установочный образ — {size}.","demo.aria":"Интерактивное демо. Стрелки выбирают, Tab переключает панели, F5 копирует, F6 перемещает, после Esc клавиша Tab выводит из демо.","k.up":"Вверх","k.down":"Вниз","k.switch":"Панель","k.copy":"Копировать","k.move":"Переместить","k.reset":"Сброс","demo.hint":"В приложении F5 и F6 выполняются в фоне, с панелью прогресса, где операцию можно приостановить или отменить. При совпадении имён Marlia предлагает заменить, пропустить или оставить оба файла.","log.ready":"Выберите файл и нажмите F5.","log.L":"Активна левая панель.","log.R":"Активна правая панель.","log.copied":"Скопировано: {n} → {p}.","log.moved":"Перемещено: {n} → {p}.","log.kept":"{n} там уже есть, сохранены оба: {m}.","log.pick":"Сначала выберите файл. Папки в этом демо не переносятся.","cmp.h2":"Чего не умеет Finder","cmp.p":"Finder хорош, чтобы смотреть файлы. Marlia — чтобы весь день их копировать, переносить и разбирать.","cmp.r1":"Две папки рядом в одном окне","cmp.r1f":"Нет, два окна","cmp.r1m":"Да, и вкладки","cmp.r2":"Скопировать или перенести в другую папку одной клавишей","cmp.r2f":"Перетаскивание или ⌘C, ⌥⌘V","cmp.r2m":"F5 и F6","cmp.r3":"Переназначить любую горячую клавишу","cmp.r3f":"Только пункты меню, в Системных настройках","cmp.r3m":"Любую команду, в настройках","cmp.r4":"Переименовать по дате съёмки или тегам музыки","cmp.r4f":"Нет","cmp.r4m":"EXIF, видео, аудиотеги","cmp.r5":"Синхронизировать две папки","cmp.r5f":"Нет","cmp.r5m":"С предпросмотром","cmp.r6":"Отмена после перезапуска","cmp.r6f":"Только в текущем сеансе","cmp.r6m":"50 шагов","cmp.r7":"Запускать свои скрипты для выбранных файлов","cmp.r7f":"Через Команды или Automator","cmp.r7m":"Меню, палитра или клавиша","cmp.r8":"Никаких файлов ._ на флешках","cmp.r8f":"Оставляет их","cmp.r8m":"Убирает после копирования","cmp.r9":"Открытый исходный код","cmp.r9f":"Нет","cmp.r9m":"GPL-3.0","feat.h2":"Всё, что должен уметь файловый менеджер, не отрывая рук от клавиатуры","ft1h":"Две панели, вкладки, три вида","ft1p":"Список, значки и колонки в стиле Finder с колонкой предпросмотра. У каждой панели своя история, каждая папка помнит, как вы её отсортировали, а вкладки окна можно сохранить как именованный набор.","ft2h":"Подход Total Commander","ft2p":"Копирование и перемещение в соседнюю панель, выбор набором имени, выделение по маске вроде <code>*.jpg<\/code>, инверсия выделения. <kbd>⇧⌘C<\/kbd> собирает файлы из разных папок, чтобы вставить их разом.","ft3h":"Фоновые операции","ft3p":"Копирование, перемещение, дублирование, удаление в корзину и переименование идут в фоне, их можно приостановить или отменить. Отмена помнит 50 шагов и переживает перезапуск.","ft4h":"Архивы","ft4p":"Создание, распаковка и просмотр архивов системными утилитами, включая ZIP с паролем. Распаковка защищена от путей zip-slip.","ft5h":"Рабочие пространства","ft5p":"Соберите файлы со всего диска в одну папку ссылок. Ничего не копируется и не перемещается, а удаление убирает только ссылку.","ft6h":"Поиск, фильтр, просмотр","ft6p":"Рекурсивный поиск по подстроке или регулярному выражению, мгновенный фильтр, Quick Look по пробелу и информационная панель, которая показывает сам файл: текст, код, PDF, картинки, видео.","ft7h":"Своя в macOS","ft7p":"Перетаскивание в Finder и из него, цветные теги, AirDrop, открытие в Терминале, SMB, извлечение дисков и установка приложений прямо из .dmg. В окне свойств можно менять права доступа. Копии на флешках не обрастают файлами <code>._<\/code>.","ft8h":"Избранное с клавиатуры","ft8p":"Избранное 1–9 открывается по <kbd>⌥⌘1<\/kbd>…<kbd>⌥⌘9<\/kbd> в порядке боковой панели. Полный список сочетаний — в настройках, там же их можно изменить.","ft9h":"Командная палитра","ft9p":"Любая команда меню в паре нажатий: нечёткий поиск находит её по нескольким буквам. «Перейти к папке» принимает путь с дополнением по <kbd>Tab<\/kbd>, а каждый / в строке пути открывает список соседних папок.","ft10h":"Сравнение папок","ft10p":"Одно нажатие выделяет в обеих панелях то, чего нет в соседней или что новее. <kbd>⌘←<\/kbd> и <kbd>⌘→<\/kbd> открывают папку в другой панели.","ft11h":"Свои команды","ft11p":"Запускайте свои shell-скрипты для выделенных файлов из меню Commands, палитры или по сочетанию клавиш, с паузой и отменой, как пользовательские команды в Total Commander.","ft12h":"Переименование по метаданным","ft12p":"Пакетное переименование с предпросмотром всех новых имён: дата и время из EXIF или видео, номер трека, исполнитель и название из тегов, смена регистра.","ft13h":"Синхронизация папок","ft13p":"Сравнение двух деревьев папок: каждое различие видно вместе с действием ещё до того, как что-то произойдёт. В обе стороны или в одну; заменённые и удалённые файлы уходят в Корзину.","ft14h":"Куда ушло место","ft14p":"Размеры папок с полоской доли у каждого элемента и «Крупнейшие файлы»: самые большие файлы во всём дереве папки, в одном нажатии от панели.","th.h2":"Семь тем с проверенной контрастностью","th.p":"В каждой палитре имена файлов читаются с контрастом не ниже 4,5:1, и на фоне панели, и на выделении.","th.system":"Системная","th.alt":"Окно Marlia в выбранной теме: слева список, справа миниатюры, боковая панель и обе панели файлов в цветах темы.","in.h2":"Запуск за минуту","s1b":"Скачайте образ.","s1t":"{DMG} или любую версию со страницы {REL}.","s2b":"Перетащите Marlia в «Программы».","s2t":"В образе рядом лежат приложение и ярлык папки «Программы».","s3b":"Первый раз откройте вручную.","s3t":"Щёлкните Marlia.app правой кнопкой и выберите «Открыть». В macOS 15 и новее откройте «Системные настройки» → «Конфиденциальность и безопасность» и нажмите «Всё равно открыть».","s4b":"По желанию: дайте полный доступ к диску.","s4t":"Тогда «Рабочий стол», «Документы» и «Загрузки» будут открываться без повторных запросов.","note.h":"Почему macOS переспрашивает","note.p1":"Marlia подписана ad-hoc, без Apple Developer ID, поэтому Gatekeeper останавливает её при первом запуске. Если macOS пишет, что приложение «повреждено и не может быть открыто» (так часто бывает после скачивания в браузере или по AirDrop), снимите атрибут карантина:","note.p2":"Хотите собрать сами? Xcode-проекта нет, только один скрипт: <code>./build.sh --run<\/code>.","foot.lic":"Marlia — свободное ПО под лицензией GNU GPL v3.0.","foot.src":"Исходный код","foot.rel":"Релизы","foot.bug":"Сообщить об ошибке","end.h2":"Попробуйте на своих папках","end.p":"Бесплатно, {size}, macOS 13.5 и новее на Apple Silicon. Без аккаунта и подписки.","tour.h2":"Пять фото, одна клавиша","tour.p":"Выделите файлы слева, нажмите F5, и они уже на резервном диске. Tab и ⌘2 переключают на другую панель и показывают их миниатюрами.","tour.aria":"Видео: пять фотографий выделяются и копируются на резервный диск по F5, затем показываются миниатюрами.","priv.h2":"Конфиденциальность","priv.1":"<strong>Само приложение Marlia ничего никуда не отправляет:<\/strong> ни аналитики, ни отчётов о сбоях, ни проверки обновлений. В сеть оно выходит, только когда вы сами об этом просите, например при подключении к SMB-серверу.","priv.2":"Сайт не использует cookies, аналитику и трекинг. Шрифты и изображения загружаются с самого сайта.","priv.3":"Выбранный язык запоминается в вашем браузере (local storage) и никуда не передаётся.","priv.4":"Чтобы показать последнюю версию, страница при каждом посещении один раз запрашивает у GitHub API сведения о релизах Marlia. При этом GitHub получает ваш IP-адрес.","priv.5":"Сайт размещён на GitHub Pages. Как и любой хостинг, GitHub ведёт журналы запросов, включая IP-адреса. Подробнее в <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub Privacy Statement<\/a>.","meta.title":"Marlia — бесплатный двухпанельный файловый менеджер для Mac в духе Total Commander","meta.desc":"Бесплатный двухпанельный файловый менеджер для Mac с открытым кодом. F5 копирует, F6 перемещает, любую горячую клавишу можно переназначить. Без тормозов.","langs":"Языки"}}
+{"ru":{"nav.compare":"Сравнение","nav.features":"Возможности","nav.install":"Установка","lang":"Язык","hero.h1":"Бесплатный нативный двухпанельный файловый менеджер для Mac","hero.lede":"Для тех, кто привык работать с клавиатуры, как в Total Commander: <span class=\"nw\"><kbd>F5<\/kbd> копирует<\/span> в соседнюю панель, <span class=\"nw\"><kbd>F6<\/kbd> перемещает,<\/span> <span class=\"nw\"><kbd>Tab<\/kbd> переключает<\/span> панели, а любую горячую клавишу можно переназначить.","hero.dl":"Скачать для macOS","hero.gh":"Открыть на GitHub","hero.req":"Версия {ver}, {size}. Для macOS 13.5 и новее на Apple Silicon.","hero.meta":"Открытый код под GPL-3.0. Подпись ad-hoc, поэтому <a href=\"#install\">первый запуск<\/a> требует одного лишнего шага.","hero.uiEn":" Интерфейс приложения на английском.","pill.aria":"Почему Marlia","f1b":"Бесплатный, с открытым кодом","f1s":"GPL-3.0. Без аккаунта, подписки и телеметрии.","f2b":"Две панели сразу","f2s":"Две папки рядом. F5 копирует в соседнюю панель, F6 перемещает, Tab переключает.","f3b":"Свои горячие клавиши","f3s":"Любую команду можно переназначить в настройках, F‑клавиши тоже.","f4b":"Нативный, без тормозов","f4s":"AppKit, а не Electron или веб-страница. Весь установочный образ — {size}.","demo.aria":"Интерактивное демо. Стрелки выбирают, Tab переключает панели, F5 копирует, F6 перемещает, после Esc клавиша Tab выводит из демо.","k.up":"Вверх","k.down":"Вниз","k.switch":"Панель","k.copy":"Копировать","k.move":"Переместить","k.reset":"Сброс","demo.hint":"В приложении F5 и F6 работают в фоне: прогресс виден на панели, операцию можно поставить на паузу или отменить. Если имена совпадают, Marlia предложит заменить файл, пропустить его или оставить оба.","log.ready":"Выберите файл и нажмите F5.","log.L":"Активна левая панель.","log.R":"Активна правая панель.","log.copied":"Скопировано: {n} → {p}.","log.moved":"Перемещено: {n} → {p}.","log.kept":"{n} там уже есть, сохранены оба: {m}.","log.pick":"Сначала выберите файл. Папки в этом демо не переносятся.","cmp.h2":"Чего не умеет Finder","cmp.p":"Finder хорош, чтобы смотреть файлы. Marlia — чтобы весь день их копировать, переносить и разбирать.","cmp.r1":"Две папки рядом в одном окне","cmp.r1f":"Нет, два окна","cmp.r1m":"Да, и вкладки","cmp.r2":"Скопировать или перенести в другую папку одной клавишей","cmp.r2f":"Перетаскивание или ⌘C, ⌥⌘V","cmp.r2m":"F5 и F6","cmp.r3":"Переназначить любую горячую клавишу","cmp.r3f":"Только пункты меню, в Системных настройках","cmp.r3m":"Любую команду, в настройках","cmp.r4":"Переименовать по дате съёмки или тегам музыки","cmp.r4f":"Нет","cmp.r4m":"EXIF, видео, аудиотеги","cmp.r5":"Синхронизировать две папки","cmp.r5f":"Нет","cmp.r5m":"С предпросмотром","cmp.r6":"Отмена после перезапуска","cmp.r6f":"Только в текущем сеансе","cmp.r6m":"50 шагов","cmp.r7":"Запускать свои скрипты для выбранных файлов","cmp.r7f":"Через Команды или Automator","cmp.r7m":"Меню, палитра или клавиша","cmp.r8":"Без служебных файлов ._ на флешках","cmp.r8f":"Оставляет их","cmp.r8m":"Убирает после копирования","cmp.r9":"Клавиши как в Windows и Linux: ↵ открывает, ⌫ — на уровень выше, ⌘X и ⌘V переносят файлы","cmp.r9f":"↵ переименовывает, открыть — ⌘↓, перенести — ⌥⌘V","cmp.r9m":"Да, и ⌘↑ тоже работает","sp1h":"Синхронизация папок","sp1p":"Сравните две папки со всем содержимым — например, проект и его копию на флешке. Для каждого различия видно, что с ним произойдёт: файл скопируется вправо или влево, будет пропущен или удалён, и до вашего подтверждения ничего не меняется. Синхронизировать можно в обе стороны или в одну; заменённые и удалённые файлы попадают в Корзину.","sp1.alt":"Окно «Synchronize Folders»: папка с фотографиями сравнивается с резервной копией, у каждого файла размер и дата на той стороне, где он есть, и стрелка, куда он будет скопирован; девять файлов идут вправо, два влево.","sp2h":"Переименование по метаданным","sp2p":"Переименуйте все фото в папке по дате съёмки за один раз. В шаблон можно подставить дату и время из EXIF или видео, номер трека, исполнителя и название из тегов, а новые имена видны заранее. Даже если файлы меняются именами друг с другом, ничего не затрётся.","sp2.alt":"Окно «Rename 25 Items» с шаблоном «Lisbon [Date] ###»: в предпросмотре IMG_3101.jpg становится Lisbon 2026-10-03 001.jpg, и так далее по списку.","sp3h":"Командная палитра","sp3p":"Любую команду меню можно найти по нескольким буквам: наберите «syn», нажмите Return — и откроется синхронизация папок. «Перейти к папке» дополняет путь по <kbd>Tab<\/kbd>, а каждый «/» в строке пути раскрывает список соседних папок.","sp3.alt":"Командная палитра: набрано «syn», первой найдена команда Synchronize Folders… с сочетанием ⌥⇧F2.","sp4h":"Переназначьте любую клавишу","sp4p":"В настройках собраны все 75 команд, по разделам. Нажмите на сочетание и введите новое — подойдёт и F-клавиша. Если оно уже занято, Marlia подскажет, какой команде. Стандартные клавиши можно вернуть по одной или все сразу, а свои сочетания можно назначить и собственным скриптам.","sp4.alt":"Сочетания клавиш в настройках: для New Folder назначена F7, а когда F7 нажали и для Get Info, у обеих строк появился значок предупреждения и надпись «F7 is also assigned to: New Folder».","sp5h":"Куда ушло место","sp5p":"Нажмите <kbd>⌥⌘L<\/kbd> — и Marlia найдёт самые большие файлы во всех вложенных папках, с полоской размера у каждого. А <kbd>⌥⌘S<\/kbd> показывает размеры папок прямо в панели, и по ним можно сортировать, как по любому другому столбцу.","sp5.alt":"Окно «Largest Files in Photos»: список открывают четыре видео от 3,25 ГБ до 922,7 МБ, у каждого полоска размера, дальше идут фотографии примерно по 8 МБ.","more.h2":"А также","ft1h":"Две панели, вкладки, три вида","ft1p":"Список, значки и колонки в стиле Finder с колонкой предпросмотра. У каждой панели своя история переходов, каждая папка помнит свою сортировку, а набор вкладок можно сохранить под своим именем.","ft2h":"Как в Total Commander","ft2p":"Копирование и перемещение в соседнюю панель, переход к файлу по первым буквам имени, выделение по маске вроде <code>*.jpg<\/code> и инверсия выделения. <kbd>⇧⌘C<\/kbd> собирает файлы из разных папок, чтобы потом вставить их все сразу.","ft3h":"Фоновые операции","ft3p":"Копирование, перемещение, дублирование, удаление в Корзину и переименование идут в фоне — их можно поставить на паузу или отменить. Отмена помнит 50 последних действий и работает даже после перезапуска.","ft4h":"Архивы","ft4p":"Создание, распаковка и просмотр архивов, в том числе ZIP с паролем, через системные утилиты. Распаковка защищена от атаки zip-slip.","ft5h":"Рабочие пространства","ft5p":"Соберите файлы со всего диска в одной папке в виде ссылок. Сами файлы никуда не копируются и не перемещаются, а удаление убирает только ссылку.","ft6h":"Поиск, фильтр, просмотр","ft6p":"Поиск по всем вложенным папкам по части имени или регулярному выражению, мгновенный фильтр, Quick Look по пробелу и информационная панель с предпросмотром: текст, код, PDF, картинки, видео.","ft7h":"Дружит с macOS","ft7p":"Перетаскивание в Finder и обратно, цветные теги, AirDrop, открытие в Терминале, SMB, извлечение дисков и установка приложений прямо из .dmg. В окне свойств можно менять права доступа. Копии на флешках не обрастают файлами метаданных (<code>._<\/code>).","ft8h":"Избранное с клавиатуры","ft8p":"Избранное 1–9 открывается по <kbd>⌥⌘1<\/kbd>…<kbd>⌥⌘9<\/kbd> в порядке боковой панели: перетащите папку выше, и клавиша перейдёт вместе с ней.","ft10h":"Сравнение папок","ft10p":"Одно нажатие выделяет в обеих панелях файлы, которых нет в соседней или которые новее. <kbd>⌘←<\/kbd> и <kbd>⌘→<\/kbd> открывают папку в другой панели.","ft11h":"Свои команды","ft11p":"Запускайте свои shell-скрипты для выделенных файлов из меню Commands, палитры или по сочетанию клавиш, с паузой и отменой, как пользовательские команды в Total Commander.","th.h2":"Оформление на ваш вкус","th.p":"Семь тем, и в каждой имена файлов хорошо читаются и на фоне панели, и на выделении: контраст не ниже 4,5:1.","th.system":"Системная","th.alt":"Окно Marlia в выбранной теме: слева список, справа миниатюры, боковая панель и обе панели файлов в цветах темы.","in.h2":"Запуск за минуту","s1b":"Скачайте образ.","s1t":"{DMG} или любую версию со страницы {REL}.","s2b":"Перетащите Marlia в «Программы».","s2t":"В образе рядом лежат приложение и ярлык папки «Программы».","s3b":"Первый запуск — вручную.","s3t":"Щёлкните Marlia.app правой кнопкой и выберите «Открыть». В macOS 15 и новее откройте «Системные настройки» → «Конфиденциальность и безопасность» и нажмите «Всё равно открыть».","s4b":"По желанию: дайте полный доступ к диску.","s4t":"Тогда «Рабочий стол», «Документы» и «Загрузки» будут открываться без повторных запросов.","note.h":"Почему требуется дополнительное подтверждение","note.p1":"Marlia подписана ad-hoc, без Apple Developer ID, поэтому Gatekeeper останавливает её при первом запуске. Если macOS пишет, что приложение «повреждено и не может быть открыто» (так часто бывает после скачивания в браузере или по AirDrop), снимите атрибут карантина:","note.p2":"Хотите собрать сами? Xcode-проекта нет, только один скрипт: <code>./build.sh --run<\/code>.","foot.lic":"Marlia — свободное ПО под лицензией GNU GPL v3.0.","foot.src":"Исходный код","foot.rel":"Релизы","foot.bug":"Сообщить об ошибке","end.h2":"Скачайте и попробуйте","end.p":"Бесплатно, {size}, macOS 13.5 и новее на Apple Silicon. Без аккаунта и подписки.","tour.h2":"Пять фото, одна клавиша","tour.p":"F5 копирует выделенные фото на резервный диск, а Tab и ⌘2 показывают их там миниатюрами.","tour.aria":"Видео: пять фотографий выделяются и копируются на резервный диск по F5, затем показываются миниатюрами.","priv.h2":"Конфиденциальность","priv.1":"<strong>Marlia ничего никуда не отправляет:<\/strong> ни аналитики, ни отчётов о сбоях, ни проверки обновлений. В сеть оно выходит, только когда вы сами об этом просите, например при подключении к SMB-серверу.","priv.2":"Сайт не использует cookies, аналитику и трекинг. Шрифты и изображения загружаются с самого сайта.","priv.3":"Выбранный язык запоминается в вашем браузере (local storage) и никуда не передаётся.","priv.4":"Чтобы показать последнюю версию, страница при каждом посещении один раз запрашивает у GitHub API сведения о релизах Marlia. При этом GitHub получает ваш IP-адрес.","priv.5":"Сайт размещён на GitHub Pages. Как и любой хостинг, GitHub ведёт журналы запросов, включая IP-адреса. Подробнее в <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub Privacy Statement<\/a>.","meta.title":"Marlia — бесплатный двухпанельный файловый менеджер для Mac в духе Total Commander","meta.desc":"Бесплатный двухпанельный файловый менеджер для Mac с открытым кодом. F5 копирует, F6 перемещает, любую горячую клавишу можно переназначить. Без тормозов.","langs":"Языки"}}
 </script>
 
 <script>

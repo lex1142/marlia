@@ -383,20 +383,34 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
 .key.pressed kbd { background: var(--m-sel); color: var(--m-sel-text); border-color: var(--m-sel); }
 .demo-log { margin-left: auto; padding-inline: 8px; color: var(--m-text); min-height: 1.4em; }
 
-/* ---------- features ---------- */
-.features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
-.feature {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 6px 16px;
-  padding-block: 22px;
-  border-top: 1px solid var(--line);
-  align-items: baseline;
-  align-content: start;
-}
-.feature .tag { display: flex; flex-wrap: wrap; gap: 4px; justify-content: end; }
-.feature .tag kbd { font-size: 0.85rem; }
-.feature p { grid-column: 1 / -1; color: var(--muted); max-width: 36em; }
+/* ---------- bands ---------- */
+/* Sections alternate between the page and a full-width strip in the window-chrome grey: the
+   app's own surfaces, not decoration. The strip is drawn by a spread shadow clipped to the
+   element's height, so it reaches the edges of the window without widening the page. */
+.band { background: var(--surface); box-shadow: 0 0 0 100vmax var(--surface); clip-path: inset(0 -100vmax); }
+.band .tour-video { background: var(--paper); }
+.band + .final { border-top: 0; }
+.band .section + .section { padding-top: 8px; }
+
+/* ---------- spotlights ---------- */
+/* Five features Finder lacks, each with a real screenshot; picture and text swap sides from
+   one to the next. On a narrow screen the picture goes above its text. */
+.spots { display: grid; gap: 88px; padding-block: 72px; }
+.spot { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; align-items: center; }
+.spot:nth-child(even) { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.spot:nth-child(even) .spot-shot { order: 2; }
+.spot-text { display: grid; gap: 14px; justify-items: start; }
+.spot-text p { color: var(--muted); max-width: 30em; }
+.spot-text .tag, .feature .tag { display: flex; flex-wrap: wrap; gap: 4px; }
+.spot-text .tag kbd, .feature .tag kbd { font-size: 0.85rem; }
+.spot-shot { margin: 0; }
+.spot-shot img { width: 100%; height: auto; vertical-align: top; filter: var(--shot-shadow); }
+
+/* ---------- and also ---------- */
+/* Ten items fill three columns top to bottom (4 + 3 + 3), so none is left alone on a last row. */
+.features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(4, auto); grid-auto-flow: column; column-gap: 40px; }
+.feature { display: grid; gap: 6px; padding-block: 22px; border-top: 1px solid var(--line); align-content: start; }
+.feature p { color: var(--muted); max-width: 36em; }
 
 /* ---------- tour video ---------- */
 .tour-video {
@@ -467,7 +481,7 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
   background: var(--accent); color: var(--accent-ink);
 }
 .note {
-  background: var(--surface);
+  background: var(--paper);
   border-radius: 10px;
   padding: 20px;
   display: grid;
@@ -475,6 +489,7 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
   font-size: 0.95rem;
 }
 .note h3 { font-size: 1.05rem; }
+.note pre { background: var(--surface); }
 .note p { color: var(--muted); }
 pre {
   margin: 0;
@@ -513,7 +528,11 @@ pre {
 @media (max-width: 900px) {
   .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 24px; }
   .pillar:nth-child(3) { padding-left: 0; border-left: 0; }
-  .features { grid-template-columns: 1fr; }
+  .features { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; grid-auto-flow: row; }
+  .spots { gap: 64px; padding-block: 56px; }
+  .spot, .spot:nth-child(even) { grid-template-columns: 1fr; gap: 22px; }
+  .spot:nth-child(even) .spot-shot { order: 0; }
+  .spot-shot { max-width: 640px; }
   .install { grid-template-columns: 1fr; }
   .top nav { display: none; }
 }
@@ -534,8 +553,7 @@ pre {
   .pillar b { font-size: 1rem; }
   .pillar span { font-size: 0.86rem; }
   .cta .btn { flex: 1 1 100%; justify-content: center; }
-  .feature { grid-template-columns: 1fr; }
-  .feature .tag { justify-content: start; }
+  .features { grid-template-columns: 1fr; }
   .m-seg { display: none; }
   /* Three columns don't fit a phone: each row becomes its label over a Finder | Marlia pair. */
   .cmp, .cmp thead, .cmp tbody { display: block; }
@@ -591,7 +609,7 @@ pre {
   <main id="top">
     <section class="hero">
       <h1 data-h="hero.h1">A free, native <span class="nw">two-pane</span> file manager for the Mac</h1>
-      <p class="lede" data-h="hero.lede">In the spirit of Total Commander, for people who live on the keyboard: <kbd>F5</kbd> copies to the other pane, <kbd>F6</kbd> moves, <kbd>Tab</kbd> switches, and every shortcut can be changed. Built on <strong>native AppKit</strong>, it stays fast in folders with thousands of files.</p>
+      <p class="lede" data-h="hero.lede">In the spirit of Total Commander, for people who live on the keyboard: <kbd>F5</kbd> copies to the other pane, <kbd>F6</kbd> moves, <kbd>Tab</kbd> switches, and every shortcut can be changed.</p>
       <div class="cta">
         <a class="btn btn-primary" data-dl href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6 10 6 6 6-6"/><path d="M4 20h16"/></svg>
@@ -688,59 +706,117 @@ pre {
           <tbody role="rowgroup">
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r1">Two folders side by side in one window</th><td role="cell" class="no" data-t="cmp.r1f">No, two windows</td><td role="cell" class="yes m" data-t="cmp.r1m">Yes, plus tabs</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r2">Copy or move to the other folder with one key</th><td role="cell" class="no" data-t="cmp.r2f">Drag, or ⌘C then ⌥⌘V</td><td role="cell" class="yes m" data-t="cmp.r2m">F5 and F6</td></tr>
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r9">Keys from Windows and Linux: ↵ opens, ⌫ goes up a level, ⌘X and ⌘V move files</th><td role="cell" class="no" data-t="cmp.r9f">↵ renames; open is ⌘↓, move is ⌥⌘V</td><td role="cell" class="yes m" data-t="cmp.r9m">Yes, and ⌘↑ works too</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r3">Change any keyboard shortcut</th><td role="cell" class="part" data-t="cmp.r3f">Menu items only, in System Settings</td><td role="cell" class="yes m" data-t="cmp.r3m">Any command, in Settings</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r4">Rename by photo date or music tags</th><td role="cell" class="no" data-t="cmp.r4f">No</td><td role="cell" class="yes m" data-t="cmp.r4m">EXIF, video, audio tags</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r5">Synchronize two folders</th><td role="cell" class="no" data-t="cmp.r5f">No</td><td role="cell" class="yes m" data-t="cmp.r5m">With a preview first</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r6">Undo after a restart</th><td role="cell" class="part" data-t="cmp.r6f">Current session only</td><td role="cell" class="yes m" data-t="cmp.r6m">50 steps</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r7">Run your own scripts on selected files</th><td role="cell" class="part" data-t="cmp.r7f">Via Shortcuts or Automator</td><td role="cell" class="yes m" data-t="cmp.r7m">Menu, palette or a key</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r8">No ._ files left on USB sticks</th><td role="cell" class="no" data-t="cmp.r8f">Leaves them</td><td role="cell" class="yes m" data-t="cmp.r8m">Removed after copying</td></tr>
-            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r9">Open source</th><td role="cell" class="no" data-t="cmp.r9f">No</td><td role="cell" class="yes m" data-t="cmp.r9m">GPL-3.0</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <section class="section" id="tour">
-      <div class="section-head">
-        <h2 data-t="tour.h2">Five photos, one key</h2>
-        <p data-t="tour.p">Select files on the left, press F5, and they are on the backup drive. Tab and ⌘2 switch to the other pane and show them as thumbnails.</p>
-      </div>
-      <div class="tour-video">
-        <video class="only-light" data-tour muted loop playsinline preload="none" poster="media/tour-light-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="Video: five photos are selected and copied to a backup drive with F5, then shown as thumbnails.">
-          <source src="media/tour-light.mp4" type="video/mp4">
-        </video>
-        <video class="only-dark" data-tour muted loop playsinline preload="none" poster="media/tour-dark-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="Video: five photos are selected and copied to a backup drive with F5, then shown as thumbnails.">
-          <source src="media/tour-dark.mp4" type="video/mp4">
-        </video>
-      </div>
+    <div class="band">
+      <section class="section" id="tour">
+        <div class="section-head">
+          <h2 data-t="tour.h2">Five photos, one key</h2>
+          <p data-t="tour.p">F5 copies the selected photos to the backup drive; Tab and ⌘2 show them there as thumbnails.</p>
+        </div>
+        <div class="tour-video">
+          <video class="only-light" data-tour muted loop playsinline preload="none" poster="media/tour-light-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="Video: five photos are selected and copied to a backup drive with F5, then shown as thumbnails.">
+            <source src="media/tour-light.mp4" type="video/mp4">
+          </video>
+          <video class="only-dark" data-tour muted loop playsinline preload="none" poster="media/tour-dark-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="Video: five photos are selected and copied to a backup drive with F5, then shown as thumbnails.">
+            <source src="media/tour-dark.mp4" type="video/mp4">
+          </video>
+        </div>
+      </section>
+    </div>
+
+    <section class="spots" id="features" data-aria="nav.features" aria-label="Features">
+      <article class="spot" aria-labelledby="sp1-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="media/spot-sync-light.webp" width="1600" height="1101" data-alt="sp1.alt" alt="The Synchronize Folders window comparing a photo folder with its backup: each file is listed with its size and date on the side where it exists and an arrow showing which way it will be copied; nine files go right, two go left." loading="lazy">
+          <img class="only-dark" src="media/spot-sync-dark.webp" width="1600" height="1101" data-alt="sp1.alt" alt="The Synchronize Folders window comparing a photo folder with its backup: each file is listed with its size and date on the side where it exists and an arrow showing which way it will be copied; nine files go right, two go left." loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp1-h" data-t="sp1h">Synchronize folders</h2>
+          <p class="tag"><kbd>⌥⇧F2</kbd></p>
+          <p data-h="sp1p">Compare two folder trees, say a project and its copy on a USB stick. Every difference is listed with what will happen to it: copy right, copy left, skip or delete, and nothing happens until you agree. Both ways or one way; replaced and deleted files go to the Trash.</p>
+        </div>
+      </article>
+      <article class="spot" aria-labelledby="sp2-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="media/spot-rename-light.webp" width="1040" height="958" data-alt="sp2.alt" alt="Rename 25 Items with the pattern “Lisbon [Date] ###”: the preview turns IMG_3101.jpg into Lisbon 2026-10-03 001.jpg, and so on down the list." loading="lazy">
+          <img class="only-dark" src="media/spot-rename-dark.webp" width="1040" height="958" data-alt="sp2.alt" alt="Rename 25 Items with the pattern “Lisbon [Date] ###”: the preview turns IMG_3101.jpg into Lisbon 2026-10-03 001.jpg, and so on down the list." loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp2-h" data-t="sp2h">Rename by metadata</h2>
+          <p class="tag"><kbd>⌥⌘R</kbd></p>
+          <p data-h="sp2p">Rename all the photos in a folder by when they were taken, in one go. A pattern takes the date and time from EXIF or a video, the track, artist and title from tags, and you see every new name before anything is renamed. Files that trade names with each other don't overwrite each other.</p>
+        </div>
+      </article>
+      <article class="spot" aria-labelledby="sp3-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="media/spot-palette-light.webp" width="1152" height="766" data-alt="sp3.alt" alt="The command palette: “syn” is typed and Synchronize Folders… is the top match, with its shortcut ⌥⇧F2." loading="lazy">
+          <img class="only-dark" src="media/spot-palette-dark.webp" width="1152" height="766" data-alt="sp3.alt" alt="The command palette: “syn” is typed and Synchronize Folders… is the top match, with its shortcut ⌥⇧F2." loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp3-h" data-t="sp3h">Command palette</h2>
+          <p class="tag"><kbd>⇧⌘P</kbd><kbd>⇧⌘G</kbd></p>
+          <p data-h="sp3p">Any menu command in a few letters: type “syn”, press Return, and Synchronize Folders opens. Go to Folder takes a path and completes it with <kbd>Tab</kbd>, and each / in the path bar lists the folders next to it.</p>
+        </div>
+      </article>
+      <article class="spot" aria-labelledby="sp4-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="media/spot-keys-light.webp" width="1360" height="1124" data-alt="sp4.alt" alt="Keyboard Shortcuts in Settings: New Folder is set to F7, and after F7 is also pressed for Get Info both rows show a warning and the note “F7 is also assigned to: New Folder”." loading="lazy">
+          <img class="only-dark" src="media/spot-keys-dark.webp" width="1360" height="1124" data-alt="sp4.alt" alt="Keyboard Shortcuts in Settings: New Folder is set to F7, and after F7 is also pressed for Get Info both rows show a warning and the note “F7 is also assigned to: New Folder”." loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp4-h" data-t="sp4h">Rebind any shortcut</h2>
+          <p class="tag"><kbd>⌘,</kbd></p>
+          <p data-h="sp4p">All 75 commands are in Settings, by section. Click a shortcut and press a new one, function keys included; if it's already taken, Marlia tells you by which command. Reset one or all, and give your own scripts a shortcut too.</p>
+        </div>
+      </article>
+      <article class="spot" aria-labelledby="sp5-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="media/spot-space-light.webp" width="1240" height="1104" data-alt="sp5.alt" alt="Largest Files in Photos: four videos from 3.25 GB down to 922.7 MB lead the list, each with a bar for its size, followed by photos of about 8 MB." loading="lazy">
+          <img class="only-dark" src="media/spot-space-dark.webp" width="1240" height="1104" data-alt="sp5.alt" alt="Largest Files in Photos: four videos from 3.25 GB down to 922.7 MB lead the list, each with a bar for its size, followed by photos of about 8 MB." loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp5-h" data-t="sp5h">Where the space went</h2>
+          <p class="tag"><kbd>⌥⌘S</kbd><kbd>⌥⌘L</kbd></p>
+          <p data-h="sp5p">Largest Files lists the biggest files anywhere in a folder's tree, each with a bar for its size, one keystroke from the pane. Press <kbd>⌥⌘S</kbd> and folder sizes appear in the pane, sortable like any other column.</p>
+        </div>
+      </article>
     </section>
 
-    <section class="section" id="features">
-      <div class="section-head">
-        <h2 data-t="feat.h2">Everything a file manager should do, without leaving the keyboard</h2>
-      </div>
-      <div class="features">
-        <div class="feature"><h3 data-t="ft1h">Two panes, tabs, three views</h3><span class="tag"><kbd>Tab</kbd><kbd>⌘1</kbd><kbd>⌘2</kbd><kbd>⌘3</kbd></span><p data-h="ft1p">List, Icons and Finder-style Columns with a preview column. Each pane keeps its own history, every folder remembers how you sorted it, and a window's tabs can be saved as a named set.</p></div>
-        <div class="feature"><h3 data-t="ft2h">The Total Commander workflow</h3><span class="tag"><kbd>F5</kbd><kbd>F6</kbd></span><p data-h="ft2p">Copy and move to the other pane, type to select, select by pattern such as <code>*.jpg</code>, invert the selection. Gather files from several folders with <kbd>⇧⌘C</kbd> and paste them all at once.</p></div>
-        <div class="feature"><h3 data-t="ft3h">Background file operations</h3><span class="tag"><kbd>⌘Z</kbd><kbd>⇧⌘Z</kbd></span><p data-h="ft3p">Copy, move, duplicate, trash and rename run in the background with pause and cancel. Undo goes back 50 steps and survives a restart.</p></div>
-        <div class="feature"><h3 data-t="ft4h">Archives</h3><p data-h="ft4p">Create, extract and browse archives with the system tools, including password-protected ZIP. Extraction is guarded against zip-slip paths.</p></div>
-        <div class="feature"><h3 data-t="ft5h">Workspaces</h3><p data-h="ft5p">Gather files from all over the disk into one folder of links. Nothing is copied or moved, and removing an item only removes the link.</p></div>
-        <div class="feature"><h3 data-t="ft6h">Search, filter, preview</h3><span class="tag"><kbd>⌘F</kbd><kbd>⌥⌘F</kbd><kbd>Space</kbd></span><p data-h="ft6p">Recursive search by substring or regex, an instant filter bar, Quick Look on Space, and an info panel that previews the file itself: text, code, PDF, images, video.</p></div>
-        <div class="feature"><h3 data-t="ft7h">At home on macOS</h3><p data-h="ft7p">Drag and drop with Finder, color tags, AirDrop, Open in Terminal, SMB shares, ejecting drives and installing apps straight from a .dmg. Get Info edits permissions. Copies to USB sticks leave no <code>._</code> files behind.</p></div>
-        <div class="feature"><h3 data-t="ft8h">Favorites from the keyboard</h3><span class="tag"><kbd>⌥⌘1…9</kbd><kbd>⌘,</kbd></span><p data-h="ft8p">Favorites 1 to 9 open with <kbd>⌥⌘1</kbd> to <kbd>⌥⌘9</kbd>, in the order of the sidebar. Settings lists every shortcut, and that's where you change them.</p></div>
-        <div class="feature"><h3 data-t="ft9h">Command palette</h3><span class="tag"><kbd>⇧⌘P</kbd><kbd>⇧⌘G</kbd></span><p data-h="ft9p">Every menu command is a few keystrokes away, found by fuzzy search. Go to Folder takes a typed path with <kbd>Tab</kbd> completion, and each / in the path bar opens the folders next to it.</p></div>
-        <div class="feature"><h3 data-t="ft10h">Compare folders</h3><span class="tag"><kbd>⇧F2</kbd><kbd>⌘←</kbd><kbd>⌘→</kbd></span><p data-h="ft10p">One keystroke selects what is missing or newer on each side. Open a folder in the other pane with <kbd>⌘←</kbd> and <kbd>⌘→</kbd>.</p></div>
-        <div class="feature"><h3 data-t="ft11h">Your own commands</h3><p data-h="ft11p">Run your shell scripts on the selected files from the Commands menu, the palette or a shortcut, with pause and cancel, like user commands in Total Commander.</p></div>
-        <div class="feature"><h3 data-t="ft12h">Rename by metadata</h3><p data-h="ft12p">Batch rename with a live preview of every new name: date and time from EXIF or video, track, artist and title from audio tags, and case conversion.</p></div>
-        <div class="feature"><h3 data-t="ft13h">Synchronize folders</h3><span class="tag"><kbd>⌥⇧F2</kbd></span><p data-h="ft13p">Compare two folder trees and review every difference with its action before anything happens. Both ways or one way; replaced and deleted files go to the Trash.</p></div>
-        <div class="feature"><h3 data-t="ft14h">Where the space went</h3><span class="tag"><kbd>⌥⌘S</kbd><kbd>⌥⌘L</kbd></span><p data-h="ft14p">Folder sizes with a bar for each item's share, and Largest Files: the biggest files anywhere under a folder, one keystroke from the pane.</p></div>
-      </div>
-    </section>
+    <div class="band">
+      <section class="section" id="more">
+        <div class="section-head">
+          <h2 id="more-h" data-t="more.h2">And also</h2>
+        </div>
+        <div class="features">
+          <div class="feature"><h3 data-t="ft1h">Two panes, tabs, three views</h3><span class="tag"><kbd>Tab</kbd><kbd>⌘1</kbd><kbd>⌘2</kbd><kbd>⌘3</kbd></span><p data-h="ft1p">List, Icons and Finder-style Columns with a preview column. Each pane keeps its own history, every folder remembers how you sorted it, and a window's tabs can be saved as a named set.</p></div>
+          <div class="feature"><h3 data-t="ft2h">The Total Commander workflow</h3><span class="tag"><kbd>F5</kbd><kbd>F6</kbd></span><p data-h="ft2p">Copy and move to the other pane, type to select, select by pattern such as <code>*.jpg</code>, invert the selection. Gather files from several folders with <kbd>⇧⌘C</kbd> and paste them all at once.</p></div>
+          <div class="feature"><h3 data-t="ft3h">Background file operations</h3><span class="tag"><kbd>⌘Z</kbd><kbd>⇧⌘Z</kbd></span><p data-h="ft3p">Copy, move, duplicate, trash and rename run in the background with pause and cancel. Undo goes back 50 steps and survives a restart.</p></div>
+          <div class="feature"><h3 data-t="ft4h">Archives</h3><p data-h="ft4p">Create, extract and browse archives with the system tools, including password-protected ZIP. Extraction is guarded against zip-slip paths.</p></div>
+          <div class="feature"><h3 data-t="ft5h">Workspaces</h3><p data-h="ft5p">Gather files from all over the disk into one folder of links. Nothing is copied or moved, and removing an item only removes the link.</p></div>
+          <div class="feature"><h3 data-t="ft6h">Search, filter, preview</h3><span class="tag"><kbd>⌘F</kbd><kbd>⌥⌘F</kbd><kbd>Space</kbd></span><p data-h="ft6p">Recursive search by substring or regex, an instant filter bar, Quick Look on Space, and an info panel that previews the file itself: text, code, PDF, images, video.</p></div>
+          <div class="feature"><h3 data-t="ft7h">At home on macOS</h3><p data-h="ft7p">Drag and drop with Finder, color tags, AirDrop, Open in Terminal, SMB shares, ejecting drives and installing apps straight from a .dmg. Get Info edits permissions. Copies to USB sticks leave no <code>._</code> metadata files behind.</p></div>
+          <div class="feature"><h3 data-t="ft8h">Favorites from the keyboard</h3><span class="tag"><kbd>⌥⌘1…9</kbd></span><p data-h="ft8p">Favorites 1 to 9 open with <kbd>⌥⌘1</kbd> to <kbd>⌥⌘9</kbd>, in the order of the sidebar: drag one higher and its key moves with it.</p></div>
+          <div class="feature"><h3 data-t="ft10h">Compare folders</h3><span class="tag"><kbd>⇧F2</kbd><kbd>⌘←</kbd><kbd>⌘→</kbd></span><p data-h="ft10p">One keystroke selects what is missing or newer on each side. Open a folder in the other pane with <kbd>⌘←</kbd> and <kbd>⌘→</kbd>.</p></div>
+          <div class="feature"><h3 data-t="ft11h">Your own commands</h3><p data-h="ft11p">Run your shell scripts on the selected files from the Commands menu, the palette or a shortcut, with pause and cancel, like user commands in Total Commander.</p></div>
+        </div>
+      </section>
+    </div>
 
     <section class="section" aria-labelledby="themes-h">
       <div class="section-head">
-        <h2 id="themes-h" data-t="th.h2">Seven looks, checked for contrast</h2>
-        <p data-t="th.p">Every palette keeps file names readable at 4.5:1 or better, on the pane and on the selection.</p>
+        <h2 id="themes-h" data-t="th.h2">Looks to suit you</h2>
+        <p data-t="th.p">Seven themes, and in every one file names stay readable on the pane and on the selection, at a contrast of 4.5:1 or better.</p>
       </div>
       <div class="theme-pick" role="group" aria-labelledby="themes-h">
         <button type="button" data-shot="system" aria-pressed="true" data-t="th.system">System</button>
@@ -757,40 +833,42 @@ pre {
       </figure>
     </section>
 
-    <section class="section" id="install">
-      <div class="section-head">
-        <h2 data-t="in.h2">Get it running in a minute</h2>
-      </div>
-      <div class="install">
-        <ol class="steps">
-          <li><div><b data-t="s1b">Download the image.</b><br><span data-h="s1t"><a href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">Marlia-1.4.dmg</a>, or any version from <a href="https://github.com/lex1142/marlia/releases" target="_blank" rel="noopener">Releases</a>.</span></div></li>
-          <li><div><b data-t="s2b">Drag Marlia onto Applications.</b><br><span data-t="s2t">The image has the app and an Applications shortcut side by side.</span></div></li>
-          <li><div><b data-t="s3b">Open it once by hand.</b><br><span data-t="s3t">Right-click Marlia.app and choose Open. On macOS 15 and later, go to System Settings → Privacy &amp; Security and click Open Anyway.</span></div></li>
-          <li><div><b data-t="s4b">Optional: grant Full Disk Access.</b><br><span data-t="s4t">Then Desktop, Documents and Downloads open without repeated prompts.</span></div></li>
-        </ol>
-        <aside class="note">
-          <h3 data-t="note.h">Why macOS asks first</h3>
-          <p data-t="note.p1">Marlia is signed ad hoc, without an Apple Developer ID, so Gatekeeper stops it on first launch. If macOS says the app “is damaged and can’t be opened”, which often happens after a browser download or AirDrop, clear the quarantine flag:</p>
-          <pre><code>xattr -cr /Applications/Marlia.app</code></pre>
-          <p data-h="note.p2">Prefer to build it yourself? There is no Xcode project, just one script: <code>./build.sh --run</code>.</p>
-        </aside>
-      </div>
-    </section>
-    <section class="section" id="privacy" aria-labelledby="privacy-h">
-      <div class="section-head">
-        <h2 id="privacy-h" data-t="priv.h2">Privacy</h2>
-      </div>
-      <ul class="privacy">
-        <li data-h="priv.1"><strong>The Marlia app sends nothing anywhere:</strong> no analytics, no crash reports, no update checks. It only goes to the network when you ask it to, for example to connect to an SMB server.</li>
-        <li data-h="priv.2">This site uses no cookies, analytics or tracking. Fonts and images are served from the site itself.</li>
-        <li data-h="priv.3">The language you pick is remembered in your browser (local storage) and is never sent anywhere.</li>
-        <li data-h="priv.4">To show the latest version, the page asks the GitHub API about Marlia's releases once per visit. GitHub receives your IP address with that request.</li>
-        <li data-h="priv.5">The site is hosted on GitHub Pages. Like any web host, GitHub logs requests, including IP addresses. See the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a>.</li>
-      </ul>
-    </section>
+    <div class="band">
+      <section class="section" id="install">
+        <div class="section-head">
+          <h2 data-t="in.h2">Get it running in a minute</h2>
+        </div>
+        <div class="install">
+          <ol class="steps">
+            <li><div><b data-t="s1b">Download the image.</b><br><span data-h="s1t"><a href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">Marlia-1.4.dmg</a>, or any version from <a href="https://github.com/lex1142/marlia/releases" target="_blank" rel="noopener">Releases</a>.</span></div></li>
+            <li><div><b data-t="s2b">Drag Marlia onto Applications.</b><br><span data-t="s2t">The image has the app and an Applications shortcut side by side.</span></div></li>
+            <li><div><b data-t="s3b">Open it once by hand.</b><br><span data-t="s3t">Right-click Marlia.app and choose Open. On macOS 15 and later, go to System Settings → Privacy &amp; Security and click Open Anyway.</span></div></li>
+            <li><div><b data-t="s4b">Optional: grant Full Disk Access.</b><br><span data-t="s4t">Then Desktop, Documents and Downloads open without repeated prompts.</span></div></li>
+          </ol>
+          <aside class="note">
+            <h3 data-t="note.h">Why macOS asks first</h3>
+            <p data-t="note.p1">Marlia is signed ad hoc, without an Apple Developer ID, so Gatekeeper stops it on first launch. If macOS says the app “is damaged and can’t be opened”, which often happens after a browser download or AirDrop, clear the quarantine flag:</p>
+            <pre><code>xattr -cr /Applications/Marlia.app</code></pre>
+            <p data-h="note.p2">Prefer to build it yourself? There is no Xcode project, just one script: <code>./build.sh --run</code>.</p>
+          </aside>
+        </div>
+      </section>
+      <section class="section" id="privacy" aria-labelledby="privacy-h">
+        <div class="section-head">
+          <h2 id="privacy-h" data-t="priv.h2">Privacy</h2>
+        </div>
+        <ul class="privacy">
+          <li data-h="priv.1"><strong>The Marlia app sends nothing anywhere:</strong> no analytics, no crash reports, no update checks. It only goes to the network when you ask it to, for example to connect to an SMB server.</li>
+          <li data-h="priv.2">This site uses no cookies, analytics or tracking. Fonts and images are served from the site itself.</li>
+          <li data-h="priv.3">The language you pick is remembered in your browser (local storage) and is never sent anywhere.</li>
+          <li data-h="priv.4">To show the latest version, the page asks the GitHub API about Marlia's releases once per visit. GitHub receives your IP address with that request.</li>
+          <li data-h="priv.5">The site is hosted on GitHub Pages. Like any web host, GitHub logs requests, including IP addresses. See the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a>.</li>
+        </ul>
+      </section>
+    </div>
 
     <section class="final" aria-labelledby="final-h">
-      <h2 id="final-h" data-t="end.h2">Try it on your own folders</h2>
+      <h2 id="final-h" data-t="end.h2">Download it and try it</h2>
       <p data-t="end.p">Free, 3.9 MB, for macOS 13.5 or later on Apple Silicon. No account, nothing to subscribe to.</p>
       <div class="cta">
         <a class="btn btn-primary" data-dl href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">
@@ -818,7 +896,7 @@ pre {
 </div>
 
 <script type="application/json" id="i18n">
-{"en":{"nav.compare":"vs Finder","nav.features":"Features","nav.install":"Install","lang":"Language","hero.h1":"A free, native <span class=\"nw\">two-pane<\/span> file manager for the Mac","hero.lede":"In the spirit of Total Commander, for people who live on the keyboard: <kbd>F5<\/kbd> copies to the other pane, <kbd>F6<\/kbd> moves, <kbd>Tab<\/kbd> switches, and every shortcut can be changed. Built on <strong>native AppKit<\/strong>, it stays fast in folders with thousands of files.","hero.dl":"Download for macOS","hero.gh":"View on GitHub","hero.req":"Version {ver}, {size}. For macOS 13.5 or later on Apple Silicon.","hero.meta":"Open source under GPL-3.0. Signed ad hoc, so the <a href=\"#install\">first launch<\/a> takes one extra step.","hero.uiEn":"","pill.aria":"Why Marlia","f1b":"Free and open source","f1s":"GPL-3.0. No account, no subscription, no telemetry.","f2b":"Two panes at once","f2s":"Two folders side by side. F5 copies across, F6 moves, Tab switches.","f3b":"Your shortcuts","f3s":"Rebind any command in Settings, function keys included.","f4b":"Native, no lag","f4s":"AppKit, not Electron or a web view. The whole download is {size}.","demo.aria":"Interactive demo. Arrow keys select, Tab switches panes, F5 copies, F6 moves, Esc lets Tab leave the demo.","k.up":"Up","k.down":"Down","k.switch":"Switch","k.copy":"Copy","k.move":"Move","k.reset":"Reset","demo.hint":"In the app, F5 and F6 run in the background with a progress panel you can pause or cancel, and a name clash asks Replace, Skip or Keep Both.","log.ready":"Pick a file and press F5.","log.L":"Active pane: left.","log.R":"Active pane: right.","log.copied":"Copied {n} to {p}.","log.moved":"Moved {n} to {p}.","log.kept":"{n} already exists there, kept both as {m}.","log.pick":"Pick a file first. Folders stay put in this demo.","cmp.h2":"What Finder doesn’t do","cmp.p":"Finder is fine for looking at files. Marlia is for copying, moving and sorting them all day.","cmp.r1":"Two folders side by side in one window","cmp.r1f":"No, two windows","cmp.r1m":"Yes, plus tabs","cmp.r2":"Copy or move to the other folder with one key","cmp.r2f":"Drag, or ⌘C then ⌥⌘V","cmp.r2m":"F5 and F6","cmp.r3":"Change any keyboard shortcut","cmp.r3f":"Menu items only, in System Settings","cmp.r3m":"Any command, in Settings","cmp.r4":"Rename by photo date or music tags","cmp.r4f":"No","cmp.r4m":"EXIF, video, audio tags","cmp.r5":"Synchronize two folders","cmp.r5f":"No","cmp.r5m":"With a preview first","cmp.r6":"Undo after a restart","cmp.r6f":"Current session only","cmp.r6m":"50 steps","cmp.r7":"Run your own scripts on selected files","cmp.r7f":"Via Shortcuts or Automator","cmp.r7m":"Menu, palette or a key","cmp.r8":"No ._ files left on USB sticks","cmp.r8f":"Leaves them","cmp.r8m":"Removed after copying","cmp.r9":"Open source","cmp.r9f":"No","cmp.r9m":"GPL-3.0","feat.h2":"Everything a file manager should do, without leaving the keyboard","ft1h":"Two panes, tabs, three views","ft1p":"List, Icons and Finder-style Columns with a preview column. Each pane keeps its own history, every folder remembers how you sorted it, and a window's tabs can be saved as a named set.","ft2h":"The Total Commander workflow","ft2p":"Copy and move to the other pane, type to select, select by pattern such as <code>*.jpg<\/code>, invert the selection. Gather files from several folders with <kbd>⇧⌘C<\/kbd> and paste them all at once.","ft3h":"Background file operations","ft3p":"Copy, move, duplicate, trash and rename run in the background with pause and cancel. Undo goes back 50 steps and survives a restart.","ft4h":"Archives","ft4p":"Create, extract and browse archives with the system tools, including password-protected ZIP. Extraction is guarded against zip-slip paths.","ft5h":"Workspaces","ft5p":"Gather files from all over the disk into one folder of links. Nothing is copied or moved, and removing an item only removes the link.","ft6h":"Search, filter, preview","ft6p":"Recursive search by substring or regex, an instant filter bar, Quick Look on Space, and an info panel that previews the file itself: text, code, PDF, images, video.","ft7h":"At home on macOS","ft7p":"Drag and drop with Finder, color tags, AirDrop, Open in Terminal, SMB shares, ejecting drives and installing apps straight from a .dmg. Get Info edits permissions. Copies to USB sticks leave no <code>._<\/code> files behind.","ft8h":"Favorites from the keyboard","ft8p":"Favorites 1 to 9 open with <kbd>⌥⌘1<\/kbd> to <kbd>⌥⌘9<\/kbd>, in the order of the sidebar. Settings lists every shortcut, and that's where you change them.","ft9h":"Command palette","ft9p":"Every menu command is a few keystrokes away, found by fuzzy search. Go to Folder takes a typed path with <kbd>Tab<\/kbd> completion, and each / in the path bar opens the folders next to it.","ft10h":"Compare folders","ft10p":"One keystroke selects what is missing or newer on each side. Open a folder in the other pane with <kbd>⌘←<\/kbd> and <kbd>⌘→<\/kbd>.","ft11h":"Your own commands","ft11p":"Run your shell scripts on the selected files from the Commands menu, the palette or a shortcut, with pause and cancel, like user commands in Total Commander.","ft12h":"Rename by metadata","ft12p":"Batch rename with a live preview of every new name: date and time from EXIF or video, track, artist and title from audio tags, and case conversion.","ft13h":"Synchronize folders","ft13p":"Compare two folder trees and review every difference with its action before anything happens. Both ways or one way; replaced and deleted files go to the Trash.","ft14h":"Where the space went","ft14p":"Folder sizes with a bar for each item's share, and Largest Files: the biggest files anywhere under a folder, one keystroke from the pane.","th.h2":"Seven looks, checked for contrast","th.p":"Every palette keeps file names readable at 4.5:1 or better, on the pane and on the selection.","th.system":"System","th.alt":"A Marlia window in the chosen theme: a list on the left, thumbnails on the right, the sidebar and both panes in the theme's colours.","in.h2":"Get it running in a minute","s1b":"Download the image.","s1t":"{DMG}, or any version from {REL}.","s2b":"Drag Marlia onto Applications.","s2t":"The image has the app and an Applications shortcut side by side.","s3b":"Open it once by hand.","s3t":"Right-click Marlia.app and choose Open. On macOS 15 and later, go to System Settings → Privacy & Security and click Open Anyway.","s4b":"Optional: grant Full Disk Access.","s4t":"Then Desktop, Documents and Downloads open without repeated prompts.","note.h":"Why macOS asks first","note.p1":"Marlia is signed ad hoc, without an Apple Developer ID, so Gatekeeper stops it on first launch. If macOS says the app “is damaged and can’t be opened”, which often happens after a browser download or AirDrop, clear the quarantine flag:","note.p2":"Prefer to build it yourself? There is no Xcode project, just one script: <code>./build.sh --run<\/code>.","foot.lic":"Marlia is free software under the GNU GPL v3.0.","foot.src":"Source","foot.rel":"Releases","foot.bug":"Report a bug","end.h2":"Try it on your own folders","end.p":"Free, {size}, for macOS 13.5 or later on Apple Silicon. No account, nothing to subscribe to.","tour.h2":"Five photos, one key","tour.p":"Select files on the left, press F5, and they are on the backup drive. Tab and ⌘2 switch to the other pane and show them as thumbnails.","tour.aria":"Video: five photos are selected and copied to a backup drive with F5, then shown as thumbnails.","priv.h2":"Privacy","priv.1":"<strong>The Marlia app sends nothing anywhere:<\/strong> no analytics, no crash reports, no update checks. It only goes to the network when you ask it to, for example to connect to an SMB server.","priv.2":"This site uses no cookies, analytics or tracking. Fonts and images are served from the site itself.","priv.3":"The language you pick is remembered in your browser (local storage) and is never sent anywhere.","priv.4":"To show the latest version, the page asks the GitHub API about Marlia's releases once per visit. GitHub receives your IP address with that request.","priv.5":"The site is hosted on GitHub Pages. Like any web host, GitHub logs requests, including IP addresses. See the <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub Privacy Statement<\/a>.","meta.title":"Marlia: free two-pane file manager for Mac, in the spirit of Total Commander","meta.desc":"Free, open-source two-pane file manager for Mac. F5 copies, F6 moves, and any shortcut can be rebound. Native AppKit, no lag.","langs":"Languages"}}
+{"en":{"nav.compare":"vs Finder","nav.features":"Features","nav.install":"Install","lang":"Language","hero.h1":"A free, native <span class=\"nw\">two-pane<\/span> file manager for the Mac","hero.lede":"In the spirit of Total Commander, for people who live on the keyboard: <kbd>F5<\/kbd> copies to the other pane, <kbd>F6<\/kbd> moves, <kbd>Tab<\/kbd> switches, and every shortcut can be changed.","hero.dl":"Download for macOS","hero.gh":"View on GitHub","hero.req":"Version {ver}, {size}. For macOS 13.5 or later on Apple Silicon.","hero.meta":"Open source under GPL-3.0. Signed ad hoc, so the <a href=\"#install\">first launch<\/a> takes one extra step.","hero.uiEn":"","pill.aria":"Why Marlia","f1b":"Free and open source","f1s":"GPL-3.0. No account, no subscription, no telemetry.","f2b":"Two panes at once","f2s":"Two folders side by side. F5 copies across, F6 moves, Tab switches.","f3b":"Your shortcuts","f3s":"Rebind any command in Settings, function keys included.","f4b":"Native, no lag","f4s":"AppKit, not Electron or a web view. The whole download is {size}.","demo.aria":"Interactive demo. Arrow keys select, Tab switches panes, F5 copies, F6 moves, Esc lets Tab leave the demo.","k.up":"Up","k.down":"Down","k.switch":"Switch","k.copy":"Copy","k.move":"Move","k.reset":"Reset","demo.hint":"In the app, F5 and F6 run in the background with a progress panel you can pause or cancel, and a name clash asks Replace, Skip or Keep Both.","log.ready":"Pick a file and press F5.","log.L":"Active pane: left.","log.R":"Active pane: right.","log.copied":"Copied {n} to {p}.","log.moved":"Moved {n} to {p}.","log.kept":"{n} already exists there, kept both as {m}.","log.pick":"Pick a file first. Folders stay put in this demo.","cmp.h2":"What Finder doesn’t do","cmp.p":"Finder is fine for looking at files. Marlia is for copying, moving and sorting them all day.","cmp.r1":"Two folders side by side in one window","cmp.r1f":"No, two windows","cmp.r1m":"Yes, plus tabs","cmp.r2":"Copy or move to the other folder with one key","cmp.r2f":"Drag, or ⌘C then ⌥⌘V","cmp.r2m":"F5 and F6","cmp.r3":"Change any keyboard shortcut","cmp.r3f":"Menu items only, in System Settings","cmp.r3m":"Any command, in Settings","cmp.r4":"Rename by photo date or music tags","cmp.r4f":"No","cmp.r4m":"EXIF, video, audio tags","cmp.r5":"Synchronize two folders","cmp.r5f":"No","cmp.r5m":"With a preview first","cmp.r6":"Undo after a restart","cmp.r6f":"Current session only","cmp.r6m":"50 steps","cmp.r7":"Run your own scripts on selected files","cmp.r7f":"Via Shortcuts or Automator","cmp.r7m":"Menu, palette or a key","cmp.r8":"No ._ files left on USB sticks","cmp.r8f":"Leaves them","cmp.r8m":"Removed after copying","cmp.r9":"Keys from Windows and Linux: ↵ opens, ⌫ goes up a level, ⌘X and ⌘V move files","cmp.r9f":"↵ renames; open is ⌘↓, move is ⌥⌘V","cmp.r9m":"Yes, and ⌘↑ works too","sp1h":"Synchronize folders","sp1p":"Compare two folder trees, say a project and its copy on a USB stick. Every difference is listed with what will happen to it: copy right, copy left, skip or delete, and nothing happens until you agree. Both ways or one way; replaced and deleted files go to the Trash.","sp1.alt":"The Synchronize Folders window comparing a photo folder with its backup: each file is listed with its size and date on the side where it exists and an arrow showing which way it will be copied; nine files go right, two go left.","sp2h":"Rename by metadata","sp2p":"Rename all the photos in a folder by when they were taken, in one go. A pattern takes the date and time from EXIF or a video, the track, artist and title from tags, and you see every new name before anything is renamed. Files that trade names with each other don't overwrite each other.","sp2.alt":"Rename 25 Items with the pattern “Lisbon [Date] ###”: the preview turns IMG_3101.jpg into Lisbon 2026-10-03 001.jpg, and so on down the list.","sp3h":"Command palette","sp3p":"Any menu command in a few letters: type “syn”, press Return, and Synchronize Folders opens. Go to Folder takes a path and completes it with <kbd>Tab<\/kbd>, and each / in the path bar lists the folders next to it.","sp3.alt":"The command palette: “syn” is typed and Synchronize Folders… is the top match, with its shortcut ⌥⇧F2.","sp4h":"Rebind any shortcut","sp4p":"All 75 commands are in Settings, by section. Click a shortcut and press a new one, function keys included; if it's already taken, Marlia tells you by which command. Reset one or all, and give your own scripts a shortcut too.","sp4.alt":"Keyboard Shortcuts in Settings: New Folder is set to F7, and after F7 is also pressed for Get Info both rows show a warning and the note “F7 is also assigned to: New Folder”.","sp5h":"Where the space went","sp5p":"Largest Files lists the biggest files anywhere in a folder's tree, each with a bar for its size, one keystroke from the pane. Press <kbd>⌥⌘S<\/kbd> and folder sizes appear in the pane, sortable like any other column.","sp5.alt":"Largest Files in Photos: four videos from 3.25 GB down to 922.7 MB lead the list, each with a bar for its size, followed by photos of about 8 MB.","more.h2":"And also","ft1h":"Two panes, tabs, three views","ft1p":"List, Icons and Finder-style Columns with a preview column. Each pane keeps its own history, every folder remembers how you sorted it, and a window's tabs can be saved as a named set.","ft2h":"The Total Commander workflow","ft2p":"Copy and move to the other pane, type to select, select by pattern such as <code>*.jpg<\/code>, invert the selection. Gather files from several folders with <kbd>⇧⌘C<\/kbd> and paste them all at once.","ft3h":"Background file operations","ft3p":"Copy, move, duplicate, trash and rename run in the background with pause and cancel. Undo goes back 50 steps and survives a restart.","ft4h":"Archives","ft4p":"Create, extract and browse archives with the system tools, including password-protected ZIP. Extraction is guarded against zip-slip paths.","ft5h":"Workspaces","ft5p":"Gather files from all over the disk into one folder of links. Nothing is copied or moved, and removing an item only removes the link.","ft6h":"Search, filter, preview","ft6p":"Recursive search by substring or regex, an instant filter bar, Quick Look on Space, and an info panel that previews the file itself: text, code, PDF, images, video.","ft7h":"At home on macOS","ft7p":"Drag and drop with Finder, color tags, AirDrop, Open in Terminal, SMB shares, ejecting drives and installing apps straight from a .dmg. Get Info edits permissions. Copies to USB sticks leave no <code>._<\/code> metadata files behind.","ft8h":"Favorites from the keyboard","ft8p":"Favorites 1 to 9 open with <kbd>⌥⌘1<\/kbd> to <kbd>⌥⌘9<\/kbd>, in the order of the sidebar: drag one higher and its key moves with it.","ft10h":"Compare folders","ft10p":"One keystroke selects what is missing or newer on each side. Open a folder in the other pane with <kbd>⌘←<\/kbd> and <kbd>⌘→<\/kbd>.","ft11h":"Your own commands","ft11p":"Run your shell scripts on the selected files from the Commands menu, the palette or a shortcut, with pause and cancel, like user commands in Total Commander.","th.h2":"Looks to suit you","th.p":"Seven themes, and in every one file names stay readable on the pane and on the selection, at a contrast of 4.5:1 or better.","th.system":"System","th.alt":"A Marlia window in the chosen theme: a list on the left, thumbnails on the right, the sidebar and both panes in the theme's colours.","in.h2":"Get it running in a minute","s1b":"Download the image.","s1t":"{DMG}, or any version from {REL}.","s2b":"Drag Marlia onto Applications.","s2t":"The image has the app and an Applications shortcut side by side.","s3b":"Open it once by hand.","s3t":"Right-click Marlia.app and choose Open. On macOS 15 and later, go to System Settings → Privacy & Security and click Open Anyway.","s4b":"Optional: grant Full Disk Access.","s4t":"Then Desktop, Documents and Downloads open without repeated prompts.","note.h":"Why macOS asks first","note.p1":"Marlia is signed ad hoc, without an Apple Developer ID, so Gatekeeper stops it on first launch. If macOS says the app “is damaged and can’t be opened”, which often happens after a browser download or AirDrop, clear the quarantine flag:","note.p2":"Prefer to build it yourself? There is no Xcode project, just one script: <code>./build.sh --run<\/code>.","foot.lic":"Marlia is free software under the GNU GPL v3.0.","foot.src":"Source","foot.rel":"Releases","foot.bug":"Report a bug","end.h2":"Download it and try it","end.p":"Free, {size}, for macOS 13.5 or later on Apple Silicon. No account, nothing to subscribe to.","tour.h2":"Five photos, one key","tour.p":"F5 copies the selected photos to the backup drive; Tab and ⌘2 show them there as thumbnails.","tour.aria":"Video: five photos are selected and copied to a backup drive with F5, then shown as thumbnails.","priv.h2":"Privacy","priv.1":"<strong>The Marlia app sends nothing anywhere:<\/strong> no analytics, no crash reports, no update checks. It only goes to the network when you ask it to, for example to connect to an SMB server.","priv.2":"This site uses no cookies, analytics or tracking. Fonts and images are served from the site itself.","priv.3":"The language you pick is remembered in your browser (local storage) and is never sent anywhere.","priv.4":"To show the latest version, the page asks the GitHub API about Marlia's releases once per visit. GitHub receives your IP address with that request.","priv.5":"The site is hosted on GitHub Pages. Like any web host, GitHub logs requests, including IP addresses. See the <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub Privacy Statement<\/a>.","meta.title":"Marlia: free two-pane file manager for Mac, in the spirit of Total Commander","meta.desc":"Free, open-source two-pane file manager for Mac. F5 copies, F6 moves, and any shortcut can be rebound. Native AppKit, no lag.","langs":"Languages"}}
 </script>
 
 <script>

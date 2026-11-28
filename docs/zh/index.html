@@ -382,20 +382,34 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
 .key.pressed kbd { background: var(--m-sel); color: var(--m-sel-text); border-color: var(--m-sel); }
 .demo-log { margin-left: auto; padding-inline: 8px; color: var(--m-text); min-height: 1.4em; }
 
-/* ---------- features ---------- */
-.features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
-.feature {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 6px 16px;
-  padding-block: 22px;
-  border-top: 1px solid var(--line);
-  align-items: baseline;
-  align-content: start;
-}
-.feature .tag { display: flex; flex-wrap: wrap; gap: 4px; justify-content: end; }
-.feature .tag kbd { font-size: 0.85rem; }
-.feature p { grid-column: 1 / -1; color: var(--muted); max-width: 36em; }
+/* ---------- bands ---------- */
+/* Sections alternate between the page and a full-width strip in the window-chrome grey: the
+   app's own surfaces, not decoration. The strip is drawn by a spread shadow clipped to the
+   element's height, so it reaches the edges of the window without widening the page. */
+.band { background: var(--surface); box-shadow: 0 0 0 100vmax var(--surface); clip-path: inset(0 -100vmax); }
+.band .tour-video { background: var(--paper); }
+.band + .final { border-top: 0; }
+.band .section + .section { padding-top: 8px; }
+
+/* ---------- spotlights ---------- */
+/* Five features Finder lacks, each with a real screenshot; picture and text swap sides from
+   one to the next. On a narrow screen the picture goes above its text. */
+.spots { display: grid; gap: 88px; padding-block: 72px; }
+.spot { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; align-items: center; }
+.spot:nth-child(even) { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.spot:nth-child(even) .spot-shot { order: 2; }
+.spot-text { display: grid; gap: 14px; justify-items: start; }
+.spot-text p { color: var(--muted); max-width: 30em; }
+.spot-text .tag, .feature .tag { display: flex; flex-wrap: wrap; gap: 4px; }
+.spot-text .tag kbd, .feature .tag kbd { font-size: 0.85rem; }
+.spot-shot { margin: 0; }
+.spot-shot img { width: 100%; height: auto; vertical-align: top; filter: var(--shot-shadow); }
+
+/* ---------- and also ---------- */
+/* Ten items fill three columns top to bottom (4 + 3 + 3), so none is left alone on a last row. */
+.features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(4, auto); grid-auto-flow: column; column-gap: 40px; }
+.feature { display: grid; gap: 6px; padding-block: 22px; border-top: 1px solid var(--line); align-content: start; }
+.feature p { color: var(--muted); max-width: 36em; }
 
 /* ---------- tour video ---------- */
 .tour-video {
@@ -466,7 +480,7 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
   background: var(--accent); color: var(--accent-ink);
 }
 .note {
-  background: var(--surface);
+  background: var(--paper);
   border-radius: 10px;
   padding: 20px;
   display: grid;
@@ -474,6 +488,7 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
   font-size: 0.95rem;
 }
 .note h3 { font-size: 1.05rem; }
+.note pre { background: var(--surface); }
 .note p { color: var(--muted); }
 pre {
   margin: 0;
@@ -512,7 +527,11 @@ pre {
 @media (max-width: 900px) {
   .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 24px; }
   .pillar:nth-child(3) { padding-left: 0; border-left: 0; }
-  .features { grid-template-columns: 1fr; }
+  .features { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; grid-auto-flow: row; }
+  .spots { gap: 64px; padding-block: 56px; }
+  .spot, .spot:nth-child(even) { grid-template-columns: 1fr; gap: 22px; }
+  .spot:nth-child(even) .spot-shot { order: 0; }
+  .spot-shot { max-width: 640px; }
   .install { grid-template-columns: 1fr; }
   .top nav { display: none; }
 }
@@ -533,8 +552,7 @@ pre {
   .pillar b { font-size: 1rem; }
   .pillar span { font-size: 0.86rem; }
   .cta .btn { flex: 1 1 100%; justify-content: center; }
-  .feature { grid-template-columns: 1fr; }
-  .feature .tag { justify-content: start; }
+  .features { grid-template-columns: 1fr; }
   .m-seg { display: none; }
   /* Three columns don't fit a phone: each row becomes its label over a Finder | Marlia pair. */
   .cmp, .cmp thead, .cmp tbody { display: block; }
@@ -590,7 +608,7 @@ pre {
   <main id="top">
     <section class="hero">
       <h1 data-h="hero.h1">免费、原生的 Mac 双栏文件管理器</h1>
-      <p class="lede" data-h="hero.lede">延续 Total Commander 的风格，为离不开键盘的人打造：按 <kbd>F5</kbd> 复制到另一栏，按 <kbd>F6</kbd> 移动，按 <kbd>Tab</kbd> 切换栏，所有快捷键都可以自定义。它基于<strong>原生 AppKit</strong> 构建，即使文件夹里有成千上万个文件也依然流畅。</p>
+      <p class="lede" data-h="hero.lede">延续 Total Commander 的风格，为离不开键盘的人打造：按 <kbd>F5</kbd> 复制到另一栏，按 <kbd>F6</kbd> 移动，按 <kbd>Tab</kbd> 切换栏，所有快捷键都可以自定义。</p>
       <div class="cta">
         <a class="btn btn-primary" data-dl href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6 10 6 6 6-6"/><path d="M4 20h16"/></svg>
@@ -687,59 +705,117 @@ pre {
           <tbody role="rowgroup">
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r1">一个窗口里并排两个文件夹</th><td role="cell" class="no" data-t="cmp.r1f">不行，需要两个窗口</td><td role="cell" class="yes m" data-t="cmp.r1m">可以，还有标签页</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r2">一键复制或移动到另一个文件夹</th><td role="cell" class="no" data-t="cmp.r2f">拖动，或 ⌘C 再 ⌥⌘V</td><td role="cell" class="yes m" data-t="cmp.r2m">F5 和 F6</td></tr>
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r9">Windows 和 Linux 的习惯按键：↵ 打开，⌫ 返回上一级，⌘X 和 ⌘V 移动文件</th><td role="cell" class="no" data-t="cmp.r9f">↵ 是重命名；打开用 ⌘↓，移动用 ⌥⌘V</td><td role="cell" class="yes m" data-t="cmp.r9m">支持，⌘↑ 同样可用</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r3">修改任意快捷键</th><td role="cell" class="part" data-t="cmp.r3f">仅限菜单项，在系统设置中</td><td role="cell" class="yes m" data-t="cmp.r3m">任何命令，在设置中</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r4">按拍摄日期或音乐标签重命名</th><td role="cell" class="no" data-t="cmp.r4f">不行</td><td role="cell" class="yes m" data-t="cmp.r4m">EXIF、视频、音频标签</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r5">同步两个文件夹</th><td role="cell" class="no" data-t="cmp.r5f">不行</td><td role="cell" class="yes m" data-t="cmp.r5m">先预览再同步</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r6">重启后仍可撤销</th><td role="cell" class="part" data-t="cmp.r6f">仅限当前会话</td><td role="cell" class="yes m" data-t="cmp.r6m">50 步</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r7">对所选文件运行自己的脚本</th><td role="cell" class="part" data-t="cmp.r7f">通过快捷指令或 Automator</td><td role="cell" class="yes m" data-t="cmp.r7m">菜单、面板或快捷键</td></tr>
             <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r8">U 盘上不留 ._ 文件</th><td role="cell" class="no" data-t="cmp.r8f">会留下</td><td role="cell" class="yes m" data-t="cmp.r8m">复制后自动清除</td></tr>
-            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r9">开源</th><td role="cell" class="no" data-t="cmp.r9f">否</td><td role="cell" class="yes m" data-t="cmp.r9m">GPL-3.0</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <section class="section" id="tour">
-      <div class="section-head">
-        <h2 data-t="tour.h2">五张照片，一个按键</h2>
-        <p data-t="tour.p">在左侧选中文件，按 F5，它们就到了备份盘上。按 Tab 和 ⌘2 切换到另一栏，以缩略图查看。</p>
-      </div>
-      <div class="tour-video">
-        <video class="only-light" data-tour muted loop playsinline preload="none" poster="../media/tour-light-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。">
-          <source src="../media/tour-light.mp4" type="video/mp4">
-        </video>
-        <video class="only-dark" data-tour muted loop playsinline preload="none" poster="../media/tour-dark-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。">
-          <source src="../media/tour-dark.mp4" type="video/mp4">
-        </video>
-      </div>
+    <div class="band">
+      <section class="section" id="tour">
+        <div class="section-head">
+          <h2 data-t="tour.h2">五张照片，一个按键</h2>
+          <p data-t="tour.p">F5 把选中的照片复制到备份盘，Tab 和 ⌘2 则在那里以缩略图显示它们。</p>
+        </div>
+        <div class="tour-video">
+          <video class="only-light" data-tour muted loop playsinline preload="none" poster="../media/tour-light-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。">
+            <source src="../media/tour-light.mp4" type="video/mp4">
+          </video>
+          <video class="only-dark" data-tour muted loop playsinline preload="none" poster="../media/tour-dark-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。">
+            <source src="../media/tour-dark.mp4" type="video/mp4">
+          </video>
+        </div>
+      </section>
+    </div>
+
+    <section class="spots" id="features" data-aria="nav.features" aria-label="功能">
+      <article class="spot" aria-labelledby="sp1-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="../media/spot-sync-light.webp" width="1600" height="1101" data-alt="sp1.alt" alt="“Synchronize Folders”窗口正在比较照片文件夹与其备份：每个文件都列出所在一侧的大小和日期，并用箭头表示复制方向；九个文件向右，两个向左。" loading="lazy">
+          <img class="only-dark" src="../media/spot-sync-dark.webp" width="1600" height="1101" data-alt="sp1.alt" alt="“Synchronize Folders”窗口正在比较照片文件夹与其备份：每个文件都列出所在一侧的大小和日期，并用箭头表示复制方向；九个文件向右，两个向左。" loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp1-h" data-t="sp1h">同步文件夹</h2>
+          <p class="tag"><kbd>⌥⇧F2</kbd></p>
+          <p data-h="sp1p">比较两个文件夹树，例如一个项目和它在 U 盘上的副本。每处差异都会列出将要执行的操作：复制到右侧、复制到左侧、跳过或删除，在你确认之前什么都不会发生。可双向或单向；被替换和删除的文件会移到废纸篓。</p>
+        </div>
+      </article>
+      <article class="spot" aria-labelledby="sp2-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="../media/spot-rename-light.webp" width="1040" height="958" data-alt="sp2.alt" alt="“Rename 25 Items”使用模板“Lisbon [Date] ###”：预览中 IMG_3101.jpg 变为 Lisbon 2026-10-03 001.jpg，其余依次类推。" loading="lazy">
+          <img class="only-dark" src="../media/spot-rename-dark.webp" width="1040" height="958" data-alt="sp2.alt" alt="“Rename 25 Items”使用模板“Lisbon [Date] ###”：预览中 IMG_3101.jpg 变为 Lisbon 2026-10-03 001.jpg，其余依次类推。" loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp2-h" data-t="sp2h">按元数据重命名</h2>
+          <p class="tag"><kbd>⌥⌘R</kbd></p>
+          <p data-h="sp2p">按拍摄时间一次重命名整个文件夹的照片。模板可以使用 EXIF 或视频中的日期和时间，以及标签中的音轨号、艺术家和标题，重命名之前就能看到每个新名称。互换名称的文件不会相互覆盖。</p>
+        </div>
+      </article>
+      <article class="spot" aria-labelledby="sp3-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="../media/spot-palette-light.webp" width="1152" height="766" data-alt="sp3.alt" alt="命令面板：输入了“syn”，第一个结果是 Synchronize Folders…，快捷键为 ⌥⇧F2。" loading="lazy">
+          <img class="only-dark" src="../media/spot-palette-dark.webp" width="1152" height="766" data-alt="sp3.alt" alt="命令面板：输入了“syn”，第一个结果是 Synchronize Folders…，快捷键为 ⌥⇧F2。" loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp3-h" data-t="sp3h">命令面板</h2>
+          <p class="tag"><kbd>⇧⌘P</kbd><kbd>⇧⌘G</kbd></p>
+          <p data-h="sp3p">任何菜单命令只需几个字母：输入“syn”，按 Return，Synchronize Folders 就会打开。“前往文件夹”接受路径并可用 <kbd>Tab</kbd> 补全，路径栏中的每个 / 都会列出相邻的文件夹。</p>
+        </div>
+      </article>
+      <article class="spot" aria-labelledby="sp4-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="../media/spot-keys-light.webp" width="1360" height="1124" data-alt="sp4.alt" alt="设置中的键盘快捷键：New Folder 设为 F7；再为 Get Info 按下 F7 后，两行都出现警告标记，并提示“F7 is also assigned to: New Folder”。" loading="lazy">
+          <img class="only-dark" src="../media/spot-keys-dark.webp" width="1360" height="1124" data-alt="sp4.alt" alt="设置中的键盘快捷键：New Folder 设为 F7；再为 Get Info 按下 F7 后，两行都出现警告标记，并提示“F7 is also assigned to: New Folder”。" loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp4-h" data-t="sp4h">任意快捷键都能改</h2>
+          <p class="tag"><kbd>⌘,</kbd></p>
+          <p data-h="sp4p">全部 75 个命令都按类别列在设置中。点按一个快捷键再按下新的组合，功能键也可以；如果已被占用，Marlia 会告诉你是哪个命令。可以单个或全部重置，你自己的脚本也能设置快捷键。</p>
+        </div>
+      </article>
+      <article class="spot" aria-labelledby="sp5-h">
+        <figure class="spot-shot">
+          <img class="only-light" src="../media/spot-space-light.webp" width="1240" height="1104" data-alt="sp5.alt" alt="“Largest Files in Photos”：列表最前面是四个视频，从 3.25 GB 到 922.7 MB，每个都带有表示大小的条形，后面是约 8 MB 的照片。" loading="lazy">
+          <img class="only-dark" src="../media/spot-space-dark.webp" width="1240" height="1104" data-alt="sp5.alt" alt="“Largest Files in Photos”：列表最前面是四个视频，从 3.25 GB 到 922.7 MB，每个都带有表示大小的条形，后面是约 8 MB 的照片。" loading="lazy">
+        </figure>
+        <div class="spot-text">
+          <h2 id="sp5-h" data-t="sp5h">空间去哪了</h2>
+          <p class="tag"><kbd>⌥⌘S</kbd><kbd>⌥⌘L</kbd></p>
+          <p data-h="sp5p">“最大文件”列出文件夹整棵树中最大的文件，每个都带有表示大小的条形，在面板中一键即达。按 <kbd>⌥⌘S</kbd>，面板里就会显示文件夹大小，并可像其他列一样排序。</p>
+        </div>
+      </article>
     </section>
 
-    <section class="section" id="features">
-      <div class="section-head">
-        <h2 data-t="feat.h2">文件管理器该有的功能，全都不用离开键盘</h2>
-      </div>
-      <div class="features">
-        <div class="feature"><h3 data-t="ft1h">双栏、标签页、三种视图</h3><span class="tag"><kbd>Tab</kbd><kbd>⌘1</kbd><kbd>⌘2</kbd><kbd>⌘3</kbd></span><p data-h="ft1p">列表、图标，以及带预览栏的 Finder 式分栏。每一栏有独立的历史记录，每个文件夹都会记住你的排序方式，窗口的标签页还能保存为命名组合。</p></div>
-        <div class="feature"><h3 data-t="ft2h">Total Commander 式操作</h3><span class="tag"><kbd>F5</kbd><kbd>F6</kbd></span><p data-h="ft2p">复制、移动到另一栏，输入名称快速定位，按 <code>*.jpg</code> 这样的模式选择，反选。用 <kbd>⇧⌘C</kbd> 从多个文件夹收集文件，一次粘贴。</p></div>
-        <div class="feature"><h3 data-t="ft3h">后台文件操作</h3><span class="tag"><kbd>⌘Z</kbd><kbd>⇧⌘Z</kbd></span><p data-h="ft3p">复制、移动、创建副本、移到废纸篓和重命名都在后台运行，可暂停或取消。撤销最多可回退 50 步，重启后依然有效。</p></div>
-        <div class="feature"><h3 data-t="ft4h">压缩包</h3><p data-h="ft4p">使用系统工具创建、解压和浏览压缩包，支持带密码的 ZIP。解压时会防范 zip-slip 路径。</p></div>
-        <div class="feature"><h3 data-t="ft5h">工作区</h3><p data-h="ft5p">把分散在磁盘各处的文件汇集到一个链接文件夹中。不会复制或移动任何文件，删除项目只会删除链接。</p></div>
-        <div class="feature"><h3 data-t="ft6h">搜索、筛选、预览</h3><span class="tag"><kbd>⌘F</kbd><kbd>⌥⌘F</kbd><kbd>Space</kbd></span><p data-h="ft6p">按子串或正则表达式递归搜索，即时筛选栏，按空格键快速查看，信息面板直接预览文件本身：文本、代码、PDF、图片、视频。</p></div>
-        <div class="feature"><h3 data-t="ft7h">融入 macOS</h3><p data-h="ft7p">与 Finder 互相拖放，颜色标签，AirDrop，在终端中打开，连接 SMB 共享，推出磁盘，直接从 .dmg 安装应用。在简介窗口中可以修改权限。复制到 U 盘时不会留下 <code>._</code> 文件。</p></div>
-        <div class="feature"><h3 data-t="ft8h">用键盘打开收藏</h3><span class="tag"><kbd>⌥⌘1…9</kbd><kbd>⌘,</kbd></span><p data-h="ft8p">收藏 1 到 9 按侧边栏顺序对应 <kbd>⌥⌘1</kbd> 到 <kbd>⌥⌘9</kbd>。完整的快捷键列表在设置中，也可以在那里修改。</p></div>
-        <div class="feature"><h3 data-t="ft9h">命令面板</h3><span class="tag"><kbd>⇧⌘P</kbd><kbd>⇧⌘G</kbd></span><p data-h="ft9p">菜单中的每条命令都能通过模糊搜索快速找到。“前往文件夹”支持输入路径并按 <kbd>Tab</kbd> 补全，路径栏中的每个 / 都能列出相邻的文件夹。</p></div>
-        <div class="feature"><h3 data-t="ft10h">比较文件夹</h3><span class="tag"><kbd>⇧F2</kbd><kbd>⌘←</kbd><kbd>⌘→</kbd></span><p data-h="ft10p">一键选出两侧缺少或较新的项目。用 <kbd>⌘←</kbd> 和 <kbd>⌘→</kbd> 在另一栏打开文件夹。</p></div>
-        <div class="feature"><h3 data-t="ft11h">自定义命令</h3><p data-h="ft11p">通过 Commands 菜单、命令面板或快捷键，对选中的文件运行你自己的 shell 脚本，可暂停或取消，就像 Total Commander 的用户命令。</p></div>
-        <div class="feature"><h3 data-t="ft12h">按元数据重命名</h3><p data-h="ft12p">批量重命名并实时预览每个新名称：日期和时间取自 EXIF 或视频，曲目号、艺术家和标题取自音频标签，还能转换大小写。</p></div>
-        <div class="feature"><h3 data-t="ft13h">同步文件夹</h3><span class="tag"><kbd>⌥⇧F2</kbd></span><p data-h="ft13p">比较两个文件夹树，在执行之前先查看每处差异及对应操作。双向或单向同步；被替换和删除的文件会移到废纸篓。</p></div>
-        <div class="feature"><h3 data-t="ft14h">空间去哪了</h3><span class="tag"><kbd>⌥⌘S</kbd><kbd>⌥⌘L</kbd></span><p data-h="ft14p">文件夹大小以条形显示各项占比；“最大文件”列出文件夹下任意位置最大的文件，一键在面板中显示。</p></div>
-      </div>
-    </section>
+    <div class="band">
+      <section class="section" id="more">
+        <div class="section-head">
+          <h2 id="more-h" data-t="more.h2">还有</h2>
+        </div>
+        <div class="features">
+          <div class="feature"><h3 data-t="ft1h">双栏、标签页、三种视图</h3><span class="tag"><kbd>Tab</kbd><kbd>⌘1</kbd><kbd>⌘2</kbd><kbd>⌘3</kbd></span><p data-h="ft1p">列表、图标，以及带预览栏的 Finder 式分栏。每一栏有独立的历史记录，每个文件夹都会记住你的排序方式，窗口的标签页还能保存为命名组合。</p></div>
+          <div class="feature"><h3 data-t="ft2h">Total Commander 式操作</h3><span class="tag"><kbd>F5</kbd><kbd>F6</kbd></span><p data-h="ft2p">复制、移动到另一栏，输入名称快速定位，按 <code>*.jpg</code> 这样的模式选择，反选。用 <kbd>⇧⌘C</kbd> 从多个文件夹收集文件，一次粘贴。</p></div>
+          <div class="feature"><h3 data-t="ft3h">后台文件操作</h3><span class="tag"><kbd>⌘Z</kbd><kbd>⇧⌘Z</kbd></span><p data-h="ft3p">复制、移动、创建副本、移到废纸篓和重命名都在后台运行，可暂停或取消。撤销最多可回退 50 步，重启后依然有效。</p></div>
+          <div class="feature"><h3 data-t="ft4h">压缩包</h3><p data-h="ft4p">使用系统工具创建、解压和浏览压缩包，支持带密码的 ZIP。解压时会防范 zip-slip 路径。</p></div>
+          <div class="feature"><h3 data-t="ft5h">工作区</h3><p data-h="ft5p">把分散在磁盘各处的文件汇集到一个链接文件夹中。不会复制或移动任何文件，删除项目只会删除链接。</p></div>
+          <div class="feature"><h3 data-t="ft6h">搜索、筛选、预览</h3><span class="tag"><kbd>⌘F</kbd><kbd>⌥⌘F</kbd><kbd>Space</kbd></span><p data-h="ft6p">按子串或正则表达式递归搜索，即时筛选栏，按空格键快速查看，信息面板直接预览文件本身：文本、代码、PDF、图片、视频。</p></div>
+          <div class="feature"><h3 data-t="ft7h">融入 macOS</h3><p data-h="ft7p">与 Finder 互相拖放，颜色标签，AirDrop，在终端中打开，连接 SMB 共享，推出磁盘，直接从 .dmg 安装应用。在简介窗口中可以修改权限。复制到 U 盘时不会留下元数据文件（<code>._</code>）。</p></div>
+          <div class="feature"><h3 data-t="ft8h">用键盘打开收藏</h3><span class="tag"><kbd>⌥⌘1…9</kbd></span><p data-h="ft8p">收藏 1 到 9 按侧边栏顺序对应 <kbd>⌥⌘1</kbd> 到 <kbd>⌥⌘9</kbd>：把一个收藏拖到更上面，它的按键也随之改变。</p></div>
+          <div class="feature"><h3 data-t="ft10h">比较文件夹</h3><span class="tag"><kbd>⇧F2</kbd><kbd>⌘←</kbd><kbd>⌘→</kbd></span><p data-h="ft10p">一键选出两侧缺少或较新的项目。用 <kbd>⌘←</kbd> 和 <kbd>⌘→</kbd> 在另一栏打开文件夹。</p></div>
+          <div class="feature"><h3 data-t="ft11h">自定义命令</h3><p data-h="ft11p">通过 Commands 菜单、命令面板或快捷键，对选中的文件运行你自己的 shell 脚本，可暂停或取消，就像 Total Commander 的用户命令。</p></div>
+        </div>
+      </section>
+    </div>
 
     <section class="section" aria-labelledby="themes-h">
       <div class="section-head">
-        <h2 id="themes-h" data-t="th.h2">七种主题，均经过对比度检查</h2>
-        <p data-t="th.p">每套配色中，文件名在面板背景和选中高亮上的对比度都不低于 4.5:1。</p>
+        <h2 id="themes-h" data-t="th.h2">外观随你喜好</h2>
+        <p data-t="th.p">七种主题，每一种里文件名在面板背景和选中高亮上都清晰可读，对比度不低于 4.5:1。</p>
       </div>
       <div class="theme-pick" role="group" aria-labelledby="themes-h">
         <button type="button" data-shot="system" aria-pressed="true" data-t="th.system">系统</button>
@@ -756,40 +832,42 @@ pre {
       </figure>
     </section>
 
-    <section class="section" id="install">
-      <div class="section-head">
-        <h2 data-t="in.h2">一分钟就能用起来</h2>
-      </div>
-      <div class="install">
-        <ol class="steps">
-          <li><div><b data-t="s1b">下载磁盘映像。</b><br><span data-h="s1t"><a href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">Marlia-1.4.dmg</a>，或从 <a href="https://github.com/lex1142/marlia/releases" target="_blank" rel="noopener">Releases</a> 获取任意版本。</span></div></li>
-          <li><div><b data-t="s2b">把 Marlia 拖到“应用程序”。</b><br><span data-t="s2t">映像中应用和“应用程序”快捷方式并排放着。</span></div></li>
-          <li><div><b data-t="s3b">首次手动打开。</b><br><span data-t="s3t">右键点按 Marlia.app 并选择“打开”。在 macOS 15 及更高版本中，前往“系统设置”→“隐私与安全性”，点按“仍要打开”。</span></div></li>
-          <li><div><b data-t="s4b">可选：授予“完全磁盘访问权限”。</b><br><span data-t="s4t">这样打开“桌面”“文稿”和“下载”时就不会反复弹出提示。</span></div></li>
-        </ol>
-        <aside class="note">
-          <h3 data-t="note.h">为什么 macOS 会先拦一下</h3>
-          <p data-t="note.p1">Marlia 仅做了 ad-hoc 签名，没有 Apple Developer ID，所以首次启动时会被 Gatekeeper 拦下。如果 macOS 提示应用“已损坏，无法打开”（通过浏览器下载或 AirDrop 后常见），请清除隔离标记：</p>
-          <pre><code>xattr -cr /Applications/Marlia.app</code></pre>
-          <p data-h="note.p2">想自己编译？没有 Xcode 工程，只需一个脚本：<code>./build.sh --run</code>。</p>
-        </aside>
-      </div>
-    </section>
-    <section class="section" id="privacy" aria-labelledby="privacy-h">
-      <div class="section-head">
-        <h2 id="privacy-h" data-t="priv.h2">隐私</h2>
-      </div>
-      <ul class="privacy">
-        <li data-h="priv.1"><strong>Marlia 应用本身不会向任何地方发送数据：</strong>没有统计分析，没有崩溃报告，也不检查更新。只有在你主动要求时（例如连接 SMB 服务器）才会访问网络。</li>
-        <li data-h="priv.2">本网站不使用 Cookie、统计分析或跟踪。字体和图片都由本网站自身提供。</li>
-        <li data-h="priv.3">你选择的语言保存在浏览器的本地存储中，不会发送到任何地方。</li>
-        <li data-h="priv.4">为显示最新版本，页面每次访问时会向 GitHub API 查询一次 Marlia 的版本发布信息，GitHub 会因此获得你的 IP 地址。</li>
-        <li data-h="priv.5">本网站托管在 GitHub Pages 上。与任何网站托管服务一样，GitHub 会记录访问请求，包括 IP 地址。详见 <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub 隐私声明</a>。</li>
-      </ul>
-    </section>
+    <div class="band">
+      <section class="section" id="install">
+        <div class="section-head">
+          <h2 data-t="in.h2">一分钟就能用起来</h2>
+        </div>
+        <div class="install">
+          <ol class="steps">
+            <li><div><b data-t="s1b">下载磁盘映像。</b><br><span data-h="s1t"><a href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">Marlia-1.4.dmg</a>，或从 <a href="https://github.com/lex1142/marlia/releases" target="_blank" rel="noopener">Releases</a> 获取任意版本。</span></div></li>
+            <li><div><b data-t="s2b">把 Marlia 拖到“应用程序”。</b><br><span data-t="s2t">映像中应用和“应用程序”快捷方式并排放着。</span></div></li>
+            <li><div><b data-t="s3b">首次手动打开。</b><br><span data-t="s3t">右键点按 Marlia.app 并选择“打开”。在 macOS 15 及更高版本中，前往“系统设置”→“隐私与安全性”，点按“仍要打开”。</span></div></li>
+            <li><div><b data-t="s4b">可选：授予“完全磁盘访问权限”。</b><br><span data-t="s4t">这样打开“桌面”“文稿”和“下载”时就不会反复弹出提示。</span></div></li>
+          </ol>
+          <aside class="note">
+            <h3 data-t="note.h">为什么 macOS 会先拦一下</h3>
+            <p data-t="note.p1">Marlia 仅做了 ad-hoc 签名，没有 Apple Developer ID，所以首次启动时会被 Gatekeeper 拦下。如果 macOS 提示应用“已损坏，无法打开”（通过浏览器下载或 AirDrop 后常见），请清除隔离标记：</p>
+            <pre><code>xattr -cr /Applications/Marlia.app</code></pre>
+            <p data-h="note.p2">想自己编译？没有 Xcode 工程，只需一个脚本：<code>./build.sh --run</code>。</p>
+          </aside>
+        </div>
+      </section>
+      <section class="section" id="privacy" aria-labelledby="privacy-h">
+        <div class="section-head">
+          <h2 id="privacy-h" data-t="priv.h2">隐私</h2>
+        </div>
+        <ul class="privacy">
+          <li data-h="priv.1"><strong>Marlia 应用本身不会向任何地方发送数据：</strong>没有统计分析，没有崩溃报告，也不检查更新。只有在你主动要求时（例如连接 SMB 服务器）才会访问网络。</li>
+          <li data-h="priv.2">本网站不使用 Cookie、统计分析或跟踪。字体和图片都由本网站自身提供。</li>
+          <li data-h="priv.3">你选择的语言保存在浏览器的本地存储中，不会发送到任何地方。</li>
+          <li data-h="priv.4">为显示最新版本，页面每次访问时会向 GitHub API 查询一次 Marlia 的版本发布信息，GitHub 会因此获得你的 IP 地址。</li>
+          <li data-h="priv.5">本网站托管在 GitHub Pages 上。与任何网站托管服务一样，GitHub 会记录访问请求，包括 IP 地址。详见 <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub 隐私声明</a>。</li>
+        </ul>
+      </section>
+    </div>
 
     <section class="final" aria-labelledby="final-h">
-      <h2 id="final-h" data-t="end.h2">用你自己的文件夹试试</h2>
+      <h2 id="final-h" data-t="end.h2">下载试试吧</h2>
       <p data-t="end.p">免费，3.9 MB，适用于 Apple 芯片上的 macOS 13.5 及更高版本。无需账号，无需订阅。</p>
       <div class="cta">
         <a class="btn btn-primary" data-dl href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">
@@ -817,7 +895,7 @@ pre {
 </div>
 
 <script type="application/json" id="i18n">
-{"zh":{"nav.compare":"对比 Finder","nav.features":"功能","nav.install":"安装","lang":"语言","hero.h1":"免费、原生的 Mac 双栏文件管理器","hero.lede":"延续 Total Commander 的风格，为离不开键盘的人打造：按 <kbd>F5<\/kbd> 复制到另一栏，按 <kbd>F6<\/kbd> 移动，按 <kbd>Tab<\/kbd> 切换栏，所有快捷键都可以自定义。它基于<strong>原生 AppKit<\/strong> 构建，即使文件夹里有成千上万个文件也依然流畅。","hero.dl":"下载 macOS 版","hero.gh":"在 GitHub 上查看","hero.req":"版本 {ver}，{size}。适用于 Apple 芯片上的 macOS 13.5 及更高版本。","hero.meta":"以 GPL-3.0 开源。仅 ad-hoc 签名，因此<a href=\"#install\">首次启动<\/a>需要多一步操作。","hero.uiEn":"应用界面为英文。","pill.aria":"为什么选择 Marlia","f1b":"免费开源","f1s":"GPL-3.0。无需账号，没有订阅，没有遥测。","f2b":"双栏同时工作","f2s":"两个文件夹并排显示。F5 复制到对面，F6 移动，Tab 切换。","f3b":"快捷键随你定","f3s":"在设置中为任何命令重新绑定快捷键，功能键也可以。","f4b":"原生，不卡顿","f4s":"基于 AppKit，不是 Electron，也不是网页。完整下载只有 {size}。","demo.aria":"交互演示。方向键选择，Tab 切换栏，F5 复制，F6 移动，按 Esc 后可用 Tab 离开演示。","k.up":"上","k.down":"下","k.switch":"切换","k.copy":"复制","k.move":"移动","k.reset":"重置","demo.hint":"在应用中，F5 和 F6 在后台运行，进度面板可暂停或取消；遇到同名文件时，可选择替换、跳过或保留两者。","log.ready":"选一个文件，然后按 F5。","log.L":"当前：左栏。","log.R":"当前：右栏。","log.copied":"已复制 {n} 到 {p}。","log.moved":"已移动 {n} 到 {p}。","log.kept":"目标中已有 {n}，两者都保留，新文件名为 {m}。","log.pick":"请先选择一个文件。此演示中文件夹不能移动。","cmp.h2":"Finder 做不到的事","cmp.p":"Finder 适合浏览文件，Marlia 适合整天复制、移动和整理文件。","cmp.r1":"一个窗口里并排两个文件夹","cmp.r1f":"不行，需要两个窗口","cmp.r1m":"可以，还有标签页","cmp.r2":"一键复制或移动到另一个文件夹","cmp.r2f":"拖动，或 ⌘C 再 ⌥⌘V","cmp.r2m":"F5 和 F6","cmp.r3":"修改任意快捷键","cmp.r3f":"仅限菜单项，在系统设置中","cmp.r3m":"任何命令，在设置中","cmp.r4":"按拍摄日期或音乐标签重命名","cmp.r4f":"不行","cmp.r4m":"EXIF、视频、音频标签","cmp.r5":"同步两个文件夹","cmp.r5f":"不行","cmp.r5m":"先预览再同步","cmp.r6":"重启后仍可撤销","cmp.r6f":"仅限当前会话","cmp.r6m":"50 步","cmp.r7":"对所选文件运行自己的脚本","cmp.r7f":"通过快捷指令或 Automator","cmp.r7m":"菜单、面板或快捷键","cmp.r8":"U 盘上不留 ._ 文件","cmp.r8f":"会留下","cmp.r8m":"复制后自动清除","cmp.r9":"开源","cmp.r9f":"否","cmp.r9m":"GPL-3.0","feat.h2":"文件管理器该有的功能，全都不用离开键盘","ft1h":"双栏、标签页、三种视图","ft1p":"列表、图标，以及带预览栏的 Finder 式分栏。每一栏有独立的历史记录，每个文件夹都会记住你的排序方式，窗口的标签页还能保存为命名组合。","ft2h":"Total Commander 式操作","ft2p":"复制、移动到另一栏，输入名称快速定位，按 <code>*.jpg<\/code> 这样的模式选择，反选。用 <kbd>⇧⌘C<\/kbd> 从多个文件夹收集文件，一次粘贴。","ft3h":"后台文件操作","ft3p":"复制、移动、创建副本、移到废纸篓和重命名都在后台运行，可暂停或取消。撤销最多可回退 50 步，重启后依然有效。","ft4h":"压缩包","ft4p":"使用系统工具创建、解压和浏览压缩包，支持带密码的 ZIP。解压时会防范 zip-slip 路径。","ft5h":"工作区","ft5p":"把分散在磁盘各处的文件汇集到一个链接文件夹中。不会复制或移动任何文件，删除项目只会删除链接。","ft6h":"搜索、筛选、预览","ft6p":"按子串或正则表达式递归搜索，即时筛选栏，按空格键快速查看，信息面板直接预览文件本身：文本、代码、PDF、图片、视频。","ft7h":"融入 macOS","ft7p":"与 Finder 互相拖放，颜色标签，AirDrop，在终端中打开，连接 SMB 共享，推出磁盘，直接从 .dmg 安装应用。在简介窗口中可以修改权限。复制到 U 盘时不会留下 <code>._<\/code> 文件。","ft8h":"用键盘打开收藏","ft8p":"收藏 1 到 9 按侧边栏顺序对应 <kbd>⌥⌘1<\/kbd> 到 <kbd>⌥⌘9<\/kbd>。完整的快捷键列表在设置中，也可以在那里修改。","ft9h":"命令面板","ft9p":"菜单中的每条命令都能通过模糊搜索快速找到。“前往文件夹”支持输入路径并按 <kbd>Tab<\/kbd> 补全，路径栏中的每个 / 都能列出相邻的文件夹。","ft10h":"比较文件夹","ft10p":"一键选出两侧缺少或较新的项目。用 <kbd>⌘←<\/kbd> 和 <kbd>⌘→<\/kbd> 在另一栏打开文件夹。","ft11h":"自定义命令","ft11p":"通过 Commands 菜单、命令面板或快捷键，对选中的文件运行你自己的 shell 脚本，可暂停或取消，就像 Total Commander 的用户命令。","ft12h":"按元数据重命名","ft12p":"批量重命名并实时预览每个新名称：日期和时间取自 EXIF 或视频，曲目号、艺术家和标题取自音频标签，还能转换大小写。","ft13h":"同步文件夹","ft13p":"比较两个文件夹树，在执行之前先查看每处差异及对应操作。双向或单向同步；被替换和删除的文件会移到废纸篓。","ft14h":"空间去哪了","ft14p":"文件夹大小以条形显示各项占比；“最大文件”列出文件夹下任意位置最大的文件，一键在面板中显示。","th.h2":"七种主题，均经过对比度检查","th.p":"每套配色中，文件名在面板背景和选中高亮上的对比度都不低于 4.5:1。","th.system":"系统","th.alt":"所选主题下的 Marlia 窗口：左侧为列表，右侧为缩略图，侧边栏和两个文件栏都使用该主题的颜色。","in.h2":"一分钟就能用起来","s1b":"下载磁盘映像。","s1t":"{DMG}，或从 {REL} 获取任意版本。","s2b":"把 Marlia 拖到“应用程序”。","s2t":"映像中应用和“应用程序”快捷方式并排放着。","s3b":"首次手动打开。","s3t":"右键点按 Marlia.app 并选择“打开”。在 macOS 15 及更高版本中，前往“系统设置”→“隐私与安全性”，点按“仍要打开”。","s4b":"可选：授予“完全磁盘访问权限”。","s4t":"这样打开“桌面”“文稿”和“下载”时就不会反复弹出提示。","note.h":"为什么 macOS 会先拦一下","note.p1":"Marlia 仅做了 ad-hoc 签名，没有 Apple Developer ID，所以首次启动时会被 Gatekeeper 拦下。如果 macOS 提示应用“已损坏，无法打开”（通过浏览器下载或 AirDrop 后常见），请清除隔离标记：","note.p2":"想自己编译？没有 Xcode 工程，只需一个脚本：<code>./build.sh --run<\/code>。","foot.lic":"Marlia 是基于 GNU GPL v3.0 的自由软件。","foot.src":"源代码","foot.rel":"版本发布","foot.bug":"报告问题","end.h2":"用你自己的文件夹试试","end.p":"免费，{size}，适用于 Apple 芯片上的 macOS 13.5 及更高版本。无需账号，无需订阅。","tour.h2":"五张照片，一个按键","tour.p":"在左侧选中文件，按 F5，它们就到了备份盘上。按 Tab 和 ⌘2 切换到另一栏，以缩略图查看。","tour.aria":"视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。","priv.h2":"隐私","priv.1":"<strong>Marlia 应用本身不会向任何地方发送数据：<\/strong>没有统计分析，没有崩溃报告，也不检查更新。只有在你主动要求时（例如连接 SMB 服务器）才会访问网络。","priv.2":"本网站不使用 Cookie、统计分析或跟踪。字体和图片都由本网站自身提供。","priv.3":"你选择的语言保存在浏览器的本地存储中，不会发送到任何地方。","priv.4":"为显示最新版本，页面每次访问时会向 GitHub API 查询一次 Marlia 的版本发布信息，GitHub 会因此获得你的 IP 地址。","priv.5":"本网站托管在 GitHub Pages 上。与任何网站托管服务一样，GitHub 会记录访问请求，包括 IP 地址。详见 <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub 隐私声明<\/a>。","meta.title":"Marlia：免费的 Mac 双栏文件管理器，Total Commander 风格","meta.desc":"免费开源的 Mac 双栏文件管理器。F5 复制，F6 移动，任何快捷键都可以重新设置。原生 AppKit，不卡顿。","langs":"语言"}}
+{"zh":{"nav.compare":"对比 Finder","nav.features":"功能","nav.install":"安装","lang":"语言","hero.h1":"免费、原生的 Mac 双栏文件管理器","hero.lede":"延续 Total Commander 的风格，为离不开键盘的人打造：按 <kbd>F5<\/kbd> 复制到另一栏，按 <kbd>F6<\/kbd> 移动，按 <kbd>Tab<\/kbd> 切换栏，所有快捷键都可以自定义。","hero.dl":"下载 macOS 版","hero.gh":"在 GitHub 上查看","hero.req":"版本 {ver}，{size}。适用于 Apple 芯片上的 macOS 13.5 及更高版本。","hero.meta":"以 GPL-3.0 开源。仅 ad-hoc 签名，因此<a href=\"#install\">首次启动<\/a>需要多一步操作。","hero.uiEn":"应用界面为英文。","pill.aria":"为什么选择 Marlia","f1b":"免费开源","f1s":"GPL-3.0。无需账号，没有订阅，没有遥测。","f2b":"双栏同时工作","f2s":"两个文件夹并排显示。F5 复制到对面，F6 移动，Tab 切换。","f3b":"快捷键随你定","f3s":"在设置中为任何命令重新绑定快捷键，功能键也可以。","f4b":"原生，不卡顿","f4s":"基于 AppKit，不是 Electron，也不是网页。完整下载只有 {size}。","demo.aria":"交互演示。方向键选择，Tab 切换栏，F5 复制，F6 移动，按 Esc 后可用 Tab 离开演示。","k.up":"上","k.down":"下","k.switch":"切换","k.copy":"复制","k.move":"移动","k.reset":"重置","demo.hint":"在应用中，F5 和 F6 在后台运行，进度面板可暂停或取消；遇到同名文件时，可选择替换、跳过或保留两者。","log.ready":"选一个文件，然后按 F5。","log.L":"当前：左栏。","log.R":"当前：右栏。","log.copied":"已复制 {n} 到 {p}。","log.moved":"已移动 {n} 到 {p}。","log.kept":"目标中已有 {n}，两者都保留，新文件名为 {m}。","log.pick":"请先选择一个文件。此演示中文件夹不能移动。","cmp.h2":"Finder 做不到的事","cmp.p":"Finder 适合浏览文件，Marlia 适合整天复制、移动和整理文件。","cmp.r1":"一个窗口里并排两个文件夹","cmp.r1f":"不行，需要两个窗口","cmp.r1m":"可以，还有标签页","cmp.r2":"一键复制或移动到另一个文件夹","cmp.r2f":"拖动，或 ⌘C 再 ⌥⌘V","cmp.r2m":"F5 和 F6","cmp.r3":"修改任意快捷键","cmp.r3f":"仅限菜单项，在系统设置中","cmp.r3m":"任何命令，在设置中","cmp.r4":"按拍摄日期或音乐标签重命名","cmp.r4f":"不行","cmp.r4m":"EXIF、视频、音频标签","cmp.r5":"同步两个文件夹","cmp.r5f":"不行","cmp.r5m":"先预览再同步","cmp.r6":"重启后仍可撤销","cmp.r6f":"仅限当前会话","cmp.r6m":"50 步","cmp.r7":"对所选文件运行自己的脚本","cmp.r7f":"通过快捷指令或 Automator","cmp.r7m":"菜单、面板或快捷键","cmp.r8":"U 盘上不留 ._ 文件","cmp.r8f":"会留下","cmp.r8m":"复制后自动清除","cmp.r9":"Windows 和 Linux 的习惯按键：↵ 打开，⌫ 返回上一级，⌘X 和 ⌘V 移动文件","cmp.r9f":"↵ 是重命名；打开用 ⌘↓，移动用 ⌥⌘V","cmp.r9m":"支持，⌘↑ 同样可用","sp1h":"同步文件夹","sp1p":"比较两个文件夹树，例如一个项目和它在 U 盘上的副本。每处差异都会列出将要执行的操作：复制到右侧、复制到左侧、跳过或删除，在你确认之前什么都不会发生。可双向或单向；被替换和删除的文件会移到废纸篓。","sp1.alt":"“Synchronize Folders”窗口正在比较照片文件夹与其备份：每个文件都列出所在一侧的大小和日期，并用箭头表示复制方向；九个文件向右，两个向左。","sp2h":"按元数据重命名","sp2p":"按拍摄时间一次重命名整个文件夹的照片。模板可以使用 EXIF 或视频中的日期和时间，以及标签中的音轨号、艺术家和标题，重命名之前就能看到每个新名称。互换名称的文件不会相互覆盖。","sp2.alt":"“Rename 25 Items”使用模板“Lisbon [Date] ###”：预览中 IMG_3101.jpg 变为 Lisbon 2026-10-03 001.jpg，其余依次类推。","sp3h":"命令面板","sp3p":"任何菜单命令只需几个字母：输入“syn”，按 Return，Synchronize Folders 就会打开。“前往文件夹”接受路径并可用 <kbd>Tab<\/kbd> 补全，路径栏中的每个 / 都会列出相邻的文件夹。","sp3.alt":"命令面板：输入了“syn”，第一个结果是 Synchronize Folders…，快捷键为 ⌥⇧F2。","sp4h":"任意快捷键都能改","sp4p":"全部 75 个命令都按类别列在设置中。点按一个快捷键再按下新的组合，功能键也可以；如果已被占用，Marlia 会告诉你是哪个命令。可以单个或全部重置，你自己的脚本也能设置快捷键。","sp4.alt":"设置中的键盘快捷键：New Folder 设为 F7；再为 Get Info 按下 F7 后，两行都出现警告标记，并提示“F7 is also assigned to: New Folder”。","sp5h":"空间去哪了","sp5p":"“最大文件”列出文件夹整棵树中最大的文件，每个都带有表示大小的条形，在面板中一键即达。按 <kbd>⌥⌘S<\/kbd>，面板里就会显示文件夹大小，并可像其他列一样排序。","sp5.alt":"“Largest Files in Photos”：列表最前面是四个视频，从 3.25 GB 到 922.7 MB，每个都带有表示大小的条形，后面是约 8 MB 的照片。","more.h2":"还有","ft1h":"双栏、标签页、三种视图","ft1p":"列表、图标，以及带预览栏的 Finder 式分栏。每一栏有独立的历史记录，每个文件夹都会记住你的排序方式，窗口的标签页还能保存为命名组合。","ft2h":"Total Commander 式操作","ft2p":"复制、移动到另一栏，输入名称快速定位，按 <code>*.jpg<\/code> 这样的模式选择，反选。用 <kbd>⇧⌘C<\/kbd> 从多个文件夹收集文件，一次粘贴。","ft3h":"后台文件操作","ft3p":"复制、移动、创建副本、移到废纸篓和重命名都在后台运行，可暂停或取消。撤销最多可回退 50 步，重启后依然有效。","ft4h":"压缩包","ft4p":"使用系统工具创建、解压和浏览压缩包，支持带密码的 ZIP。解压时会防范 zip-slip 路径。","ft5h":"工作区","ft5p":"把分散在磁盘各处的文件汇集到一个链接文件夹中。不会复制或移动任何文件，删除项目只会删除链接。","ft6h":"搜索、筛选、预览","ft6p":"按子串或正则表达式递归搜索，即时筛选栏，按空格键快速查看，信息面板直接预览文件本身：文本、代码、PDF、图片、视频。","ft7h":"融入 macOS","ft7p":"与 Finder 互相拖放，颜色标签，AirDrop，在终端中打开，连接 SMB 共享，推出磁盘，直接从 .dmg 安装应用。在简介窗口中可以修改权限。复制到 U 盘时不会留下元数据文件（<code>._<\/code>）。","ft8h":"用键盘打开收藏","ft8p":"收藏 1 到 9 按侧边栏顺序对应 <kbd>⌥⌘1<\/kbd> 到 <kbd>⌥⌘9<\/kbd>：把一个收藏拖到更上面，它的按键也随之改变。","ft10h":"比较文件夹","ft10p":"一键选出两侧缺少或较新的项目。用 <kbd>⌘←<\/kbd> 和 <kbd>⌘→<\/kbd> 在另一栏打开文件夹。","ft11h":"自定义命令","ft11p":"通过 Commands 菜单、命令面板或快捷键，对选中的文件运行你自己的 shell 脚本，可暂停或取消，就像 Total Commander 的用户命令。","th.h2":"外观随你喜好","th.p":"七种主题，每一种里文件名在面板背景和选中高亮上都清晰可读，对比度不低于 4.5:1。","th.system":"系统","th.alt":"所选主题下的 Marlia 窗口：左侧为列表，右侧为缩略图，侧边栏和两个文件栏都使用该主题的颜色。","in.h2":"一分钟就能用起来","s1b":"下载磁盘映像。","s1t":"{DMG}，或从 {REL} 获取任意版本。","s2b":"把 Marlia 拖到“应用程序”。","s2t":"映像中应用和“应用程序”快捷方式并排放着。","s3b":"首次手动打开。","s3t":"右键点按 Marlia.app 并选择“打开”。在 macOS 15 及更高版本中，前往“系统设置”→“隐私与安全性”，点按“仍要打开”。","s4b":"可选：授予“完全磁盘访问权限”。","s4t":"这样打开“桌面”“文稿”和“下载”时就不会反复弹出提示。","note.h":"为什么 macOS 会先拦一下","note.p1":"Marlia 仅做了 ad-hoc 签名，没有 Apple Developer ID，所以首次启动时会被 Gatekeeper 拦下。如果 macOS 提示应用“已损坏，无法打开”（通过浏览器下载或 AirDrop 后常见），请清除隔离标记：","note.p2":"想自己编译？没有 Xcode 工程，只需一个脚本：<code>./build.sh --run<\/code>。","foot.lic":"Marlia 是基于 GNU GPL v3.0 的自由软件。","foot.src":"源代码","foot.rel":"版本发布","foot.bug":"报告问题","end.h2":"下载试试吧","end.p":"免费，{size}，适用于 Apple 芯片上的 macOS 13.5 及更高版本。无需账号，无需订阅。","tour.h2":"五张照片，一个按键","tour.p":"F5 把选中的照片复制到备份盘，Tab 和 ⌘2 则在那里以缩略图显示它们。","tour.aria":"视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。","priv.h2":"隐私","priv.1":"<strong>Marlia 应用本身不会向任何地方发送数据：<\/strong>没有统计分析，没有崩溃报告，也不检查更新。只有在你主动要求时（例如连接 SMB 服务器）才会访问网络。","priv.2":"本网站不使用 Cookie、统计分析或跟踪。字体和图片都由本网站自身提供。","priv.3":"你选择的语言保存在浏览器的本地存储中，不会发送到任何地方。","priv.4":"为显示最新版本，页面每次访问时会向 GitHub API 查询一次 Marlia 的版本发布信息，GitHub 会因此获得你的 IP 地址。","priv.5":"本网站托管在 GitHub Pages 上。与任何网站托管服务一样，GitHub 会记录访问请求，包括 IP 地址。详见 <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub 隐私声明<\/a>。","meta.title":"Marlia：免费的 Mac 双栏文件管理器，Total Commander 风格","meta.desc":"免费开源的 Mac 双栏文件管理器。F5 复制，F6 移动，任何快捷键都可以重新设置。原生 AppKit，不卡顿。","langs":"语言"}}
 </script>
 
 <script>

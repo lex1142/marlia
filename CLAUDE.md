@@ -137,6 +137,14 @@ pane (⌘+). In that narrow window, zooming left the grid scrolled, which clippe
 thumbnails, and Home didn't bring it back.
 `docs/marlia-icon.png` is 128 px, from `App/Marlia.icns` via `sips`.
 
+Features are five **spotlights** (`spot-*.webp`: Synchronize Folders, Rename Multiple, the command
+palette, Settings ▸ Shortcuts, Largest Files), each with a screenshot that alternates sides, then an
+"And also" list of the other ten features (filled column by column, 4 + 3 + 3, so no item is left
+alone on a row). The palette and rename shots are cropped to the panel/sheet with transparent rounded
+corners; the full window made their text too small in the ~600 px picture column. Sections alternate between the page and full-width grey **bands** (`.band`: video,
+"And also", install + privacy). A band is a spread `box-shadow` clipped by `clip-path`, so it reaches
+the window edges without causing horizontal scroll.
+
 **Design direction (2026-11-28, made with the `frontend-design` skill):** the page is dressed as the app
 itself, using the macOS window surfaces of Marlia's System theme and one accent, the selected-row blue.
 Its one bold element is the live two-pane window in the hero, with a function-key bar along its bottom.
@@ -156,6 +164,15 @@ Check that list before a shoot; the theme shots show the real, empty "Workspace"
 know if you reshoot: a Columns view starts at `/` and shows `/Users` with
 the account name in it, and ScreenCaptureKit window capture replaces the traffic lights with a
 "window is being recorded" badge on macOS 26 (the video patches that corner from a still).
+
+Driving the copy through System Events while the real Marlia also runs (spotlights, 2026-11-28):
+**give the copy a different executable name** (`CFBundleExecutable`, e.g. `MarliaDemo`). System Events
+keeps a process reference by *name*, so `tell (first process whose unix id is N)` with a block body or
+a stored reference silently resolved to the real app. Single-expression one-liners happened to work,
+but any multi-step script did not. Also send keys by `key code`, never `keystroke "r"`: with a non-Latin
+layout active, `keystroke` hit a different shortcut (⌥⌘A instead of ⌥⌘R). Text goes in via the field's
+`AXValue`. Demo data for those shots (a backup copy for sync, sparse `.mov` files for Largest Files,
+which counts logical size) was created for the shoot and removed afterwards.
 
 The download button needs **no edit on release**: on load the page fetches
 `api.github.com/repos/lex1142/marlia/releases/latest` and takes the version, DMG size and URL from
