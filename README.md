@@ -29,7 +29,7 @@ A two-pane, keyboard-driven file manager for macOS in the spirit of Total Comman
 - **Search and preview.** Recursive search (substring or regex), an instant filter bar, Quick Look on Space, a live info panel that previews the file itself, and Get Info with editable permissions.
 - **macOS integration.** Drag and drop with Finder, Finder color tags, AirDrop, Open in Terminal, SMB connect, ejecting drives, and installing apps from `.dmg` files.
 - **Themes.** System, Dracula, Gruvbox Dark, Nord, Solarized Dark/Light/Auto.
-- **Rebindable shortcuts.** Change them in Settings (⌘,). The full list is in Help (⌘?).
+- **Rebindable shortcuts.** Settings (⌘,) lists every command and lets you change its keys. Help (⌘?) has a short list of the main ones.
 
 ## Install
 

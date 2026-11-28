@@ -422,11 +422,17 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
   display: grid;
   gap: 4px;
   border: 1px solid var(--line);
+  align-content: start;
 }
 .theme .row { padding: 2px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .theme .label { margin-top: 6px; font-family: var(--f-body); font-weight: 600; font-size: 0.9rem; }
 .theme-system { background: var(--m-pane); color: var(--m-text); }
 .theme-system .sel { background: var(--m-sel); color: var(--m-sel-text); }
+/* Solarized (Auto) switches with the system: shown as its light and dark palettes side by side. */
+.theme-split { padding: 0; overflow: hidden; grid-template-columns: 1fr 1fr; gap: 0; background: var(--surface); }
+.theme-split .half { padding: 12px 6px 10px 12px; display: grid; gap: 4px; min-width: 0; }
+.theme-split .half + .half { padding: 12px 12px 10px 6px; }
+.theme-split .label { grid-column: 1 / -1; margin: 0; padding: 8px 12px 10px; color: var(--ink); }
 
 /* ---------- install ---------- */
 .install { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
@@ -499,6 +505,7 @@ pre {
   .m-head, .m-row { grid-template-columns: minmax(0, 1fr) 64px; }
   .m-head .d, .m-row .d { display: none; }
   .demo-log { margin-left: 0; width: 100%; padding: 2px 6px 4px; }
+  .theme-split { grid-column: 1 / -1; }
 }
 @media (max-width: 560px) {
   .hero { padding-top: 24px; }
@@ -702,7 +709,7 @@ pre {
         <div class="feature"><h3 data-t="ft5h"></h3><p data-h="ft5p"></p></div>
         <div class="feature"><h3 data-t="ft6h"></h3><span class="tag"><kbd>⌘F</kbd><kbd>⌥⌘F</kbd><kbd>Space</kbd></span><p data-h="ft6p"></p></div>
         <div class="feature"><h3 data-t="ft7h"></h3><p data-h="ft7p"></p></div>
-        <div class="feature"><h3 data-t="ft8h"></h3><span class="tag"><kbd>⌘,</kbd><kbd>⌘?</kbd></span><p data-h="ft8p"></p></div>
+        <div class="feature"><h3 data-t="ft8h"></h3><span class="tag"><kbd>⌥⌘1…9</kbd><kbd>⌘,</kbd></span><p data-h="ft8p"></p></div>
         <div class="feature"><h3 data-t="ft9h"></h3><span class="tag"><kbd>⇧⌘P</kbd><kbd>⇧⌘G</kbd></span><p data-h="ft9p"></p></div>
         <div class="feature"><h3 data-t="ft10h"></h3><span class="tag"><kbd>⇧F2</kbd><kbd>⌘←</kbd><kbd>⌘→</kbd></span><p data-h="ft10p"></p></div>
         <div class="feature"><h3 data-t="ft11h"></h3><p data-h="ft11p"></p></div>
@@ -724,7 +731,7 @@ pre {
         <div class="theme" style="background:#2e3440;color:#d8dee9;border-color:#2e3440"><div class="row">Documents</div><div class="row" style="background:#434c5e">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#88c0d0">Nord</div></div>
         <div class="theme" style="background:#002b36;color:#eee8d5;border-color:#002b36"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.4)">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#268bd2">Solarized Dark</div></div>
         <div class="theme" style="background:#fdf6e3;color:#073642;border-color:#eee8d5"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.35)">report.pdf</div><div class="row">notes.md</div><div class="label" style="color:#1f6fa8">Solarized Light</div></div>
-        <div class="theme" style="background:linear-gradient(135deg,#fdf6e3 50%,#002b36 50%);color:#586e75;border-color:#eee8d5"><div class="row" style="background:rgba(253,246,227,.85)" data-t="th.auto1">follows the system</div><div class="row" style="background:rgba(38,139,210,.4);color:#073642">report.pdf</div><div class="row" style="background:rgba(0,43,54,.85);color:#eee8d5" data-t="th.auto2">light ↔ dark</div><div class="label" style="color:#268bd2;background:rgba(0,43,54,.85);padding:2px 6px;border-radius:4px;justify-self:start">Solarized (Auto)</div></div>
+        <div class="theme theme-split" style="border-color:#eee8d5"><div class="half" style="background:#fdf6e3;color:#073642"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.35)">report.pdf</div><div class="row">notes.md</div></div><div class="half" style="background:#002b36;color:#eee8d5"><div class="row">Documents</div><div class="row" style="background:rgba(38,139,210,.4)">report.pdf</div><div class="row">notes.md</div></div><div class="label">Solarized (Auto)</div></div>
       </div>
     </section>
 
@@ -870,8 +877,8 @@ pre {
   "ft6p": "Recursive search by substring or regex, an instant filter bar, Quick Look on Space, and an info panel that previews the file itself: text, code, PDF, images, video.",
   "ft7h": "At home on macOS",
   "ft7p": "Drag and drop with Finder, color tags, AirDrop, Open in Terminal, SMB shares, ejecting drives and installing apps straight from a .dmg. Get Info edits permissions. Copies to USB sticks leave no <code>._<\/code> files behind.",
-  "ft8h": "Your shortcuts",
-  "ft8p": "Every binding can be changed in Settings. Favorites 1 to 9 are on <kbd>⌥⌘1<\/kbd> to <kbd>⌥⌘9<\/kbd>, and the full list lives in Help.",
+  "ft8h": "Favorites from the keyboard",
+  "ft8p": "Favorites 1 to 9 open with <kbd>⌥⌘1<\/kbd> to <kbd>⌥⌘9<\/kbd>, in the order of the sidebar. Settings lists every shortcut, and that's where you change them.",
   "ft9h": "Command palette",
   "ft9p": "Every menu command is a few keystrokes away, found by fuzzy search. Go to Folder takes a typed path with <kbd>Tab<\/kbd> completion, and each / in the path bar opens the folders next to it.",
   "ft10h": "Compare folders",
@@ -887,8 +894,6 @@ pre {
   "th.h2": "Seven looks, checked for contrast",
   "th.p": "Every palette keeps file names readable at 4.5:1 or better, on the pane and on the selection.",
   "th.system": "System",
-  "th.auto1": "follows the system",
-  "th.auto2": "light ↔ dark",
   "in.h2": "Get it running in a minute",
   "s1b": "Download the image.",
   "s1t": "{DMG}, or any version from {REL}.",
@@ -917,7 +922,7 @@ pre {
   "priv.4": "To show the latest version, the page asks the GitHub API about Marlia's releases once per visit. GitHub receives your IP address with that request.",
   "priv.5": "The site is hosted on GitHub Pages. Like any web host, GitHub logs requests, including IP addresses. See the <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub Privacy Statement<\/a>.",
   "meta.title": "Marlia: free two-pane file manager for Mac, in the spirit of Total Commander",
-  "meta.desc": "Free, open-source two-pane file manager for macOS. F5 copies, F6 moves, Tab switches panes. Native AppKit, tabs, archives, workspaces and themes. Apple Silicon, macOS 13.5+.",
+  "meta.desc": "Free, open-source two-pane file manager for Mac. F5 copies, F6 moves, and any shortcut can be rebound. Native AppKit, no lag.",
   "langs": "Languages"
  },
  "ru": {
@@ -1000,8 +1005,8 @@ pre {
   "ft6p": "Рекурсивный поиск по подстроке или регулярному выражению, мгновенный фильтр, Quick Look по пробелу и информационная панель, которая показывает сам файл: текст, код, PDF, картинки, видео.",
   "ft7h": "Своя в macOS",
   "ft7p": "Перетаскивание в Finder и из него, цветные теги, AirDrop, открытие в Терминале, SMB, извлечение дисков и установка приложений прямо из .dmg. В окне свойств можно менять права доступа. Копии на флешках не обрастают файлами <code>._<\/code>.",
-  "ft8h": "Свои сочетания клавиш",
-  "ft8p": "Любое сочетание меняется в настройках. Избранное 1–9 открывается по <kbd>⌥⌘1<\/kbd>…<kbd>⌥⌘9<\/kbd>, полный список есть в справке.",
+  "ft8h": "Избранное с клавиатуры",
+  "ft8p": "Избранное 1–9 открывается по <kbd>⌥⌘1<\/kbd>…<kbd>⌥⌘9<\/kbd> в порядке боковой панели. Полный список сочетаний — в настройках, там же их можно изменить.",
   "ft9h": "Командная палитра",
   "ft9p": "Любая команда меню в паре нажатий: нечёткий поиск находит её по нескольким буквам. «Перейти к папке» принимает путь с дополнением по <kbd>Tab<\/kbd>, а каждый / в строке пути открывает список соседних папок.",
   "ft10h": "Сравнение папок",
@@ -1017,8 +1022,6 @@ pre {
   "th.h2": "Семь тем с проверенной контрастностью",
   "th.p": "В каждой палитре имена файлов читаются с контрастом не ниже 4,5:1, и на фоне панели, и на выделении.",
   "th.system": "Системная",
-  "th.auto1": "как в системе",
-  "th.auto2": "светлая ↔ тёмная",
   "in.h2": "Запуск за минуту",
   "s1b": "Скачайте образ.",
   "s1t": "{DMG} или любую версию со страницы {REL}.",
@@ -1047,7 +1050,7 @@ pre {
   "priv.4": "Чтобы показать последнюю версию, страница при каждом посещении один раз запрашивает у GitHub API сведения о релизах Marlia. При этом GitHub получает ваш IP-адрес.",
   "priv.5": "Сайт размещён на GitHub Pages. Как и любой хостинг, GitHub ведёт журналы запросов, включая IP-адреса. Подробнее в <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub Privacy Statement<\/a>.",
   "meta.title": "Marlia — бесплатный двухпанельный файловый менеджер для Mac в духе Total Commander",
-  "meta.desc": "Бесплатный двухпанельный файловый менеджер для macOS с открытым кодом. F5 копирует, F6 перемещает, Tab переключает панели. Нативный AppKit, вкладки, архивы, рабочие пространства, темы. Apple Silicon, macOS 13.5+.",
+  "meta.desc": "Бесплатный двухпанельный файловый менеджер для Mac с открытым кодом. F5 копирует, F6 перемещает, любую горячую клавишу можно переназначить. Без тормозов.",
   "langs": "Языки"
  },
  "zh": {
@@ -1130,8 +1133,8 @@ pre {
   "ft6p": "按子串或正则表达式递归搜索，即时筛选栏，按空格键快速查看，信息面板直接预览文件本身：文本、代码、PDF、图片、视频。",
   "ft7h": "融入 macOS",
   "ft7p": "与 Finder 互相拖放，颜色标签，AirDrop，在终端中打开，连接 SMB 共享，推出磁盘，直接从 .dmg 安装应用。在简介窗口中可以修改权限。复制到 U 盘时不会留下 <code>._<\/code> 文件。",
-  "ft8h": "自定义快捷键",
-  "ft8p": "所有快捷键都可以在设置中修改。收藏 1 到 9 对应 <kbd>⌥⌘1<\/kbd> 到 <kbd>⌥⌘9<\/kbd>，完整列表见帮助。",
+  "ft8h": "用键盘打开收藏",
+  "ft8p": "收藏 1 到 9 按侧边栏顺序对应 <kbd>⌥⌘1<\/kbd> 到 <kbd>⌥⌘9<\/kbd>。完整的快捷键列表在设置中，也可以在那里修改。",
   "ft9h": "命令面板",
   "ft9p": "菜单中的每条命令都能通过模糊搜索快速找到。“前往文件夹”支持输入路径并按 <kbd>Tab<\/kbd> 补全，路径栏中的每个 / 都能列出相邻的文件夹。",
   "ft10h": "比较文件夹",
@@ -1147,8 +1150,6 @@ pre {
   "th.h2": "七种主题，均经过对比度检查",
   "th.p": "每套配色中，文件名在面板背景和选中高亮上的对比度都不低于 4.5:1。",
   "th.system": "系统",
-  "th.auto1": "跟随系统",
-  "th.auto2": "浅色 ↔ 深色",
   "in.h2": "一分钟就能用起来",
   "s1b": "下载磁盘映像。",
   "s1t": "{DMG}，或从 {REL} 获取任意版本。",
@@ -1177,7 +1178,7 @@ pre {
   "priv.4": "为显示最新版本，页面每次访问时会向 GitHub API 查询一次 Marlia 的版本发布信息，GitHub 会因此获得你的 IP 地址。",
   "priv.5": "本网站托管在 GitHub Pages 上。与任何网站托管服务一样，GitHub 会记录访问请求，包括 IP 地址。详见 <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub 隐私声明<\/a>。",
   "meta.title": "Marlia：免费的 Mac 双栏文件管理器，Total Commander 风格",
-  "meta.desc": "免费开源的 macOS 双栏文件管理器。F5 复制，F6 移动，Tab 切换栏。原生 AppKit，支持标签页、压缩包、工作区和主题。适用于 Apple 芯片，macOS 13.5+。",
+  "meta.desc": "免费开源的 Mac 双栏文件管理器。F5 复制，F6 移动，任何快捷键都可以重新设置。原生 AppKit，不卡顿。",
   "langs": "语言"
  },
  "es": {
@@ -1260,8 +1261,8 @@ pre {
   "ft6p": "Búsqueda recursiva por subcadena o regex, barra de filtro instantánea, Vista rápida con la barra espaciadora y un panel de información que muestra el propio archivo: texto, código, PDF, imágenes, vídeo.",
   "ft7h": "Como en casa en macOS",
   "ft7p": "Arrastrar y soltar con Finder, etiquetas de color, AirDrop, abrir en Terminal, recursos SMB, expulsar discos e instalar apps directamente desde un .dmg. Obtener información permite cambiar los permisos. Las copias a memorias USB no dejan archivos <code>._<\/code>.",
-  "ft8h": "Tus atajos",
-  "ft8p": "Todos los atajos se pueden cambiar en Ajustes. Los favoritos del 1 al 9 están en <kbd>⌥⌘1<\/kbd> a <kbd>⌥⌘9<\/kbd>, y la lista completa está en la Ayuda.",
+  "ft8h": "Favoritos desde el teclado",
+  "ft8p": "Los favoritos del 1 al 9 se abren con <kbd>⌥⌘1<\/kbd> a <kbd>⌥⌘9<\/kbd>, en el orden de la barra lateral. La lista completa de atajos está en Ajustes, donde también se cambian.",
   "ft9h": "Paleta de comandos",
   "ft9p": "Cualquier comando del menú está a unas pocas teclas, con búsqueda aproximada. Ir a la carpeta acepta una ruta escrita con autocompletado con <kbd>Tab<\/kbd>, y cada / de la barra de ruta muestra las carpetas vecinas.",
   "ft10h": "Comparar carpetas",
@@ -1277,8 +1278,6 @@ pre {
   "th.h2": "Siete temas con el contraste comprobado",
   "th.p": "Cada paleta mantiene los nombres legibles con un contraste de 4,5:1 o más, sobre el panel y sobre la selección.",
   "th.system": "Sistema",
-  "th.auto1": "sigue al sistema",
-  "th.auto2": "claro ↔ oscuro",
   "in.h2": "Funcionando en un minuto",
   "s1b": "Descarga la imagen.",
   "s1t": "{DMG} o cualquier versión desde {REL}.",
@@ -1307,7 +1306,7 @@ pre {
   "priv.4": "Para mostrar la última versión, la página consulta una vez por visita la API de GitHub sobre las versiones de Marlia. GitHub recibe tu dirección IP con esa petición.",
   "priv.5": "El sitio está alojado en GitHub Pages. Como cualquier alojamiento web, GitHub registra las peticiones, incluidas las direcciones IP. Consulta la <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">Declaración de privacidad de GitHub<\/a>.",
   "meta.title": "Marlia: gestor de archivos gratuito de dos paneles para Mac, al estilo de Total Commander",
-  "meta.desc": "Gestor de archivos de dos paneles para macOS, gratuito y de código abierto. F5 copia, F6 mueve, Tab cambia de panel. AppKit nativo, pestañas, archivos comprimidos, espacios de trabajo y temas. Apple Silicon, macOS 13.5+.",
+  "meta.desc": "Gestor de archivos de dos paneles para Mac, gratis y de código abierto. F5 copia, F6 mueve y cualquier atajo se puede reasignar. AppKit nativo y fluido.",
   "langs": "Idiomas"
  },
  "ja": {
@@ -1390,8 +1389,8 @@ pre {
   "ft6p": "部分一致や正規表現での再帰検索、即時フィルタバー、スペースキーでクイックルック。情報パネルではテキスト、コード、PDF、画像、動画などファイルそのものをプレビューできます。",
   "ft7h": "macOS になじむ",
   "ft7p": "Finder とのドラッグ＆ドロップ、カラータグ、AirDrop、ターミナルで開く、SMB 共有への接続、ドライブの取り出し、.dmg からのアプリインストール。情報ウインドウでアクセス権を変更できます。USB メモリにコピーしても <code>._<\/code> ファイルは残りません。",
-  "ft8h": "自分好みのショートカット",
-  "ft8p": "すべてのキー割り当ては設定で変更できます。よく使う項目 1〜9 は <kbd>⌥⌘1<\/kbd>〜<kbd>⌥⌘9<\/kbd>、一覧はヘルプにあります。",
+  "ft8h": "キーボードでよく使う項目へ",
+  "ft8p": "よく使う項目 1〜9 はサイドバーの順に <kbd>⌥⌘1<\/kbd>〜<kbd>⌥⌘9<\/kbd> で開けます。ショートカットの一覧は設定にあり、そこで変更もできます。",
   "ft9h": "コマンドパレット",
   "ft9p": "メニューのすべてのコマンドを、あいまい検索ですぐに呼び出せます。「フォルダへ移動」はパスを入力して <kbd>Tab<\/kbd> で補完でき、パスバーの / をクリックすると隣のフォルダが一覧できます。",
   "ft10h": "フォルダの比較",
@@ -1407,8 +1406,6 @@ pre {
   "th.h2": "コントラストを検証した7つのテーマ",
   "th.p": "どのパレットでも、ファイル名はペイン上でも選択範囲上でも 4.5:1 以上のコントラストを保ちます。",
   "th.system": "システム",
-  "th.auto1": "システムに追従",
-  "th.auto2": "ライト ↔ ダーク",
   "in.h2": "1分で使い始められます",
   "s1b": "ディスクイメージをダウンロード。",
   "s1t": "{DMG}、または {REL} から任意のバージョン。",
@@ -1437,7 +1434,7 @@ pre {
   "priv.4": "最新バージョンを表示するため、ページは訪問ごとに一度 GitHub API に Marlia のリリース情報を問い合わせます。その際、GitHub はあなたの IP アドレスを受け取ります。",
   "priv.5": "このサイトは GitHub Pages でホストされています。一般的なホスティングと同様に、GitHub は IP アドレスを含むリクエストを記録します。詳しくは<a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub プライバシーステートメント<\/a>をご覧ください。",
   "meta.title": "Marlia：Mac 用の無料 2ペイン・ファイルマネージャー（Total Commander 風）",
-  "meta.desc": "macOS 向けの無料・オープンソースの2ペイン・ファイルマネージャー。F5 でコピー、F6 で移動、Tab でペイン切替。ネイティブ AppKit、タブ、アーカイブ、ワークスペース、テーマ。Apple シリコン、macOS 13.5 以降。",
+  "meta.desc": "Mac 向けの無料・オープンソースの2ペイン・ファイルマネージャー。F5 でコピー、F6 で移動、ショートカットはすべて変更できます。ネイティブ AppKit で軽快。",
   "langs": "言語"
  }
 }
