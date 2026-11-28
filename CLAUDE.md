@@ -123,10 +123,24 @@ The **only** request to another host is one call to the GitHub API. Fonts are se
 Google Fonts: loading them from Google sends every visitor's IP there, which German courts have held
 to be a GDPR violation. The page's **Privacy** section lists everything the site and the app send
 anywhere — anything that adds a request to another host (analytics, embeds, CDN scripts) must be
-added there too, in every language. Images and the tour video live in
-`docs/media/` (WebP stills and H.264 video, each in a `-light` and a `-dark` variant; the page shows
-the one matching its theme through the `--only-light`/`--only-dark` tokens, and the README's
-`<picture>` uses the same hero pair). `docs/marlia-icon.png` is 128 px, from `App/Marlia.icns` via `sips`.
+added there too, in every language. Fonts are two families only: Onest (a variable font, declared
+`font-weight: 100 900`, so 700/800 headings are real weights) for all text, and JetBrains Mono only
+for keys, code and paths. Media live in `docs/media/` in `-light`/`-dark` pairs (WebP stills, H.264
+video); the page shows the one matching its theme through the `--only-light`/`--only-dark` tokens.
+The page itself now shows only the tour video (and its posters). The hero still pair is no longer on
+the page, but the README's `<picture>`, the JSON-LD `screenshot` and `og.jpg` still use it.
+`docs/marlia-icon.png` is 128 px, from `App/Marlia.icns` via `sips`.
+
+**Design direction (2026-11-28, made with the `frontend-design` skill):** the page is dressed as the app
+itself, using the macOS window surfaces of Marlia's System theme and one accent, the selected-row blue.
+Its one bold element is the live two-pane window in the hero, with a function-key bar along its bottom.
+There are deliberately no section labels above headings, no "A · B · C" meta strings, no decorative
+gradients or card shadows, and no boxed icon cards. Keep it that way unless the design is revisited
+on purpose. The demo window takes keyboard focus on a fresh load on pointer:fine devices, but not on
+reload, back/forward, a URL hash or a scrolled page. It loses focus when it scrolls off screen. It takes
+Tab (switch panes) only after the visitor has used it (arrow key, F5/F6 or a click); before that, and
+after Esc, Tab moves on through the page. Without this, the autofocused window would be a keyboard
+trap. Both reviews of the redesign caught that.
 
 The media were shot on 2026-11-27 from a demo folder (`/Users/Shared/Demo`, generated content) in an
 isolated copy of the app with its own bundle id, so the real app's favorites, recents and session

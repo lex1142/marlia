@@ -27,32 +27,36 @@
 <meta name="twitter:description" content="免费开源的 macOS 双栏文件管理器。F5 复制，F6 移动，Tab 切换栏。原生 AppKit，支持标签页、压缩包、工作区和主题。适用于 Apple 芯片，macOS 13.5+。">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Marlia", "url": "https://marlia.app/zh/", "description": "免费开源的 macOS 双栏文件管理器。F5 复制，F6 移动，Tab 切换栏。原生 AppKit，支持标签页、压缩包、工作区和主题。适用于 Apple 芯片，macOS 13.5+。", "inLanguage": "zh-Hans", "applicationCategory": "UtilitiesApplication", "applicationSubCategory": "File manager", "operatingSystem": "macOS 13.5 or later", "processorRequirements": "Apple Silicon (arm64)", "softwareVersion": "1.4", "downloadUrl": "https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg", "fileSize": "3.9 MB", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "license": "https://www.gnu.org/licenses/gpl-3.0.html", "image": "https://marlia.app/media/og.jpg", "screenshot": "https://marlia.app/media/hero-light.webp", "sameAs": ["https://github.com/lex1142/marlia"]}</script>
 <!-- seo:end -->
-<meta name="theme-color" content="#f3f5fa" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1e1e1f" media="(prefers-color-scheme: dark)">
 <link rel="icon" type="image/png" href="../marlia-icon.png">
 <link rel="apple-touch-icon" href="../marlia-icon.png">
 <link rel="stylesheet" href="../fonts/fonts.css">
 <style>
-/* Layout: text column + full-width app shot, then a live replica of a Marlia window
-   (default System look), then a quiet two-column feature list. Fonts all cover Cyrillic;
-   CJK falls through to the system faces picked per language. */
+/* The page is dressed as Marlia itself: macOS window surfaces of the app's System theme, one
+   accent (the selected-row blue), one text face (Onest) and a monospace face only where the text
+   really is a key, a path or code. The one bold thing is the live two-pane window in the hero;
+   everything else stays quiet: no section labels above headings, no decorative gradients or
+   card shadows. CJK falls through to the system faces picked per language. */
 :root {
-  --paper: #f3f5fa;
-  --surface: #ffffff;
-  --ink: #0f1630;
-  --muted: #56607a;
-  --line: #d9deea;
-  --accent: #2342c8;
+  --paper: #ffffff;
+  --surface: #f5f5f7;
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --line: #dedee2;
+  --accent: #0a64d8;          /* fills: buttons, selection, ✓ */
+  --accent-text: #0a5bc4;     /* links and other accent text on --paper */
   --accent-ink: #ffffff;
-  --mark: #f5c518;
-  --code-bg: #e8ecf6;
+  --sel-tint: color-mix(in srgb, var(--accent) 9%, var(--paper));
+  --win-shadow: 0 12px 32px -20px rgba(0, 0, 0, 0.35);
+  --code-bg: #f5f5f7;
 
   /* replica of Marlia's System theme (follows the page's light/dark, like the app follows macOS) */
   --m-pane: #ffffff;
   --m-chrome: #f5f5f7;
   --m-title: #e9e9ec;
   --m-text: #1d1d1f;
-  --m-sec: #86868b;
+  --m-sec: #6e6e73;
   --m-sep: #dedee2;
   --m-sel: #0a64d8;
   --m-sel-text: #ffffff;
@@ -67,16 +71,9 @@
   --only-dark: none;
 
   --cjk: "Hiragino Sans", "PingFang SC", "Noto Sans JP", "Noto Sans SC";
-  --f-display: "Manrope", "Avenir Next", "Helvetica Neue", var(--cjk), Arial, sans-serif;
   --f-body: "Onest", -apple-system, BlinkMacSystemFont, "Helvetica Neue", var(--cjk), Arial, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, var(--cjk), monospace;
   --f-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-
-  --step-0: 1rem;
-  --step-1: 1.2rem;
-  --step-2: 1.75rem;
-  --step-3: clamp(2.2rem, 5.2vw, 4rem);
-  --radius: 10px;
 }
 :root:lang(zh) { --cjk: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei"; }
 :root:lang(ja) { --cjk: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic"; }
@@ -84,14 +81,16 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --paper: #0b1020;
-    --surface: #121a33;
-    --ink: #e8ecf7;
-    --muted: #9aa4bf;
-    --line: #243052;
-    --accent: #8197ff;
-    --accent-ink: #0b1020;
-    --code-bg: #18213f;
+    --paper: #1e1e1f;
+    --surface: #2a2a2c;
+    --ink: #ececee;
+    --muted: #98989d;
+    --line: #3c3c3f;
+    --accent: #0a5ed7;
+    --accent-text: #5aa2ff;
+    --sel-tint: color-mix(in srgb, var(--accent) 24%, var(--paper));
+    --win-shadow: none;
+    --code-bg: #2a2a2c;
     --m-pane: #1e1e1f;
     --m-chrome: #2a2a2c;
     --m-title: #333336;
@@ -113,14 +112,16 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --paper: #0b1020;
-  --surface: #121a33;
-  --ink: #e8ecf7;
-  --muted: #9aa4bf;
-  --line: #243052;
-  --accent: #8197ff;
-  --accent-ink: #0b1020;
-  --code-bg: #18213f;
+  --paper: #1e1e1f;
+  --surface: #2a2a2c;
+  --ink: #ececee;
+  --muted: #98989d;
+  --line: #3c3c3f;
+  --accent: #0a5ed7;
+  --accent-text: #5aa2ff;
+  --sel-tint: color-mix(in srgb, var(--accent) 24%, var(--paper));
+  --win-shadow: none;
+  --code-bg: #2a2a2c;
   --m-pane: #1e1e1f;
   --m-chrome: #2a2a2c;
   --m-title: #333336;
@@ -149,7 +150,7 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--f-body);
-  font-size: var(--step-0);
+  font-size: 1rem;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
@@ -159,23 +160,18 @@ body {
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-a { color: var(--accent); }
+a { color: var(--accent-text); }
 a:focus-visible, button:focus-visible, select:focus-visible, .demo:focus-visible {
-  outline: 3px solid var(--mark);
-  outline-offset: 3px;
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
 }
-h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.12; }
-h2 { font-size: var(--step-2); font-weight: 800; letter-spacing: -0.01em; }
+/* Type scale: 1 · 1.15 · 1.9 · up to 4 rem, all Onest; weight does the work a second face would. */
+h1, h2, h3 { font-family: var(--f-body); text-wrap: balance; margin: 0; line-height: 1.12; }
+h2 { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em; }
+h3 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.005em; }
 :lang(zh) h1, :lang(zh) h2, :lang(ja) h1, :lang(ja) h2 { letter-spacing: 0; line-height: 1.3; }
-:lang(ja) h1, :lang(ja) h2, :lang(ja) h3 { word-break: auto-phrase; }
+:lang(ja) h1, :lang(ja) h2, :lang(ja) h3, :lang(ja) .pillar b, :lang(ja) .cmp th, :lang(ja) .cmp td { word-break: auto-phrase; }
 p { margin: 0; }
-.eyebrow {
-  font-family: var(--f-mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
 kbd {
   font-family: var(--f-mono);
   font-size: 0.8em;
@@ -187,7 +183,7 @@ kbd {
   border: 1px solid var(--line);
   border-bottom-width: 3px;
   border-radius: 6px;
-  background: var(--surface);
+  background: var(--paper);
   color: var(--ink);
   line-height: 1.5;
   white-space: nowrap;
@@ -195,20 +191,14 @@ kbd {
 code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
 
 /* ---------- header ---------- */
-.top {
-  display: flex;
-  align-items: center;
-  gap: 16px 24px;
-  padding-block: 20px;
-}
+.top { display: flex; align-items: center; gap: 16px 24px; padding-block: 18px; }
 .brand {
-  display: flex; align-items: center; gap: 10px;
-  font-family: var(--f-display); font-weight: 800; font-size: 1.3rem;
+  display: flex; align-items: center; gap: 8px;
+  font-weight: 800; font-size: 1.25rem; letter-spacing: -0.01em;
   color: var(--ink); text-decoration: none;
   margin-right: auto;
 }
-.brand { gap: 8px; }
-.brand-icon { width: 40px; height: 40px; display: block; flex: none; margin-left: -4px; }
+.brand-icon { width: 36px; height: 36px; display: block; flex: none; margin-left: -4px; border-radius: 8px; }
 .top nav { display: flex; gap: 22px; flex-wrap: wrap; }
 .top nav a { color: var(--muted); text-decoration: none; font-weight: 500; }
 .top nav a:hover { color: var(--ink); }
@@ -229,65 +219,54 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
 }
 .lang select:hover { border-color: var(--muted); }
 
-/* ---------- hero ---------- */
-.hero { padding-block: 36px 28px; display: grid; gap: 26px; }
-.hero h1 { font-size: var(--step-3); font-weight: 800; letter-spacing: -0.025em; max-width: 17ch; }
-:lang(zh) .hero h1, :lang(ja) .hero h1 { max-width: 15em; }
-.lede { font-size: var(--step-1); color: var(--muted); max-width: 60ch; line-height: 1.55; }
+/* ---------- hero: headline, download, then the live window ---------- */
+.hero { padding-block: 32px 24px; display: grid; gap: 20px; }
+.hero h1 { font-size: clamp(2.2rem, 4.6vw, 3.4rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.06; max-width: 21ch; }
+:lang(ru) .hero h1 { max-width: 25ch; }
+:lang(zh) .hero h1, :lang(ja) .hero h1 { max-width: 15em; letter-spacing: 0; }
+/* Keeps a hyphenated term on one line ("two-pane" broke as "two- / pane"). */
+.nw { white-space: nowrap; }
+.lede { font-size: 1.18rem; color: var(--muted); max-width: 34em; line-height: 1.55; }
 .lede strong { color: var(--ink); font-weight: 600; }
-.cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch; }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .btn {
-  display: inline-flex; align-items: center; gap: 12px;
-  padding: 12px 22px;
-  border-radius: var(--radius);
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 11px 20px;
+  border-radius: 8px;
   font-weight: 600; font-size: 1rem;
   text-decoration: none;
-  transition: transform .12s ease, box-shadow .12s ease;
+  white-space: nowrap;
 }
-.btn-text { display: grid; gap: 1px; text-align: left; }
-.btn-label { white-space: nowrap; line-height: 1.3; }
-.btn small { font-family: var(--f-mono); font-weight: 400; font-size: 0.76rem; opacity: 0.85; white-space: nowrap; line-height: 1.3; }
-.btn-primary {
-  background: var(--accent); color: var(--accent-ink);
-  box-shadow: 0 3px 0 color-mix(in srgb, var(--accent) 60%, #000);
-}
-.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 0 color-mix(in srgb, var(--accent) 60%, #000); }
-.btn-primary:active { transform: translateY(2px); box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 60%, #000); }
-.btn-ghost { color: var(--ink); border: 1px solid var(--line); background: var(--surface); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: color-mix(in srgb, var(--accent) 86%, #000); }
+.btn-ghost { color: var(--ink); background: var(--surface); border: 1px solid var(--line); }
 .btn-ghost:hover { border-color: var(--muted); }
-.btn svg { width: 20px; height: 20px; flex: none; }
-.meta { font-family: var(--f-mono); font-size: 0.8rem; color: var(--muted); }
+.btn svg { width: 19px; height: 19px; flex: none; }
+.meta { font-size: 0.92rem; color: var(--muted); max-width: 38em; }
+.hero .demo { margin-top: 10px; }
+.demo-hint { font-size: 0.92rem; color: var(--muted); max-width: 38em; }
 
 .only-light { display: var(--only-light); }
 .only-dark { display: var(--only-dark); }
 
-.shot {
-  margin: 8px 0 0;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  box-shadow: 0 30px 60px -30px rgba(15, 22, 48, 0.45);
-  background: var(--surface);
-}
-.shot img { width: 100%; height: auto; max-width: 100%; aspect-ratio: 2880 / 1720; }
-.shot-cap { margin-top: -12px; font-size: 0.85rem; color: var(--muted); }
-
-/* ---------- facts strip ---------- */
-.facts {
+/* ---------- the four points: plain text in columns, no boxes ---------- */
+.pillars {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-block: 40px 16px;
+  padding-block: 28px;
   border-block: 1px solid var(--line);
-  margin-block: 48px;
 }
-.fact { padding: 22px 20px 22px 0; display: grid; gap: 4px; align-content: start; }
-.fact + .fact { padding-left: 20px; border-left: 1px solid var(--line); }
-.fact b { font-family: var(--f-display); font-size: 1.35rem; font-weight: 800; white-space: nowrap; }
-.fact span { color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.pillar { display: grid; gap: 6px; align-content: start; padding-inline: 22px; }
+.pillar:first-child { padding-left: 0; }
+.pillar + .pillar { border-left: 1px solid var(--line); }
+.pillar b { font-size: 1.12rem; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; }
+.pillar span { color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
 
 /* ---------- sections ---------- */
-.section { padding-block: 24px 56px; display: grid; gap: 24px; }
-.section-head { display: grid; gap: 10px; max-width: 64ch; }
-.section-head p { color: var(--muted); }
+.section { padding-block: 56px; display: grid; gap: 24px; }
+.section-head { display: grid; gap: 10px; }
+.section-head p { color: var(--muted); max-width: 36em; }
 
 /* ---------- demo: a Marlia window, System theme ---------- */
 .demo {
@@ -299,7 +278,7 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
   border: 1px solid var(--m-sep);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 24px 50px -28px rgba(15, 22, 48, 0.5);
+  box-shadow: var(--win-shadow);
   outline: none;
 }
 .m-titlebar {
@@ -350,7 +329,7 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
   background: var(--m-pane);
 }
 .m-head .sorted::after { content: " ⌃"; font-size: 10px; }
-.m-list { list-style: none; margin: 0; padding: 4px 6px; min-height: 216px; }
+.m-list { list-style: none; margin: 0; padding: 4px 6px; min-height: 190px; }
 .m-row { height: 26px; border-radius: 5px; padding: 0 6px; }
 .m-row .n { display: flex; align-items: center; gap: 7px; min-width: 0; }
 .m-row .n span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -376,22 +355,28 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
 .m-status span { overflow: hidden; text-overflow: ellipsis; }
 .m-status .free { color: var(--m-sec); flex: none; }
 
-.keys { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+/* The function-key bar along the bottom of the window, as in a two-pane commander: each key is
+   a real control of the demo, so the bar is structure, not decoration. */
+.fbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 2px 4px;
+  padding: 6px 8px;
+  background: var(--m-chrome);
+  border-top: 1px solid var(--m-sep);
+}
 .key {
-  font: inherit; font-size: 0.92rem;
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--surface);
-  color: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 5px 12px 5px 5px;
+  font: inherit;
+  display: inline-flex; align-items: center; gap: 7px;
+  background: transparent;
+  color: var(--m-text);
+  border: 0;
+  border-radius: 6px;
+  padding: 4px 10px 4px 4px;
   cursor: pointer;
 }
-.key:hover { border-color: var(--muted); }
-.key kbd { transition: background .12s ease, color .12s ease; }
-.key.pressed kbd { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-.demo-log { margin-left: auto; color: var(--muted); font-size: 0.9rem; min-height: 1.4em; }
-.demo-hint { font-size: 0.9rem; color: var(--muted); max-width: 80ch; }
+.key:hover { background: var(--m-sel-off); }
+.key kbd { font-size: 11px; background: var(--m-pane); border-color: var(--m-sep); color: var(--m-text); }
+.key.pressed kbd { background: var(--m-sel); color: var(--m-sel-text); border-color: var(--m-sel); }
+.demo-log { margin-left: auto; padding-inline: 8px; color: var(--m-text); min-height: 1.4em; }
 
 /* ---------- features ---------- */
 .features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
@@ -402,46 +387,59 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
   padding-block: 22px;
   border-top: 1px solid var(--line);
   align-items: baseline;
+  align-content: start;
 }
-.feature h3 { font-size: 1.12rem; font-weight: 800; }
-.feature .tag { font-family: var(--f-mono); font-size: 0.78rem; color: var(--accent); white-space: nowrap; }
-.feature p { grid-column: 1 / -1; color: var(--muted); max-width: 54ch; }
+.feature .tag { display: flex; flex-wrap: wrap; gap: 4px; justify-content: end; }
+.feature .tag kbd { font-size: 0.85rem; }
+.feature p { grid-column: 1 / -1; color: var(--muted); max-width: 36em; }
 
-/* ---------- tour: video + feature shots ---------- */
+/* ---------- tour video ---------- */
 .tour-video {
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--line);
-  box-shadow: 0 30px 60px -30px rgba(15, 22, 48, 0.45);
   background: var(--surface);
 }
-.tour-video video { width: 100%; height: auto; max-width: 100%; aspect-ratio: 1920 / 1146; }
-.gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 24px; }
-.gallery figure { margin: 0; display: grid; gap: 12px; align-content: start; }
-.gallery .frame {
-  aspect-ratio: 16 / 10;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  background: var(--code-bg);
-  overflow: hidden;
+.tour-video video { width: 100%; height: auto; max-width: 100%; aspect-ratio: 1920 / 1146; vertical-align: top; }
+
+/* ---------- comparison with Finder ---------- */
+.cmp-scroll { overflow-x: auto; }
+.cmp { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.98rem; }
+/* Top-aligned: the mark is pinned to a cell's first line, so a cell's text must start there too. */
+.cmp th, .cmp td { padding: 13px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+.cmp tbody tr:last-child > * { border-bottom: 0; }
+.cmp thead th { font-weight: 700; font-size: 1.05rem; white-space: nowrap; }
+.cmp thead th img { width: 22px; height: 22px; vertical-align: -5px; margin-right: 7px; border-radius: 5px; }
+.cmp tbody th { font-weight: 600; width: 46%; padding-left: 0; }
+.cmp td { color: var(--muted); width: 27%; position: relative; padding-left: calc(24px + 1.15em); }
+/* The Marlia column reads as a selected column: the same blue the app selects rows with. */
+.cmp .m { background: var(--sel-tint); color: var(--ink); border-bottom-color: color-mix(in srgb, var(--accent) 20%, var(--line)); }
+.cmp thead .m { border-radius: 10px 10px 0 0; }
+.cmp tbody tr:last-child .m { border-radius: 0 0 10px 10px; }
+.cmp td, .cmp th, .pillar span { text-wrap: pretty; }
+.cmp td::before {
+  position: absolute; left: 16px; top: calc(13px + 0.27em);
+  display: grid; place-items: center;
+  width: 1.35em; height: 1.35em;
+  border-radius: 50%;
+  font-size: 0.85em; font-weight: 800; line-height: 1;
 }
-/* Every still is cut to 16:10 at the source, so it fills the frame edge to edge; cover only
-   guards against a rounding pixel. */
-/* No display here: .only-light/.only-dark decide which of the two variants is shown. */
-.gallery .frame img { width: 100%; height: 100%; object-fit: cover; vertical-align: top; }
-.gallery figcaption { display: grid; gap: 4px; }
-.gallery figcaption b { font-family: var(--f-display); font-weight: 800; font-size: 1.02rem; }
-.gallery figcaption span { color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+/* The second content value is the alt text: empty, since the cell's words already say yes/no/partly.
+   Browsers without that syntax drop the declaration and keep the first one. */
+.cmp .yes::before { content: "✓"; content: "✓" / ""; color: var(--accent-ink); background: var(--accent); }
+.cmp .no::before { content: "✕"; content: "✕" / ""; color: var(--muted); background: color-mix(in srgb, var(--muted) 16%, transparent); }
+.cmp .part::before { content: "~"; content: "~" / ""; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--muted); }
 
 /* ---------- themes ---------- */
 /* Seven equal cards, 4 + 3 (2 per row on a phone). Fixed columns rather than auto-fill, which
-   made them narrow enough to cut off the Auto card's text. */
+   made them narrow enough to cut off the Auto card's text. These are samples of the app's
+   palettes, so they keep their own colours. */
 .themes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .theme {
   border-radius: 10px;
   padding: 12px;
-  font-family: var(--f-mono);
-  font-size: 0.78rem;
+  font-family: var(--f-ui);
+  font-size: 0.82rem;
   display: grid;
   gap: 4px;
   border: 1px solid var(--line);
@@ -453,29 +451,30 @@ code { font-family: var(--f-mono); font-size: 0.9em; white-space: nowrap; }
 
 /* ---------- install ---------- */
 .install { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+/* Numbered because it is a sequence. */
 .steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 16px; }
 .steps li { counter-increment: s; display: grid; grid-template-columns: 2.2em 1fr; gap: 12px; }
 .steps li::before {
   content: counter(s);
-  font-family: var(--f-display); font-weight: 800; font-size: 1.05rem;
+  font-weight: 700; font-size: 1rem;
   width: 2em; height: 2em; border-radius: 50%;
   display: grid; place-items: center;
   background: var(--accent); color: var(--accent-ink);
 }
 .note {
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 20px;
   display: grid;
   gap: 12px;
   font-size: 0.95rem;
 }
-.note h3 { font-size: 1.1rem; font-weight: 800; }
+.note h3 { font-size: 1.05rem; }
 .note p { color: var(--muted); }
 pre {
   margin: 0;
-  background: var(--code-bg);
+  background: var(--paper);
+  border: 1px solid var(--line);
   border-radius: 8px;
   padding: 12px 14px;
   overflow-x: auto;
@@ -484,9 +483,15 @@ pre {
 }
 
 /* ---------- privacy ---------- */
-.privacy { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; max-width: 72ch; color: var(--muted); }
-.privacy li::marker { color: var(--accent); }
+.privacy { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; max-width: 38em; color: var(--muted); }
+.privacy li::marker { color: var(--muted); }
 .privacy strong { color: var(--ink); font-weight: 600; }
+
+/* ---------- closing download ---------- */
+.final { padding-block: 56px 72px; border-top: 1px solid var(--line); display: grid; gap: 14px; justify-items: start; }
+.final h2 { font-size: clamp(1.9rem, 4vw, 2.7rem); letter-spacing: -0.03em; }
+.final p { color: var(--muted); max-width: 34em; }
+.final .cta { margin-top: 6px; }
 
 /* ---------- footer ---------- */
 .foot {
@@ -501,10 +506,8 @@ pre {
 .foot a { color: var(--muted); }
 
 @media (max-width: 900px) {
-  .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .fact:nth-child(3) { padding-left: 0; border-left: 0; }
-  .fact:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 24px; }
+  .pillar:nth-child(3) { padding-left: 0; border-left: 0; }
   .features { grid-template-columns: 1fr; }
   .themes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .install { grid-template-columns: 1fr; }
@@ -516,15 +519,33 @@ pre {
   .m-list { min-height: 0; }
   .m-head, .m-row { grid-template-columns: minmax(0, 1fr) 64px; }
   .m-head .d, .m-row .d { display: none; }
-  .demo-log { margin-left: 0; width: 100%; }
+  .demo-log { margin-left: 0; width: 100%; padding: 2px 6px 4px; }
 }
 @media (max-width: 560px) {
-  .gallery { grid-template-columns: 1fr; }
-  .facts { grid-template-columns: 1fr; }
-  .fact, .fact + .fact, .fact:nth-child(3) { padding-left: 0; border-left: 0; }
-  .fact + .fact { border-top: 1px solid var(--line); }
-  .cta .btn { width: 100%; }
+  .hero { padding-top: 24px; }
+  .hero h1 { font-size: 2.1rem; }
+  .lede { font-size: 1.06rem; }
+  .pillar { padding-inline: 12px; }
+  .pillar:nth-child(odd) { padding-left: 0; }
+  .pillar b { font-size: 1rem; }
+  .pillar span { font-size: 0.86rem; }
+  .cta .btn { flex: 1 1 100%; justify-content: center; }
+  .feature { grid-template-columns: 1fr; }
+  .feature .tag { justify-content: start; }
   .m-seg { display: none; }
+  /* Three columns don't fit a phone: each row becomes its label over a Finder | Marlia pair. */
+  .cmp, .cmp thead, .cmp tbody { display: block; }
+  .cmp { font-size: 0.9rem; }
+  .cmp tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 6px; }
+  .cmp thead td { display: none; }
+  .cmp th, .cmp td { width: auto; padding: 9px 10px; border-bottom: 0; }
+  .cmp thead th { padding-bottom: 4px; }
+  .cmp tbody tr { border-top: 1px solid var(--line); padding-block: 6px 10px; }
+  .cmp tbody th { grid-column: 1 / -1; width: auto; padding: 6px 0 2px; }
+  .cmp td { padding-left: calc(18px + 1.15em); }
+  .cmp td::before { left: 10px; top: calc(9px + 0.27em); }
+  .cmp .m, .cmp thead .m, .cmp tbody tr:last-child .m { border-radius: 8px; }
+  .cmp thead .m { background: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
@@ -545,8 +566,7 @@ pre {
       Marlia
     </a>
     <nav aria-label="Sections">
-      <a href="#tour" data-t="nav.tour">实际操作</a>
-      <a href="#demo" data-t="nav.demo">试用</a>
+      <a href="#compare" data-t="nav.compare">对比 Finder</a>
       <a href="#features" data-t="nav.features">功能</a>
       <a href="#install" data-t="nav.install">安装</a>
       <a href="https://github.com/lex1142/marlia" target="_blank" rel="noopener">GitHub</a>
@@ -566,103 +586,20 @@ pre {
 
   <main id="top">
     <section class="hero">
-      <p class="eyebrow" data-t="hero.eyebrow">免费开源 · macOS 13.5+ · Apple 芯片</p>
-      <h1 data-h="hero.h1">为离不开键盘的人打造的双栏文件管理器</h1>
-      <p class="lede" data-h="hero.lede">Marlia 把 Total Commander 的工作方式带到了 Mac 上。按 <kbd>F5</kbd> 复制到另一栏，按 <kbd>F6</kbd> 移动，按 <kbd>Tab</kbd> 切换栏。它基于<strong>原生 AppKit 视图</strong>构建，即使文件夹里有成千上万个文件也依然流畅。</p>
+      <h1 data-h="hero.h1">免费、原生的 Mac 双栏文件管理器</h1>
+      <p class="lede" data-h="hero.lede">延续 Total Commander 的风格，为离不开键盘的人打造：按 <kbd>F5</kbd> 复制到另一栏，按 <kbd>F6</kbd> 移动，按 <kbd>Tab</kbd> 切换栏，所有快捷键都可以自定义。它基于<strong>原生 AppKit</strong> 构建，即使文件夹里有成千上万个文件也依然流畅。</p>
       <div class="cta">
         <a class="btn btn-primary" data-dl href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6 10 6 6 6-6"/><path d="M4 20h16"/></svg>
-          <span class="btn-text"><span class="btn-label" data-t="hero.dl">下载 macOS 版</span><small data-t="hero.dlmeta">v1.4 · DMG · 3.9 MB</small></span>
+          <span class="btn-label" data-t="hero.dl">下载 macOS 版</span>
         </a>
         <a class="btn btn-ghost" href="https://github.com/lex1142/marlia" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
           <span class="btn-label" data-t="hero.gh">在 GitHub 上查看</span>
         </a>
       </div>
-      <p class="meta"><span data-h="hero.meta">GPL-3.0 · 仅 ad-hoc 签名，参见<a href="#install">首次启动</a></span><span data-t="hero.uiEn"> · 应用界面为英文</span></p>
-
-      <figure class="shot" style="margin-inline:0">
-        <img class="only-light" src="../media/hero-light.webp" fetchpriority="high" data-alt="hero.alt" alt="系统主题下的 Marlia：左栏以列表显示里斯本的照片，选中了四张；右栏以缩略图显示京都的照片。" width="2880" height="1720">
-        <img class="only-dark" src="../media/hero-dark.webp" data-alt="hero.alt" alt="系统主题下的 Marlia：左栏以列表显示里斯本的照片，选中了四张；右栏以缩略图显示京都的照片。" width="2880" height="1720" loading="lazy">
-      </figure>
-      <p class="shot-cap" data-t="hero.cap">左侧列表，右侧图标，侧边栏汇集收藏、磁盘和工作区。</p>
-    </section>
-
-    <section class="facts" aria-label="At a glance">
-      <div class="fact"><b data-t="f1b">原生</b><span data-t="f1s">使用 AppKit 表格与网格，不是 Electron，也不是网页。</span></div>
-      <div class="fact"><b data-t="f2b">3.9 MB</b><span data-t="f2s">这就是完整下载，无需安装任何运行时。</span></div>
-      <div class="fact"><b data-t="f3b">50 步</b><span data-t="f3s">复制、移动、重命名和移到废纸篓都可撤销和重做。</span></div>
-      <div class="fact"><b data-t="f4b">免费</b><span data-t="f4s">GPL-3.0。无需账户，没有遥测，没有试用期。</span></div>
-    </section>
-
-    <section class="section" id="tour">
-      <div class="section-head">
-        <p class="eyebrow" data-t="tour.eyebrow">实际操作</p>
-        <h2 data-t="tour.h2">五张照片，一个按键</h2>
-        <p data-t="tour.p">在左侧选中文件，按 F5，它们就到了备份盘上。按 Tab 和 ⌘2 切换到另一栏，以缩略图查看。</p>
-      </div>
-      <div class="tour-video">
-        <video class="only-light" data-tour muted loop playsinline preload="none" poster="../media/tour-light-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。">
-          <source src="../media/tour-light.mp4" type="video/mp4">
-        </video>
-        <video class="only-dark" data-tour muted loop playsinline preload="none" poster="../media/tour-dark-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。">
-          <source src="../media/tour-dark.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="gallery">
-        <figure>
-          <div class="frame">
-            <img class="only-light" src="../media/columns2-light.webp" alt="" loading="lazy">
-            <img class="only-dark" src="../media/columns2-dark.webp" alt="" loading="lazy">
-          </div>
-          <figcaption><b data-t="c1t">带预览的分栏</b><span data-t="c1p">Finder 式分栏，选中的文件夹会在右侧展开。</span></figcaption>
-        </figure>
-        <figure>
-          <div class="frame">
-            <img class="only-light" src="../media/rename-light.webp" alt="" loading="lazy">
-            <img class="only-dark" src="../media/rename-dark.webp" alt="" loading="lazy">
-          </div>
-          <figcaption><b data-t="c2t">批量重命名</b><span data-t="c2p">使用“Lisbon 2026 – ##”这样的模式，实时预览每个新名称。</span></figcaption>
-        </figure>
-        <figure>
-          <div class="frame">
-            <img class="only-light" src="../media/conflict-light.webp" alt="" loading="lazy">
-            <img class="only-dark" src="../media/conflict-dark.webp" alt="" loading="lazy">
-          </div>
-          <figcaption><b data-t="c3t">同名冲突</b><span data-t="c3p">跳过、替换或保留两者，可只针对当前文件，也可应用到全部。</span></figcaption>
-        </figure>
-        <figure>
-          <div class="frame">
-            <img class="only-light" src="../media/progress2-light.webp" alt="" loading="lazy">
-            <img class="only-dark" src="../media/progress2-dark.webp" alt="" loading="lazy">
-          </div>
-          <figcaption><b data-t="c4t">后台复制</b><span data-t="c4p">大文件复制在后台进行，随时可以暂停或取消。</span></figcaption>
-        </figure>
-        <figure>
-          <div class="frame">
-            <img class="only-light" src="../media/workspace-light.webp" alt="" loading="lazy">
-            <img class="only-dark" src="../media/workspace-dark.webp" alt="" loading="lazy">
-          </div>
-          <figcaption><b data-t="c5t">工作区</b><span data-t="c5p">一个链接文件夹，收纳来自任何位置的文件，不移动任何东西。</span></figcaption>
-        </figure>
-        <figure>
-          <div class="frame">
-            <img class="only-light" src="../media/search-light.webp" alt="" loading="lazy">
-            <img class="only-dark" src="../media/search-dark.webp" alt="" loading="lazy">
-          </div>
-          <figcaption><b data-t="c6t">递归搜索</b><span data-t="c6p">按名称、子串或正则表达式搜索整个文件夹树。</span></figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <section class="section" id="demo">
-      <div class="section-head">
-        <p class="eyebrow" data-t="demo.eyebrow">动手试试</p>
-        <h2 data-t="demo.h2">双栏操作，一键一步</h2>
-        <p data-t="demo.p">点击一栏后用键盘操作，或点击下面的按键。选中文件，按一个键，它就会出现在另一栏里。这就是 Marlia 默认的“系统”外观。</p>
-      </div>
-
-      <div class="demo" id="demoBox" tabindex="0" data-aria="demo.aria" aria-label="交互演示。方向键选择，Tab 切换栏，F5 复制，F6 移动。">
+      <p class="meta"><span data-t="hero.req">版本 1.4，3.9 MB。适用于 Apple 芯片上的 macOS 13.5 及更高版本。</span> <span data-h="hero.meta">以 GPL-3.0 开源。仅 ad-hoc 签名，因此<a href="#install">首次启动</a>需要多一步操作。</span><span data-t="hero.uiEn">应用界面为英文。</span></p>
+      <div class="demo" id="demoBox" tabindex="0" role="group" data-aria="demo.aria" aria-label="交互演示。方向键选择，Tab 切换栏，F5 复制，F6 移动，按 Esc 后可用 Tab 离开演示。">
         <div class="m-titlebar">
           <div class="m-lights" aria-hidden="true"><i></i><i></i><i></i></div>
           <span class="m-title" id="mTitle">Trip</span>
@@ -705,46 +642,99 @@ pre {
             <div class="m-status"><span class="cnt"></span><span class="free">98.9 GB free</span></div>
           </div>
         </div>
-      </div>
-
-      <div class="keys">
-        <button class="key" type="button" data-k="ArrowUp" id="kUp"><kbd>↑</kbd><span data-t="k.up">上</span></button>
-        <button class="key" type="button" data-k="ArrowDown" id="kDown"><kbd>↓</kbd><span data-t="k.down">下</span></button>
-        <button class="key" type="button" data-k="Tab" id="kTab"><kbd>Tab</kbd><span data-t="k.switch">切换</span></button>
-        <button class="key" type="button" data-k="F5" id="kF5"><kbd>F5</kbd><span data-t="k.copy">复制</span></button>
-        <button class="key" type="button" data-k="F6" id="kF6"><kbd>F6</kbd><span data-t="k.move">移动</span></button>
-        <button class="key" type="button" data-k="reset" id="kReset"><kbd>↺</kbd><span data-t="k.reset">重置</span></button>
-        <span class="demo-log" id="demoLog" aria-live="polite"></span>
+        <div class="fbar">
+          <button class="key" type="button" data-k="ArrowUp" id="kUp"><kbd>↑</kbd><span data-t="k.up">上</span></button>
+          <button class="key" type="button" data-k="ArrowDown" id="kDown"><kbd>↓</kbd><span data-t="k.down">下</span></button>
+          <button class="key" type="button" data-k="Tab" id="kTab"><kbd>Tab</kbd><span data-t="k.switch">切换</span></button>
+          <button class="key" type="button" data-k="F5" id="kF5"><kbd>F5</kbd><span data-t="k.copy">复制</span></button>
+          <button class="key" type="button" data-k="F6" id="kF6"><kbd>F6</kbd><span data-t="k.move">移动</span></button>
+          <button class="key" type="button" data-k="reset" id="kReset"><kbd>↺</kbd><span data-t="k.reset">重置</span></button>
+          <span class="demo-log" id="demoLog" aria-live="polite"></span>
+        </div>
       </div>
       <p class="demo-hint" data-t="demo.hint">在应用中，F5 和 F6 在后台运行，进度面板可暂停或取消；遇到同名文件时，可选择替换、跳过或保留两者。</p>
     </section>
 
+    <!-- The four things the page leads with: free, two panes, your shortcuts, native. -->
+    <section class="pillars" data-aria="pill.aria" aria-label="为什么选择 Marlia">
+      <div class="pillar">
+        <b data-t="f1b">免费开源</b><span data-t="f1s">GPL-3.0。无需账号，没有订阅，没有遥测。</span>
+      </div>
+      <div class="pillar">
+        <b data-t="f2b">双栏同时工作</b><span data-t="f2s">两个文件夹并排显示。F5 复制到对面，F6 移动，Tab 切换。</span>
+      </div>
+      <div class="pillar">
+        <b data-t="f3b">快捷键随你定</b><span data-t="f3s">在设置中为任何命令重新绑定快捷键，功能键也可以。</span>
+      </div>
+      <div class="pillar">
+        <b data-t="f4b">原生，不卡顿</b><span data-t="f4s">基于 AppKit，不是 Electron，也不是网页。完整下载只有 3.9 MB。</span>
+      </div>
+    </section>
+
+    <section class="section" id="compare" aria-labelledby="cmp-h">
+      <div class="section-head">
+        <h2 id="cmp-h" data-t="cmp.h2">Finder 做不到的事</h2>
+        <p data-t="cmp.p">Finder 适合浏览文件，Marlia 适合整天复制、移动和整理文件。</p>
+      </div>
+      <div class="cmp-scroll">
+        <table class="cmp" role="table" aria-labelledby="cmp-h">
+          <thead role="rowgroup">
+            <tr role="row"><td role="cell"></td><th scope="col" role="columnheader">Finder</th><th scope="col" role="columnheader" class="m"><img src="../marlia-icon.png" alt="" width="22" height="22">Marlia</th></tr>
+          </thead>
+          <tbody role="rowgroup">
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r1">一个窗口里并排两个文件夹</th><td role="cell" class="no" data-t="cmp.r1f">不行，需要两个窗口</td><td role="cell" class="yes m" data-t="cmp.r1m">可以，还有标签页</td></tr>
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r2">一键复制或移动到另一个文件夹</th><td role="cell" class="no" data-t="cmp.r2f">拖动，或 ⌘C 再 ⌥⌘V</td><td role="cell" class="yes m" data-t="cmp.r2m">F5 和 F6</td></tr>
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r3">修改任意快捷键</th><td role="cell" class="part" data-t="cmp.r3f">仅限菜单项，在系统设置中</td><td role="cell" class="yes m" data-t="cmp.r3m">任何命令，在设置中</td></tr>
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r4">按拍摄日期或音乐标签重命名</th><td role="cell" class="no" data-t="cmp.r4f">不行</td><td role="cell" class="yes m" data-t="cmp.r4m">EXIF、视频、音频标签</td></tr>
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r5">同步两个文件夹</th><td role="cell" class="no" data-t="cmp.r5f">不行</td><td role="cell" class="yes m" data-t="cmp.r5m">先预览再同步</td></tr>
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r6">重启后仍可撤销</th><td role="cell" class="part" data-t="cmp.r6f">仅限当前会话</td><td role="cell" class="yes m" data-t="cmp.r6m">50 步</td></tr>
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r7">对所选文件运行自己的脚本</th><td role="cell" class="part" data-t="cmp.r7f">通过快捷指令或 Automator</td><td role="cell" class="yes m" data-t="cmp.r7m">菜单、面板或快捷键</td></tr>
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r8">U 盘上不留 ._ 文件</th><td role="cell" class="no" data-t="cmp.r8f">会留下</td><td role="cell" class="yes m" data-t="cmp.r8m">复制后自动清除</td></tr>
+            <tr role="row"><th scope="row" role="rowheader" data-t="cmp.r9">开源</th><td role="cell" class="no" data-t="cmp.r9f">否</td><td role="cell" class="yes m" data-t="cmp.r9m">GPL-3.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="tour">
+      <div class="section-head">
+        <h2 data-t="tour.h2">五张照片，一个按键</h2>
+        <p data-t="tour.p">在左侧选中文件，按 F5，它们就到了备份盘上。按 Tab 和 ⌘2 切换到另一栏，以缩略图查看。</p>
+      </div>
+      <div class="tour-video">
+        <video class="only-light" data-tour muted loop playsinline preload="none" poster="../media/tour-light-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。">
+          <source src="../media/tour-light.mp4" type="video/mp4">
+        </video>
+        <video class="only-dark" data-tour muted loop playsinline preload="none" poster="../media/tour-dark-poster.webp" width="1920" height="1146" data-aria="tour.aria" aria-label="视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。">
+          <source src="../media/tour-dark.mp4" type="video/mp4">
+        </video>
+      </div>
+    </section>
+
     <section class="section" id="features">
       <div class="section-head">
-        <p class="eyebrow" data-t="feat.eyebrow">功能</p>
         <h2 data-t="feat.h2">文件管理器该有的功能，全都不用离开键盘</h2>
       </div>
       <div class="features">
-        <div class="feature"><h3 data-t="ft1h">双栏、标签页、三种视图</h3><span class="tag">Tab · ⌘1 ⌘2 ⌘3</span><p data-h="ft1p">列表、图标，以及带预览栏的 Finder 式分栏。每一栏有独立的历史记录，每个文件夹都会记住你的排序方式，窗口的标签页还能保存为命名组合。</p></div>
-        <div class="feature"><h3 data-t="ft2h">Total Commander 式操作</h3><span class="tag">F5 · F6</span><p data-h="ft2p">复制、移动到另一栏，输入名称快速定位，按 <code>*.jpg</code> 这样的模式选择，反选。用 <kbd>⇧⌘C</kbd> 从多个文件夹收集文件，一次粘贴。</p></div>
-        <div class="feature"><h3 data-t="ft3h">后台文件操作</h3><span class="tag">⌘Z · ⇧⌘Z</span><p data-h="ft3p">复制、移动、创建副本、移到废纸篓和重命名都在后台运行，可暂停或取消。撤销最多可回退 50 步，重启后依然有效。</p></div>
-        <div class="feature"><h3 data-t="ft4h">压缩包</h3><span class="tag">zip · tar.gz/bz2/xz</span><p data-h="ft4p">使用系统工具创建、解压和浏览压缩包，支持带密码的 ZIP。解压时会防范 zip-slip 路径。</p></div>
-        <div class="feature"><h3 data-t="ft5h">工作区</h3><span class="tag">symlinks</span><p data-h="ft5p">把分散在磁盘各处的文件汇集到一个链接文件夹中。不会复制或移动任何文件，删除项目只会删除链接。</p></div>
-        <div class="feature"><h3 data-t="ft6h">搜索、筛选、预览</h3><span class="tag">⌘F · ⌥⌘F · Space</span><p data-h="ft6p">按子串或正则表达式递归搜索，即时筛选栏，按空格键快速查看，信息面板直接预览文件本身：文本、代码、PDF、图片、视频。</p></div>
-        <div class="feature"><h3 data-t="ft7h">融入 macOS</h3><span class="tag">Finder · AirDrop · SMB</span><p data-h="ft7p">与 Finder 互相拖放，颜色标签，AirDrop，在终端中打开，连接 SMB 共享，推出磁盘，直接从 .dmg 安装应用。在简介窗口中可以修改权限。复制到 U 盘时不会留下 <code>._</code> 文件。</p></div>
-        <div class="feature"><h3 data-t="ft8h">自定义快捷键</h3><span class="tag">⌘, · ⌘?</span><p data-h="ft8p">所有快捷键都可以在设置中修改。收藏 1 到 9 对应 <kbd>⌥⌘1</kbd> 到 <kbd>⌥⌘9</kbd>，完整列表见帮助。</p></div>
-        <div class="feature"><h3 data-t="ft9h">命令面板</h3><span class="tag">⇧⌘P · ⇧⌘G</span><p data-h="ft9p">菜单中的每条命令都能通过模糊搜索快速找到。“前往文件夹”支持输入路径并按 <kbd>Tab</kbd> 补全，路径栏中的每个 / 都能列出相邻的文件夹。</p></div>
-        <div class="feature"><h3 data-t="ft10h">比较文件夹</h3><span class="tag">⇧F2 · ⌘← ⌘→</span><p data-h="ft10p">一键选出两侧缺少或较新的项目。用 <kbd>⌘←</kbd> 和 <kbd>⌘→</kbd> 在另一栏打开文件夹。</p></div>
-        <div class="feature"><h3 data-t="ft11h">自定义命令</h3><span class="tag">Commands · zsh</span><p data-h="ft11p">通过 Commands 菜单、命令面板或快捷键，对选中的文件运行你自己的 shell 脚本，可暂停或取消，就像 Total Commander 的用户命令。</p></div>
-        <div class="feature"><h3 data-t="ft12h">按元数据重命名</h3><span class="tag">[Date] · [Track]</span><p data-h="ft12p">批量重命名并实时预览每个新名称：日期和时间取自 EXIF 或视频，曲目号、艺术家和标题取自音频标签，还能转换大小写。</p></div>
-        <div class="feature"><h3 data-t="ft13h">同步文件夹</h3><span class="tag">⌥⇧F2</span><p data-h="ft13p">比较两个文件夹树，在执行之前先查看每处差异及对应操作。双向或单向同步；被替换和删除的文件会移到废纸篓。</p></div>
-        <div class="feature"><h3 data-t="ft14h">空间去哪了</h3><span class="tag">⌥⌘S · ⌥⌘L</span><p data-h="ft14p">文件夹大小以条形显示各项占比；“最大文件”列出文件夹下任意位置最大的文件，一键在面板中显示。</p></div>
+        <div class="feature"><h3 data-t="ft1h">双栏、标签页、三种视图</h3><span class="tag"><kbd>Tab</kbd><kbd>⌘1</kbd><kbd>⌘2</kbd><kbd>⌘3</kbd></span><p data-h="ft1p">列表、图标，以及带预览栏的 Finder 式分栏。每一栏有独立的历史记录，每个文件夹都会记住你的排序方式，窗口的标签页还能保存为命名组合。</p></div>
+        <div class="feature"><h3 data-t="ft2h">Total Commander 式操作</h3><span class="tag"><kbd>F5</kbd><kbd>F6</kbd></span><p data-h="ft2p">复制、移动到另一栏，输入名称快速定位，按 <code>*.jpg</code> 这样的模式选择，反选。用 <kbd>⇧⌘C</kbd> 从多个文件夹收集文件，一次粘贴。</p></div>
+        <div class="feature"><h3 data-t="ft3h">后台文件操作</h3><span class="tag"><kbd>⌘Z</kbd><kbd>⇧⌘Z</kbd></span><p data-h="ft3p">复制、移动、创建副本、移到废纸篓和重命名都在后台运行，可暂停或取消。撤销最多可回退 50 步，重启后依然有效。</p></div>
+        <div class="feature"><h3 data-t="ft4h">压缩包</h3><p data-h="ft4p">使用系统工具创建、解压和浏览压缩包，支持带密码的 ZIP。解压时会防范 zip-slip 路径。</p></div>
+        <div class="feature"><h3 data-t="ft5h">工作区</h3><p data-h="ft5p">把分散在磁盘各处的文件汇集到一个链接文件夹中。不会复制或移动任何文件，删除项目只会删除链接。</p></div>
+        <div class="feature"><h3 data-t="ft6h">搜索、筛选、预览</h3><span class="tag"><kbd>⌘F</kbd><kbd>⌥⌘F</kbd><kbd>Space</kbd></span><p data-h="ft6p">按子串或正则表达式递归搜索，即时筛选栏，按空格键快速查看，信息面板直接预览文件本身：文本、代码、PDF、图片、视频。</p></div>
+        <div class="feature"><h3 data-t="ft7h">融入 macOS</h3><p data-h="ft7p">与 Finder 互相拖放，颜色标签，AirDrop，在终端中打开，连接 SMB 共享，推出磁盘，直接从 .dmg 安装应用。在简介窗口中可以修改权限。复制到 U 盘时不会留下 <code>._</code> 文件。</p></div>
+        <div class="feature"><h3 data-t="ft8h">自定义快捷键</h3><span class="tag"><kbd>⌘,</kbd><kbd>⌘?</kbd></span><p data-h="ft8p">所有快捷键都可以在设置中修改。收藏 1 到 9 对应 <kbd>⌥⌘1</kbd> 到 <kbd>⌥⌘9</kbd>，完整列表见帮助。</p></div>
+        <div class="feature"><h3 data-t="ft9h">命令面板</h3><span class="tag"><kbd>⇧⌘P</kbd><kbd>⇧⌘G</kbd></span><p data-h="ft9p">菜单中的每条命令都能通过模糊搜索快速找到。“前往文件夹”支持输入路径并按 <kbd>Tab</kbd> 补全，路径栏中的每个 / 都能列出相邻的文件夹。</p></div>
+        <div class="feature"><h3 data-t="ft10h">比较文件夹</h3><span class="tag"><kbd>⇧F2</kbd><kbd>⌘←</kbd><kbd>⌘→</kbd></span><p data-h="ft10p">一键选出两侧缺少或较新的项目。用 <kbd>⌘←</kbd> 和 <kbd>⌘→</kbd> 在另一栏打开文件夹。</p></div>
+        <div class="feature"><h3 data-t="ft11h">自定义命令</h3><p data-h="ft11p">通过 Commands 菜单、命令面板或快捷键，对选中的文件运行你自己的 shell 脚本，可暂停或取消，就像 Total Commander 的用户命令。</p></div>
+        <div class="feature"><h3 data-t="ft12h">按元数据重命名</h3><p data-h="ft12p">批量重命名并实时预览每个新名称：日期和时间取自 EXIF 或视频，曲目号、艺术家和标题取自音频标签，还能转换大小写。</p></div>
+        <div class="feature"><h3 data-t="ft13h">同步文件夹</h3><span class="tag"><kbd>⌥⇧F2</kbd></span><p data-h="ft13p">比较两个文件夹树，在执行之前先查看每处差异及对应操作。双向或单向同步；被替换和删除的文件会移到废纸篓。</p></div>
+        <div class="feature"><h3 data-t="ft14h">空间去哪了</h3><span class="tag"><kbd>⌥⌘S</kbd><kbd>⌥⌘L</kbd></span><p data-h="ft14p">文件夹大小以条形显示各项占比；“最大文件”列出文件夹下任意位置最大的文件，一键在面板中显示。</p></div>
       </div>
     </section>
 
     <section class="section" aria-labelledby="themes-h">
       <div class="section-head">
-        <p class="eyebrow" data-t="th.eyebrow">主题</p>
         <h2 id="themes-h" data-t="th.h2">七种主题，均经过对比度检查</h2>
         <p data-t="th.p">每套配色中，文件名在面板背景和选中高亮上的对比度都不低于 4.5:1。</p>
       </div>
@@ -761,7 +751,6 @@ pre {
 
     <section class="section" id="install">
       <div class="section-head">
-        <p class="eyebrow" data-t="in.eyebrow">安装</p>
         <h2 data-t="in.h2">一分钟就能用起来</h2>
       </div>
       <div class="install">
@@ -791,6 +780,21 @@ pre {
         <li data-h="priv.5">本网站托管在 GitHub Pages 上。与任何网站托管服务一样，GitHub 会记录访问请求，包括 IP 地址。详见 <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub 隐私声明</a>。</li>
       </ul>
     </section>
+
+    <section class="final" aria-labelledby="final-h">
+      <h2 id="final-h" data-t="end.h2">用你自己的文件夹试试</h2>
+      <p data-t="end.p">免费，3.9 MB，适用于 Apple 芯片上的 macOS 13.5 及更高版本。无需账号，无需订阅。</p>
+      <div class="cta">
+        <a class="btn btn-primary" data-dl href="https://github.com/lex1142/marlia/releases/download/v1.4/Marlia-1.4.dmg" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6 10 6 6 6-6"/><path d="M4 20h16"/></svg>
+          <span class="btn-label" data-t="hero.dl">下载 macOS 版</span>
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/lex1142/marlia" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+          <span class="btn-label" data-t="hero.gh">在 GitHub 上查看</span>
+        </a>
+      </div>
+    </section>
   </main>
 
   <footer class="foot">
@@ -806,7 +810,7 @@ pre {
 </div>
 
 <script type="application/json" id="i18n">
-{"zh":{"nav.demo":"试用","nav.features":"功能","nav.install":"安装","lang":"语言","hero.eyebrow":"免费开源 · macOS 13.5+ · Apple 芯片","hero.h1":"为离不开键盘的人打造的双栏文件管理器","hero.lede":"Marlia 把 Total Commander 的工作方式带到了 Mac 上。按 <kbd>F5<\/kbd> 复制到另一栏，按 <kbd>F6<\/kbd> 移动，按 <kbd>Tab<\/kbd> 切换栏。它基于<strong>原生 AppKit 视图<\/strong>构建，即使文件夹里有成千上万个文件也依然流畅。","hero.dl":"下载 macOS 版","hero.dlmeta":"v{ver} · DMG · {size}","hero.gh":"在 GitHub 上查看","hero.meta":"GPL-3.0 · 仅 ad-hoc 签名，参见<a href=\"#install\">首次启动<\/a>","hero.uiEn":" · 应用界面为英文","f1b":"原生","f1s":"使用 AppKit 表格与网格，不是 Electron，也不是网页。","f2b":"{size}","f2s":"这就是完整下载，无需安装任何运行时。","f3b":"50 步","f3s":"复制、移动、重命名和移到废纸篓都可撤销和重做。","f4b":"免费","f4s":"GPL-3.0。无需账户，没有遥测，没有试用期。","demo.eyebrow":"动手试试","demo.h2":"双栏操作，一键一步","demo.p":"点击一栏后用键盘操作，或点击下面的按键。选中文件，按一个键，它就会出现在另一栏里。这就是 Marlia 默认的“系统”外观。","demo.aria":"交互演示。方向键选择，Tab 切换栏，F5 复制，F6 移动。","k.up":"上","k.down":"下","k.switch":"切换","k.copy":"复制","k.move":"移动","k.reset":"重置","demo.hint":"在应用中，F5 和 F6 在后台运行，进度面板可暂停或取消；遇到同名文件时，可选择替换、跳过或保留两者。","log.ready":"就绪。","log.L":"当前：左栏。","log.R":"当前：右栏。","log.copied":"已复制 {n} 到 {p}。","log.moved":"已移动 {n} 到 {p}。","log.kept":"目标中已有 {n}，两者都保留，新文件名为 {m}。","log.pick":"请先选择一个文件。此演示中文件夹不能移动。","feat.eyebrow":"功能","feat.h2":"文件管理器该有的功能，全都不用离开键盘","ft1h":"双栏、标签页、三种视图","ft1p":"列表、图标，以及带预览栏的 Finder 式分栏。每一栏有独立的历史记录，每个文件夹都会记住你的排序方式，窗口的标签页还能保存为命名组合。","ft2h":"Total Commander 式操作","ft2p":"复制、移动到另一栏，输入名称快速定位，按 <code>*.jpg<\/code> 这样的模式选择，反选。用 <kbd>⇧⌘C<\/kbd> 从多个文件夹收集文件，一次粘贴。","ft3h":"后台文件操作","ft3p":"复制、移动、创建副本、移到废纸篓和重命名都在后台运行，可暂停或取消。撤销最多可回退 50 步，重启后依然有效。","ft4h":"压缩包","ft4p":"使用系统工具创建、解压和浏览压缩包，支持带密码的 ZIP。解压时会防范 zip-slip 路径。","ft5h":"工作区","ft5p":"把分散在磁盘各处的文件汇集到一个链接文件夹中。不会复制或移动任何文件，删除项目只会删除链接。","ft6h":"搜索、筛选、预览","ft6p":"按子串或正则表达式递归搜索，即时筛选栏，按空格键快速查看，信息面板直接预览文件本身：文本、代码、PDF、图片、视频。","ft7h":"融入 macOS","ft7p":"与 Finder 互相拖放，颜色标签，AirDrop，在终端中打开，连接 SMB 共享，推出磁盘，直接从 .dmg 安装应用。在简介窗口中可以修改权限。复制到 U 盘时不会留下 <code>._<\/code> 文件。","ft8h":"自定义快捷键","ft8p":"所有快捷键都可以在设置中修改。收藏 1 到 9 对应 <kbd>⌥⌘1<\/kbd> 到 <kbd>⌥⌘9<\/kbd>，完整列表见帮助。","ft9h":"命令面板","ft9p":"菜单中的每条命令都能通过模糊搜索快速找到。“前往文件夹”支持输入路径并按 <kbd>Tab<\/kbd> 补全，路径栏中的每个 / 都能列出相邻的文件夹。","ft10h":"比较文件夹","ft10p":"一键选出两侧缺少或较新的项目。用 <kbd>⌘←<\/kbd> 和 <kbd>⌘→<\/kbd> 在另一栏打开文件夹。","ft11h":"自定义命令","ft11p":"通过 Commands 菜单、命令面板或快捷键，对选中的文件运行你自己的 shell 脚本，可暂停或取消，就像 Total Commander 的用户命令。","ft12h":"按元数据重命名","ft12p":"批量重命名并实时预览每个新名称：日期和时间取自 EXIF 或视频，曲目号、艺术家和标题取自音频标签，还能转换大小写。","ft13h":"同步文件夹","ft13p":"比较两个文件夹树，在执行之前先查看每处差异及对应操作。双向或单向同步；被替换和删除的文件会移到废纸篓。","ft14h":"空间去哪了","ft14p":"文件夹大小以条形显示各项占比；“最大文件”列出文件夹下任意位置最大的文件，一键在面板中显示。","th.eyebrow":"主题","th.h2":"七种主题，均经过对比度检查","th.p":"每套配色中，文件名在面板背景和选中高亮上的对比度都不低于 4.5:1。","th.system":"系统","th.auto1":"跟随系统","th.auto2":"浅色 ↔ 深色","in.eyebrow":"安装","in.h2":"一分钟就能用起来","s1b":"下载磁盘映像。","s1t":"{DMG}，或从 {REL} 获取任意版本。","s2b":"把 Marlia 拖到“应用程序”。","s2t":"映像中应用和“应用程序”快捷方式并排放着。","s3b":"首次手动打开。","s3t":"右键点按 Marlia.app 并选择“打开”。在 macOS 15 及更高版本中，前往“系统设置”→“隐私与安全性”，点按“仍要打开”。","s4b":"可选：授予“完全磁盘访问权限”。","s4t":"这样打开“桌面”“文稿”和“下载”时就不会反复弹出提示。","note.h":"为什么 macOS 会先拦一下","note.p1":"Marlia 仅做了 ad-hoc 签名，没有 Apple Developer ID，所以首次启动时会被 Gatekeeper 拦下。如果 macOS 提示应用“已损坏，无法打开”（通过浏览器下载或 AirDrop 后常见），请清除隔离标记：","note.p2":"想自己编译？没有 Xcode 工程，只需一个脚本：<code>./build.sh --run<\/code>。","foot.lic":"Marlia 是基于 GNU GPL v3.0 的自由软件。","foot.src":"源代码","foot.rel":"版本发布","foot.bug":"报告问题","nav.tour":"实际操作","hero.alt":"系统主题下的 Marlia：左栏以列表显示里斯本的照片，选中了四张；右栏以缩略图显示京都的照片。","hero.cap":"左侧列表，右侧图标，侧边栏汇集收藏、磁盘和工作区。","tour.eyebrow":"实际操作","tour.h2":"五张照片，一个按键","tour.p":"在左侧选中文件，按 F5，它们就到了备份盘上。按 Tab 和 ⌘2 切换到另一栏，以缩略图查看。","tour.aria":"视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。","c1t":"带预览的分栏","c1p":"Finder 式分栏，选中的文件夹会在右侧展开。","c2t":"批量重命名","c2p":"使用“Lisbon 2026 – ##”这样的模式，实时预览每个新名称。","c3t":"同名冲突","c3p":"跳过、替换或保留两者，可只针对当前文件，也可应用到全部。","c4t":"后台复制","c4p":"大文件复制在后台进行，随时可以暂停或取消。","c5t":"工作区","c5p":"一个链接文件夹，收纳来自任何位置的文件，不移动任何东西。","c6t":"递归搜索","c6p":"按名称、子串或正则表达式搜索整个文件夹树。","priv.h2":"隐私","priv.1":"<strong>Marlia 应用本身不会向任何地方发送数据：<\/strong>没有统计分析，没有崩溃报告，也不检查更新。只有在你主动要求时（例如连接 SMB 服务器）才会访问网络。","priv.2":"本网站不使用 Cookie、统计分析或跟踪。字体和图片都由本网站自身提供。","priv.3":"你选择的语言保存在浏览器的本地存储中，不会发送到任何地方。","priv.4":"为显示最新版本，页面每次访问时会向 GitHub API 查询一次 Marlia 的版本发布信息，GitHub 会因此获得你的 IP 地址。","priv.5":"本网站托管在 GitHub Pages 上。与任何网站托管服务一样，GitHub 会记录访问请求，包括 IP 地址。详见 <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub 隐私声明<\/a>。","meta.title":"Marlia：免费的 Mac 双栏文件管理器，Total Commander 风格","meta.desc":"免费开源的 macOS 双栏文件管理器。F5 复制，F6 移动，Tab 切换栏。原生 AppKit，支持标签页、压缩包、工作区和主题。适用于 Apple 芯片，macOS 13.5+。","langs":"语言"}}
+{"zh":{"nav.compare":"对比 Finder","nav.features":"功能","nav.install":"安装","lang":"语言","hero.h1":"免费、原生的 Mac 双栏文件管理器","hero.lede":"延续 Total Commander 的风格，为离不开键盘的人打造：按 <kbd>F5<\/kbd> 复制到另一栏，按 <kbd>F6<\/kbd> 移动，按 <kbd>Tab<\/kbd> 切换栏，所有快捷键都可以自定义。它基于<strong>原生 AppKit<\/strong> 构建，即使文件夹里有成千上万个文件也依然流畅。","hero.dl":"下载 macOS 版","hero.gh":"在 GitHub 上查看","hero.req":"版本 {ver}，{size}。适用于 Apple 芯片上的 macOS 13.5 及更高版本。","hero.meta":"以 GPL-3.0 开源。仅 ad-hoc 签名，因此<a href=\"#install\">首次启动<\/a>需要多一步操作。","hero.uiEn":"应用界面为英文。","pill.aria":"为什么选择 Marlia","f1b":"免费开源","f1s":"GPL-3.0。无需账号，没有订阅，没有遥测。","f2b":"双栏同时工作","f2s":"两个文件夹并排显示。F5 复制到对面，F6 移动，Tab 切换。","f3b":"快捷键随你定","f3s":"在设置中为任何命令重新绑定快捷键，功能键也可以。","f4b":"原生，不卡顿","f4s":"基于 AppKit，不是 Electron，也不是网页。完整下载只有 {size}。","demo.aria":"交互演示。方向键选择，Tab 切换栏，F5 复制，F6 移动，按 Esc 后可用 Tab 离开演示。","k.up":"上","k.down":"下","k.switch":"切换","k.copy":"复制","k.move":"移动","k.reset":"重置","demo.hint":"在应用中，F5 和 F6 在后台运行，进度面板可暂停或取消；遇到同名文件时，可选择替换、跳过或保留两者。","log.ready":"选一个文件，然后按 F5。","log.L":"当前：左栏。","log.R":"当前：右栏。","log.copied":"已复制 {n} 到 {p}。","log.moved":"已移动 {n} 到 {p}。","log.kept":"目标中已有 {n}，两者都保留，新文件名为 {m}。","log.pick":"请先选择一个文件。此演示中文件夹不能移动。","cmp.h2":"Finder 做不到的事","cmp.p":"Finder 适合浏览文件，Marlia 适合整天复制、移动和整理文件。","cmp.r1":"一个窗口里并排两个文件夹","cmp.r1f":"不行，需要两个窗口","cmp.r1m":"可以，还有标签页","cmp.r2":"一键复制或移动到另一个文件夹","cmp.r2f":"拖动，或 ⌘C 再 ⌥⌘V","cmp.r2m":"F5 和 F6","cmp.r3":"修改任意快捷键","cmp.r3f":"仅限菜单项，在系统设置中","cmp.r3m":"任何命令，在设置中","cmp.r4":"按拍摄日期或音乐标签重命名","cmp.r4f":"不行","cmp.r4m":"EXIF、视频、音频标签","cmp.r5":"同步两个文件夹","cmp.r5f":"不行","cmp.r5m":"先预览再同步","cmp.r6":"重启后仍可撤销","cmp.r6f":"仅限当前会话","cmp.r6m":"50 步","cmp.r7":"对所选文件运行自己的脚本","cmp.r7f":"通过快捷指令或 Automator","cmp.r7m":"菜单、面板或快捷键","cmp.r8":"U 盘上不留 ._ 文件","cmp.r8f":"会留下","cmp.r8m":"复制后自动清除","cmp.r9":"开源","cmp.r9f":"否","cmp.r9m":"GPL-3.0","feat.h2":"文件管理器该有的功能，全都不用离开键盘","ft1h":"双栏、标签页、三种视图","ft1p":"列表、图标，以及带预览栏的 Finder 式分栏。每一栏有独立的历史记录，每个文件夹都会记住你的排序方式，窗口的标签页还能保存为命名组合。","ft2h":"Total Commander 式操作","ft2p":"复制、移动到另一栏，输入名称快速定位，按 <code>*.jpg<\/code> 这样的模式选择，反选。用 <kbd>⇧⌘C<\/kbd> 从多个文件夹收集文件，一次粘贴。","ft3h":"后台文件操作","ft3p":"复制、移动、创建副本、移到废纸篓和重命名都在后台运行，可暂停或取消。撤销最多可回退 50 步，重启后依然有效。","ft4h":"压缩包","ft4p":"使用系统工具创建、解压和浏览压缩包，支持带密码的 ZIP。解压时会防范 zip-slip 路径。","ft5h":"工作区","ft5p":"把分散在磁盘各处的文件汇集到一个链接文件夹中。不会复制或移动任何文件，删除项目只会删除链接。","ft6h":"搜索、筛选、预览","ft6p":"按子串或正则表达式递归搜索，即时筛选栏，按空格键快速查看，信息面板直接预览文件本身：文本、代码、PDF、图片、视频。","ft7h":"融入 macOS","ft7p":"与 Finder 互相拖放，颜色标签，AirDrop，在终端中打开，连接 SMB 共享，推出磁盘，直接从 .dmg 安装应用。在简介窗口中可以修改权限。复制到 U 盘时不会留下 <code>._<\/code> 文件。","ft8h":"自定义快捷键","ft8p":"所有快捷键都可以在设置中修改。收藏 1 到 9 对应 <kbd>⌥⌘1<\/kbd> 到 <kbd>⌥⌘9<\/kbd>，完整列表见帮助。","ft9h":"命令面板","ft9p":"菜单中的每条命令都能通过模糊搜索快速找到。“前往文件夹”支持输入路径并按 <kbd>Tab<\/kbd> 补全，路径栏中的每个 / 都能列出相邻的文件夹。","ft10h":"比较文件夹","ft10p":"一键选出两侧缺少或较新的项目。用 <kbd>⌘←<\/kbd> 和 <kbd>⌘→<\/kbd> 在另一栏打开文件夹。","ft11h":"自定义命令","ft11p":"通过 Commands 菜单、命令面板或快捷键，对选中的文件运行你自己的 shell 脚本，可暂停或取消，就像 Total Commander 的用户命令。","ft12h":"按元数据重命名","ft12p":"批量重命名并实时预览每个新名称：日期和时间取自 EXIF 或视频，曲目号、艺术家和标题取自音频标签，还能转换大小写。","ft13h":"同步文件夹","ft13p":"比较两个文件夹树，在执行之前先查看每处差异及对应操作。双向或单向同步；被替换和删除的文件会移到废纸篓。","ft14h":"空间去哪了","ft14p":"文件夹大小以条形显示各项占比；“最大文件”列出文件夹下任意位置最大的文件，一键在面板中显示。","th.h2":"七种主题，均经过对比度检查","th.p":"每套配色中，文件名在面板背景和选中高亮上的对比度都不低于 4.5:1。","th.system":"系统","th.auto1":"跟随系统","th.auto2":"浅色 ↔ 深色","in.h2":"一分钟就能用起来","s1b":"下载磁盘映像。","s1t":"{DMG}，或从 {REL} 获取任意版本。","s2b":"把 Marlia 拖到“应用程序”。","s2t":"映像中应用和“应用程序”快捷方式并排放着。","s3b":"首次手动打开。","s3t":"右键点按 Marlia.app 并选择“打开”。在 macOS 15 及更高版本中，前往“系统设置”→“隐私与安全性”，点按“仍要打开”。","s4b":"可选：授予“完全磁盘访问权限”。","s4t":"这样打开“桌面”“文稿”和“下载”时就不会反复弹出提示。","note.h":"为什么 macOS 会先拦一下","note.p1":"Marlia 仅做了 ad-hoc 签名，没有 Apple Developer ID，所以首次启动时会被 Gatekeeper 拦下。如果 macOS 提示应用“已损坏，无法打开”（通过浏览器下载或 AirDrop 后常见），请清除隔离标记：","note.p2":"想自己编译？没有 Xcode 工程，只需一个脚本：<code>./build.sh --run<\/code>。","foot.lic":"Marlia 是基于 GNU GPL v3.0 的自由软件。","foot.src":"源代码","foot.rel":"版本发布","foot.bug":"报告问题","end.h2":"用你自己的文件夹试试","end.p":"免费，{size}，适用于 Apple 芯片上的 macOS 13.5 及更高版本。无需账号，无需订阅。","tour.h2":"五张照片，一个按键","tour.p":"在左侧选中文件，按 F5，它们就到了备份盘上。按 Tab 和 ⌘2 切换到另一栏，以缩略图查看。","tour.aria":"视频：选中五张照片，按 F5 复制到备份盘，然后以缩略图显示。","priv.h2":"隐私","priv.1":"<strong>Marlia 应用本身不会向任何地方发送数据：<\/strong>没有统计分析，没有崩溃报告，也不检查更新。只有在你主动要求时（例如连接 SMB 服务器）才会访问网络。","priv.2":"本网站不使用 Cookie、统计分析或跟踪。字体和图片都由本网站自身提供。","priv.3":"你选择的语言保存在浏览器的本地存储中，不会发送到任何地方。","priv.4":"为显示最新版本，页面每次访问时会向 GitHub API 查询一次 Marlia 的版本发布信息，GitHub 会因此获得你的 IP 地址。","priv.5":"本网站托管在 GitHub Pages 上。与任何网站托管服务一样，GitHub 会记录访问请求，包括 IP 地址。详见 <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub 隐私声明<\/a>。","meta.title":"Marlia：免费的 Mac 双栏文件管理器，Total Commander 风格","meta.desc":"免费开源的 macOS 双栏文件管理器。F5 复制，F6 移动，Tab 切换栏。原生 AppKit，支持标签页、压缩包、工作区和主题。适用于 Apple 芯片，macOS 13.5+。","langs":"语言"}}
 </script>
 
 <script>
@@ -987,22 +991,30 @@ pre {
     setTimeout(() => b.classList.remove("pressed"), 160);
   }
 
+  /* Keyboard: the window takes Tab (switch panes) only once the visitor is using it, i.e.
+     after an arrow, F5/F6 or a click inside. Before that, and again after Esc, Tab moves on
+     through the page like anywhere else, so the window is never a trap. Keys typed on the
+     key-bar buttons are theirs (Tab moves to the next button). */
+  let engaged = false;
   box.addEventListener("keydown", (e) => {
-    if (e.metaKey || e.ctrlKey || e.altKey) return;
-    if (e.key === "Tab" && e.shiftKey) return;
+    if (e.metaKey || e.ctrlKey || e.altKey || e.target !== box) return;
+    if (e.key === "Escape") { engaged = false; return; }
+    if (e.key === "Tab" && (e.shiftKey || !engaged)) return;
     if (keyIds[e.key]) {
       e.preventDefault();
+      engaged = true;
       flash(e.key);
       act(e.key);
     }
   });
+  box.addEventListener("focusout", (e) => { if (!box.contains(e.relatedTarget)) engaged = false; });
   document.querySelectorAll(".key").forEach(b => {
     b.addEventListener("click", () => { flash(b.dataset.k); act(b.dataset.k); });
   });
   for (const side of ["L", "R"]) {
     panes[side].addEventListener("mousedown", () => {
       if (st.side !== side) { st.side = side; render(); }
-      setTimeout(() => box.focus({ preventScroll: true }));
+      setTimeout(() => { box.focus({ preventScroll: true }); engaged = true; });
     });
   }
 
@@ -1025,6 +1037,18 @@ pre {
 
   render();
   applyLang(PAGE_LANG);
+  /* The window is the first thing on the page: with a mouse and keyboard it takes focus at
+     once, so F5 works without a click. Not on touch screens, and not when the visitor came
+     for a section further down. */
+  const nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+  if (window.matchMedia("(pointer: fine)").matches && !location.hash && window.scrollY === 0
+      && (!nav || nav.type === "navigate")) box.focus({ preventScroll: true });
+  /* Arrow keys must scroll the page again once the window is off screen. */
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((entries) => {
+      if (!entries[0].isIntersecting && document.activeElement === box) box.blur();
+    }).observe(box);
+  }
 
   /* Tour video: two variants (light/dark), only the one the theme shows is loaded and played,
      and only while it is on screen. With reduced motion it stays on its poster, with controls. */
